@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Modal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/v_Food_info.css">
+</head>
+
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Food Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img class="img-fluid"
+                            src="https://images.deliveryhero.io/image/fd-bd/Products/641061.JPG?width=400"
+                            alt="Chicken Chowmein">
+                    </div>
+                    <div class="mt-3">
+                        <h3>Chicken Chowmein</h3>
+                        <p>Chicken chowmein contains shredded chicken, cabbage, oyster sauce & other ingredients</p>
+                        <span class="font-weight-bold">
+                            <h4>Tk 139</h4>
+                        </span>
+                    </div>
+                    <div class="mt-3">
+                        <h5>Overall Rating of this Food</h5>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90"
+                                aria-valuemin="0" aria-valuemax="100">9 out of 10</div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <h5>Ratings</h5>
+                        <table class="table table-striped rating-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ratingTableBody">
+                                <tr>
+                                    <td>Nahidur</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr>
+                                    <td>Tusha</td>
+                                    <td>8</td>
+                                </tr>
+                                <tr>
+                                    <td>sakid</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>hello</td>
+                                    <td>9</td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>Jasdhas</td>
+                                    <td>8</td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>Eadsbbaon</td>
+                                    <td>10</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-primary" id="showMoreRatingsBtn">Show More Ratings</button>
+                    </div>
+                    <div class="mt-3">
+                        <h5>Reviews</h5>
+                        <table class="table table-striped review-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Customer</th>
+                                    <th scope="col">Review</th>
+                                    <th scope="col">Reply</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reviewTableBody">
+                                <tr>
+                                    <td>hemal</td>
+                                    <td>Delicious and well-cooked!</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>sakif</td>
+                                    <td>Great taste, but could use more vegetables.</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>hemak</td>
+                                    <td>Absolutely loved it!</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>tushu</td>
+                                    <td>Delicious and well-cooked!</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>sakif</td>
+                                    <td>Great taste, but could use more vegetables.</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="hidden-row">
+                                    <td>fahimn</td>
+                                    <td>Absolutely loved it!</td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Write a reply...">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button">Reply</button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-primary" id="showMoreReviewsBtn">Show More Reviews</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button to Open Modal -->
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('showMoreRatingsBtn').addEventListener('click', function () {
+            var rows = document.querySelectorAll('#ratingTableBody .hidden-row');
+            rows.forEach(function (row) {
+                row.classList.remove('hidden-row');
+            });
+            this.style.display = 'none';
+        });
+
+        document.getElementById('showMoreReviewsBtn').addEventListener('click', function () {
+            var rows = document.querySelectorAll('#reviewTableBody .hidden-row');
+            rows.forEach(function (row) {
+                row.classList.remove('hidden-row');
+            });
+            this.style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>

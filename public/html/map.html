@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Simple HERE Map</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://js.api.here.com/v3/3.1/mapsjs-ui.css"
+    />
+    <style>
+      html,
+      body {
+        border: 0;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <script>
+      const platform = new H.service.Platform({ apikey: "eST2bn0y_6FCTHJTt1343iSOJWBGXUIwKtxEU7Hi5ys" });
+      const defaultLayers = platform.createDefaultLayers();
+      const map = new H.Map(
+        document.getElementById("map"),
+        defaultLayers.vector.normal.map,
+        {
+          center: { lat: 37.773972, lng: -122.431297 },
+          zoom: 13,
+          pixelRatio: window.devicePixelRatio || 1,
+        }
+      );
+      window.addEventListener("resize", () => map.getViewPort().resize());
+      const behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      const ui = H.ui.UI.createDefault(map, defaultLayers);
+
+      //Begin geocoding
+      const searchText = "1070 Lombard Street, San Francisco";
+      const geocoder = platform.getGeocodingService();
+      geocoder.geocode({ searchText }, (result) => {
+        const location =
+          result.Response.View[0].Result[0].Location.DisplayPosition;
+        const { Latitude: lat, Longitude: lng } = location;
+        const marker = new H.map.Marker({ lat, lng });
+        map.addObject(marker);
+      });
+    </script>
+  </body>
+</html>

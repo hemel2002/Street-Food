@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
+        <title>Document</title>
+        <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="../css/forget.css">
+</head>
+<body>
+    <div class="container align-content-center">
+        <form action="/forget" class="needs-validation" novalidate method="post">
+            <div class="row" style="">
+                
+                <div class="col">
+                    <p class="lab"><b>Forgret your password through Email</b></p>
+                    
+                </div>
+            </div>
+            <div class="row g-2 forget">
+              
+                <div class="col-md">
+    
+                  <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInputGrid" placeholder="name@example.com" name="email" required>
+                    <label for="floatingInputGrid">Email address</label>
+                  </div>
+                  <div class="invalid-feedback">Please fill the entity</div>
+                </div>
+                <div class="col-md">
+                  <div class="form-floating">
+                    <select class="form-select" id="floatingSelectGrid" name="acctype">
+                      <option selected>Select Account</option>
+                      <option value="user">User</option>
+                      <option value="Seller">Seller</option>
+                    
+                    </select>
+                    <label for="floatingSelectGrid">Choose Account</label>
+                  </div>
+                 
+                </div>
+              </div>
+              <div class="row next"> 
+                <div class="col">
+                <center>
+                    <button type="submit" class="btn btn-primary btn-lg">Next<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
+                      </svg></button>
+                </center>
+               </div>
+            </div>    
+        </form>
+         <script>// Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+      
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+      
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()</script>
+  
+
+    </div>
+ 
+</html>

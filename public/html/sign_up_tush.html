@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css" />
+  <script src="../js/signup.js"></script>
+  <link rel="stylesheet" href="../css/signup.css">
+  <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <title>Registration Form</title>
+</head>
+<body>
+
+  <div class="container">
+    <div class="row justify-content-center ">
+      <div class="title">Registration Form</div>
+      <form class="needs-validation signup" novalidate>
+        <div class="row">
+          <div class="col">
+            <label for="accountType" class="form-label">Account Type</label>
+            <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required id="accountType">
+              <option selected disabled>Select Account Type</option>
+              <option value="1">User</option>
+              <option value="2">Seller</option>
+            </select>
+            <div class="invalid-feedback">Please select an account type.</div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="inputEmail4" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="inputEmail4" required>
+            <div class="invalid-feedback">Please fill the entity</div>
+          </div>
+          <div class="col-md-6">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastname" required>
+            <div class="invalid-feedback">Please fill the entity</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+              <label for="floatingInput">Email address</label>
+              <div class="invalid-feedback">Please fill the entity</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Fields -->
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" placeholder="01XX-XXX-XXXX" required>
+            <div class="invalid-feedback">Please enter a valid phone number.</div>
+          </div>
+          <div class="col-12">
+            <label for="district" class="form-label">District</label>
+            <input type="text" class="form-control" id="district" placeholder="" required>
+            <div class="invalid-feedback">Please enter your district.</div>
+          </div>
+          <div class="col-12">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" placeholder="" required>
+            <div class="invalid-feedback">Please enter your city.</div>
+          </div>
+          <div class="col-12">
+            <label for="area" class="form-label">Area</label>
+            <input type="text" class="form-control" id="area" placeholder="" required>
+            <div class="invalid-feedback">Please enter your area.</div>
+          </div>
+            
+          
+          <div class="col-12 vendor-field" style="display: none;">
+            <label for="stallName" class="form-label">Stall Name</label>
+            <input type="text" class="form-control" id="stallName" placeholder="" required>
+            <div class="invalid-feedback">Please enter your stall name.</div>
+          </div>
+          <div class="col-12 vendor-field" style="display: none;">
+            <label for="stallPic" class="form-label">Stall Picture</label>
+            <input type="file" class="form-control" id="stallPic" accept="image/*" required>
+            <div class="invalid-feedback">Please upload a picture of your stall.</div>
+          </div>
+          <div class="col-12 vendor-field" style="display: none;">
+            <label for="basic-url" class="form-label">Shop Location URL</label>
+              <div class="input-group">
+               <span class="input-group-text" id="basic-addon3">https://google.com/map/</span>
+               <input type="text" class="form-control" required id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+             </div>
+             <div class="form-text" id="basic-addon4">Location for finding you.</div> 
+         </div>
+        </div>
+            
+
+        <hr class="my-4">
+
+        <div class="row">
+          <div class="col">
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+              <label for="floatingPassword">Password</label>
+              <div class="invalid-feedback">Please fill the entity</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+              <label for="confirmPassword">Confirm Password</label>
+              <div class="invalid-feedback">Passwords must match.</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12" >
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" required />
+                <label class="form-check-label" for="exampleCheck1">I agree to the <a href="#">terms & Conditions</a></label>
+              </div>
+          </div>
+
+
+        <div class="otp-section" style="display: none;">
+          <h4 class="mb-3">OTP Verification</h4>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="otp" class="form-label">Enter OTP</label>
+              <input type="text" class="form-control" id="otp" placeholder="123456" required>
+              <div class="invalid-feedback">Please enter the OTP sent to your email/phone.</div>
+            </div>
+          </div>
+          <hr class="my-4">
+        </div>
+
+        <button class="w-100 btn btn-primary btn-lg" type="button" id="nextBtn">Next</button>
+        <button class="w-100 btn btn-primary btn-lg otp-btn" type="submit" style="display: none;">Verify OTP</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const forms = document.querySelectorAll('.needs-validation');
+      const nextBtn = document.getElementById('nextBtn');
+      const otpBtn = document.querySelector('.otp-btn');
+      const otpSection = document.querySelector('.otp-section');
+      const vendorFields = document.querySelectorAll('.vendor-field');
+      const accountType = document.getElementById('accountType');
+
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add('was-validated');
+        }, false);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (forms[0].checkValidity()) {
+          nextBtn.style.display = 'none';
+          otpBtn.style.display = 'block';
+          otpSection.style.display = 'block';
+        } else {
+          forms[0].classList.add('was-validated');
+        }
+      });
+
+      accountType.addEventListener('change', () => {
+        if (accountType.value === '2') {
+          vendorFields.forEach(field => field.style.display = 'block');
+        } else {
+          vendorFields.forEach(field => field.style.display = 'none');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

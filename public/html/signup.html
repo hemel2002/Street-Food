@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../bootstrap-5.3.3-dist/css/bootstrap.min.css"
+    />
+    <script src="../js/signup.js"></script>
+    <link rel="stylesheet" href="../css/signup.css">
+  
+    <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <title>Document</title>
+ 
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="title">
+          Registration form
+       </div>
+ 
+        <form class="needs-validation signup" novalidate >
+         
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="inputEmail4" class="form-label" >First Name</label>
+              <input type="text" class="form-control" id="inputEmail4" required>
+              <div class="invalid-feedback">Please fill the entity</div>
+            </div>
+            <div class="col-md-6">
+              <label for="lastname" class="form-label" >Last Name</label>
+              <input type="text" class="form-control" id="lastname" required>
+              <div class="invalid-feedback">Please fill the entity</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">  <div class="form-floating mb">
+              <input
+                type="email"
+                class="form-control"
+                id="floatingInput"
+                placeholder="name@example.com" required
+              />
+              <label for="floatingInput">Email address</label>
+              <div class="invalid-feedback">Please fill the entity</div>
+              
+            </div></div>
+          </div>
+<!--Changed tushar -->
+
+ 
+
+<!-- changed done by tush-->
+
+
+       <div class="row"><div class="col">
+        <div class="form-floating">
+          <input
+            type="password"
+            class="form-control"
+            id="floatingPassword"
+            placeholder="Password" required
+          />
+          <label for="floatingPassword">Password</label>
+          <div class="invalid-feedback">Please fill the entity</div>
+        </div>
+       </div></div>
+
+        <div class="row"><div class="col">
+          <div>
+            <select
+              class="form-select form-select-lg mb-3 acctype"
+              aria-label="Large select example" required
+            >
+              <option selected>Account Type</option>
+              <option value="1">User</option>
+              <option value="2">Seller</option>
+            
+            </select>
+          </div>
+        </div></div>
+         <center>  <button type="submit" class="btn btn-primary submit hide">Submit</button>
+          <button type="submit" class="btn btn-primary next hide">next</button></center>
+        
+        </form>
+      </div>
+    </div>
+    <script>// Example starter JavaScript for disabling form submissions if there are invalid fields
+      (() => {
+          'use strict'
+        
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          const forms = document.querySelectorAll('.needs-validation')
+        
+          // Loop over them and prevent submission
+          Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+              if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+              }
+        
+              form.classList.add('was-validated')
+            }, false)
+          })
+        })()</script>
+  </body>
+</html>

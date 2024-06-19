@@ -1,0 +1,221 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #495057;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Container and Main Styling */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  main {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Text Centering */
+  .text-center {
+    text-align: center;
+  }
+  
+  /* Form Styling */
+  form.needs-validation {
+    margin-top: 20px;
+  }
+  
+  form .form-control {
+    border-radius: 4px;
+  }
+  
+  form .form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  form .form-select {
+    border-radius: 4px;
+  }
+  
+  /* Validation Feedback */
+  .invalid-feedback {
+    font-size: 0.875em;
+    color: #dc3545;
+  }
+  
+  .was-validated .form-control:invalid,
+  .was-validated .form-select:invalid {
+    border-color: #dc3545;
+  }
+  
+  /* Button Styling */
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+  
+  /* Footer Styling */
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+    color: #6c757d;
+  }
+  
+  footer p {
+    margin-bottom: 0;
+  }
+  
+  footer ul {
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  footer ul li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  footer ul li a {
+    color: #6c757d;
+  }
+  
+  footer ul li a:hover {
+    color: #0056b3;
+  }
+  
+
+  /* about */
+  /* Sign Up CSS for the footer */
+.footer {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 60px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer a {
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #3498db;
+}
+
+.footer h5 {
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.footer .social-icons a {
+  font-size: 24px;
+  margin-right: 20px;
+  color: #ecf0f1;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer .social-icons a:hover {
+  color: #3498db;
+  transform: scale(1.2);
+}
+
+.footer .newsletter-form {
+  display: flex;
+  margin-top: 15px;
+}
+
+.footer .newsletter-form input {
+  border: none;
+  padding: 12px;
+  width: 70%;
+  border-radius: 5px 0 0 5px;
+  margin-right: -5px;
+}
+
+.footer .newsletter-form button {
+  border: none;
+  padding: 12px 20px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer .newsletter-form button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.footer .bottom-footer {
+  background-color: #1a252f;
+  padding: 20px 0;
+  color: #bdc3c7;
+  text-align: center;
+  font-size: 15px;
+}
+
+.payment-icons i {
+  margin-right: 15px;
+  color: #ecf0f1;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.payment-icons i:hover {
+  color: #3498db;
+  transform: scale(1.2);
+}
+
+/* Footer background decorations */
+.footer::before,
+.footer::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.footer::before {
+  top: -150px;
+  left: -150px;
+}
+
+.footer::after {
+  bottom: -150px;
+  right: -150px;
+}
+
+.footer .container {
+  position: relative;
+  z-index: 1;
+}

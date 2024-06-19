@@ -1,0 +1,94 @@
+<!-- ..........header......... -->
+
+<%- include('header') %>
+
+<%- include('navbar') %>
+
+<!-- ...............body................ -->
+<center>
+  <div class="row" style="margin-bottom: 50px;">
+    <center>
+      <div class="card" style="width: 40rem;">
+        <img class="card-img-top" src="<%= findfoodData.FOOD_PIC  %>" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title"></h5>
+          <p class="card-text">Food Id: </p>
+
+          <form method="post" action="http://localhost:3000/vendor/update/<%=findfoodData.FOOD_ID %>?_method=PATCH" class="needs-validation" enctype="multipart/form-data" novalidate>
+            <!-- Input for Food Id -->
+
+
+            <input class="form-control" type="text" id="F_id" name="F_id" value="<%=findfoodData.FOOD_ID %>" aria-label="readonly input example" readonly>
+            <div class="row">
+              <div class="col">
+                <label for="availability" class="form-label">Available Status</label>
+                <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required id="availability" name="availability">
+                  <option selected disabled><%= findfoodData.AVAILABILITY %></option>
+                  <option  value="Yes">Yes</option>
+                  <option value="No">NO</option>
+                </select>
+                <div class="invalid-feedback">Please set the available staus.</div>
+              </div>
+            </div>
+            <div class="col-md-12 mb-3">
+              <!-- Input for Food Title -->
+              <label for="foodtitle" class="form-label">Enter the food title</label>
+              <input type="text" class="form-control" id="foodtitle" name="name" value="<%= findfoodData.NAME %>" required />
+              <div class="invalid-feedback">Please enter the food title.</div>
+            </div>
+            
+            <div class="col-md-12 mb-3">
+              <!-- Input for Price -->
+              <label for="price" class="form-label">Price</label>
+              <input type="text" class="form-control" id="price" name="price" value="<%=findfoodData.PRICE %>" required />
+              <div class="invalid-feedback">Please enter the price.</div>
+            </div>
+            
+            <div class="mb-3">
+              <!-- Input for Image -->
+              <label for="image" class="form-label">Upload Image</label>
+              <input class="form-control form-control-sm" id="image" name="image" value="<%= findfoodData.ORGINAL_PATH %>" type="file" required>
+            </div>
+            <!-- ----------ingredient update............. -->
+            <div class="row"><div class="col-12">
+              <div class="input-group" >
+                <span class="input-group-text">Share the ingredient </span>
+                <textarea class="form-control" aria-label="With textarea" name="ingredient"><%= findfoodData.INGREDIENT %></textarea>
+              </div>
+            </div></div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary" style="margin-top: 15px;">Update</button>
+          </form>
+        </div>
+      </div>
+    </center>
+  </div>
+</center>
+
+
+<!-- ...........js for validator.............. -->
+
+<script>
+  (function () {
+      'use strict';
+      window.addEventListener('load', function () {
+          var forms = document.getElementsByClassName('needs-validation');
+          var validation = Array.prototype.filter.call(forms, function (form) {
+              form.addEventListener('submit', function (event) {
+                  if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                  }
+                  form.classList.add('was-validated');
+              }, false);
+          });
+      }, false);
+  })();
+</script>
+
+
+
+
+<!-- ..........footer.......... -->
+<%- include('footer') %>

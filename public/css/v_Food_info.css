@@ -1,0 +1,151 @@
+.rating-table th,
+.rating-table td,
+.review-table th,
+.review-table td {
+    text-align: left;
+    vertical-align: middle;
+}
+
+.modal-dialog {
+    max-width: 1000px; /* Increased modal width */
+}
+
+.modal-content {
+    background-color: #f8f9fa; /* Background color of modal content */
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-body {
+    text-align: center;
+    padding: 20px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.close {
+    color: #888;
+    opacity: 0.7;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.food-info {
+    margin-bottom: 20px;
+}
+
+.food-info h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.food-info p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.btn-primary {
+    background-color: #28a745; /* Green color */
+    border-color: #28a745;
+    padding: 10px 20px;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #218838; /* Darker green on hover */
+    border-color: #218838;
+}
+
+.table {
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.table th,
+.table td {
+    border: none; /* Remove table borders */
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa; /* Light gray for odd rows */
+}
+
+.input-group {
+    margin-bottom: 10px; /* Add margin below input group */
+}
+
+.progress {
+    height: 30px; /* Increase height */
+    background-color: #e9ecef;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Add shadow */
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #28a745, #218838); /* Gradient color */
+    border-radius: 20px;
+    line-height: 30px; /* Center text vertically */
+    font-size: 1rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Text shadow for better readability */
+}
+
+.table thead th {
+    background-color: #007bff;
+    color: white;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #e9ecef;
+}
+
+.table tbody tr:hover {
+    background-color: #d1ecf1;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table .btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.table .btn:hover {
+    background-color: #0056b3;
+}
+
+.hidden-row {
+    display: none;
+}

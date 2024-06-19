@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Map with Autocomplete</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 600px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <input type="text" id="autocomplete-input" placeholder="Enter address" />
+  <button onclick="searchAddresses()">Search</button>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Initialize the map
+    const map = L.map('map').setView([51.505, -0.09], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Function to fetch and display addresses
+    async function searchAddresses() {
+      const inputText = document.getElementById('autocomplete-input').value;
+      const apiKey = '66056c352e73420c9649ec72b251ee42';  // Replace with your Geoapify API key
+      const data = await fetchAddresses(inputText, apiKey);
+      const addresses = extractAddressData(data);
+
+      // Clear existing markers
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          map.removeLayer(layer);
+        }
+      });
+
+      // Add markers to the map
+      addresses.forEach(addr => {
+        const marker = L.marker([addr.lat, addr.lon]).addTo(map);
+        marker.bindPopup(addr.address);
+      });
+
+      // Fit map bounds to markers
+      if (addresses.length > 0) {
+        const bounds = addresses.map(addr => [addr.lat, addr.lon]);
+        map.fitBounds(bounds);
+      }
+    }
+
+    // Fetch addresses function
+    const fetchAddresses = async (inputText, apiKey) => {
+      try {
+        const response = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${inputText}&format=json&apiKey=${apiKey}`);
+        const result = await response.json();
+        return result;
+      } catch (error) {
+        console.error('Error fetching addresses:', error);
+        return null;
+      }
+    };
+
+    // Extract address data function
+    const extractAddressData = (data) => {
+      if (!data || !data.features) return [];
+
+      return data.features.map(feature => ({
+        address: feature.properties.formatted,
+        lat: feature.properties.lat,
+        lon: feature.properties.lon
+      }));
+    };
+  </script>
+</body>
+</html>

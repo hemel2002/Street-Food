@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Modal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../All Page/test.css">
+    <head>
+       
+      <style>
+            .rating-table th, .rating-table td, .review-table th, .review-table td {
+            text-align: left;
+            vertical-align: middle;
+        }
+      </style>
+</head>
+<body>
+
+
+<!-- Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel">Food Information</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center">
+                <img class="img-fluid" src="https://images.deliveryhero.io/image/fd-bd/Products/641061.JPG?width=400" alt="Chicken Chowmein">
+              </div>          <div class="mt-3">
+            <h4>Chicken Chowmein</h4>
+            <p>Chicken chowmein contains shredded chicken, cabbage, oyster sauce & other ingredients</p>
+            <span class="font-weight-bold">Tk 139</span>
+          </div>
+          <div class="mt-3">
+            <h5>Overall Rating of this Food</h5>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">9 out of 10</div>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h5>Ratings</h5>
+            <table class="table rating-table">
+              <thead>
+                <tr>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Rating </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Nahidur</td>
+                  <td>9</td>
+                </tr>
+                <tr>
+                  <td>Sakif</td>
+                  <td>8</td>
+                </tr>
+                <tr>
+                  <td>Hemal</td>
+                  <td>10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3">
+            <h5>Reviews</h5>
+            <table class="table review-table">
+              <thead>
+                <tr>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Review</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Fahim</td>
+                  <td>Delicious and well-cooked!</td>
+                </tr>
+                <tr>
+                  <td>Tushar</td>
+                  <td>Great taste, but could use more vegetables.</td>
+                </tr>
+                <tr>
+                  <td>Hemal</td>
+                  <td>Absolutely loved it!</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Button to Open Modal -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal">
+    Open Product Modal
+  </button>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

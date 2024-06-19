@@ -1,0 +1,163 @@
+/* styles.css */
+
+.carousel-item img {
+    height: 500px; /* Set the desired height for the images */
+    object-fit: cover; /* Ensures the images cover the area without distortion */
+}
+
+
+  .custom-margin {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+
+
+  
+  .counter {
+    color: #ffffff;
+    margin-bottom: 50px;
+    margin-top: 30px;
+}
+
+.counter-value {
+  display: block;
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffffff;
+  animation: count 2s ease-in-out;
+}
+
+@keyframes count {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+
+/*ABout */
+
+/* Custom CSS for the footer */
+.footer {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 60px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer a {
+  color: #ecf0f1;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: #3498db;
+}
+
+.footer h5 {
+  margin-bottom: 25px;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer ul li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.footer .social-icons a {
+  font-size: 24px;
+  margin-right: 20px;
+  color: #ecf0f1;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer .social-icons a:hover {
+  color: #3498db;
+  transform: scale(1.2);
+}
+
+.footer .newsletter-form {
+  display: flex;
+  margin-top: 15px;
+}
+
+.footer .newsletter-form input {
+  border: none;
+  padding: 12px;
+  width: 70%;
+  border-radius: 5px 0 0 5px;
+  margin-right: -5px;
+}
+
+.footer .newsletter-form button {
+  border: none;
+  padding: 12px 20px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer .newsletter-form button:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.footer .bottom-footer {
+  background-color: #1a252f;
+  padding: 20px 0;
+  color: #bdc3c7;
+  text-align: center;
+  font-size: 15px;
+}
+
+.payment-icons i {
+  margin-right: 15px;
+  color: #ecf0f1;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.payment-icons i:hover {
+  color: #3498db;
+  transform: scale(1.2);
+}
+
+/* Footer background decorations */
+.footer::before,
+.footer::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.footer::before {
+  top: -150px;
+  left: -150px;
+}
+
+.footer::after {
+  bottom: -150px;
+  right: -150px;
+}
+
+.footer .container {
+  position: relative;
+  z-index: 1;
+}

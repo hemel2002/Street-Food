@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
+    <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+    <title>Theme Toggle</title>
+</head>
+<body>
+
+
+
+<!-- Optional: Include a script to handle theme switching logic -->
+<script>
+  document.querySelectorAll('[data-bs-theme-value]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-bs-theme-value]').forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('active');
+      button.setAttribute('aria-pressed', 'true');
+      const theme = button.getAttribute('data-bs-theme-value');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+      // Additional logic to persist the theme selection can be added here
+    });
+  });
+</script>
+
+</body>
+</html>
