@@ -33,7 +33,7 @@
             <div class="col-md-12 mb-3">
               <!-- Input for Food Title -->
               <label for="foodtitle" class="form-label">Enter the food title</label>
-              <input type="text" class="form-control" id="foodtitle" name="name" value="<%= findfoodData.NAME %>" required />
+              <input type="text" class="form-control" id="foodtitle" name="name" value="<%= findfoodData.FOOD_NAME %>" required />
               <div class="invalid-feedback">Please enter the food title.</div>
             </div>
             
@@ -47,13 +47,13 @@
             <div class="mb-3">
               <!-- Input for Image -->
               <label for="image" class="form-label">Upload Image</label>
-              <input class="form-control form-control-sm" id="image" name="image" value="<%= findfoodData.ORGINAL_PATH %>" type="file" required>
+              <input class="form-control form-control-sm" id="image" name="image" value="<%= findfoodData.ORIGINAL_PATH %>" type="file" required>
             </div>
             <!-- ----------ingredient update............. -->
             <div class="row"><div class="col-12">
               <div class="input-group" >
                 <span class="input-group-text">Share the ingredient </span>
-                <textarea class="form-control" aria-label="With textarea" name="ingredient"><%= findfoodData.INGREDIENT %></textarea>
+                <textarea class="form-control" aria-label="With textarea" name="ingredient" required><%= findfoodData.INGREDIENT %></textarea>
               </div>
             </div></div>
             

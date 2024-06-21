@@ -15,6 +15,7 @@ const dbConfig = require('./dbConfig');
 const { constrainedMemory } = require('process');
 
 let foodData = [];
+let reviews = [];
 /////////////////////////////////dark_mode////////////////////////
 router.post('/navbar', (req, res) => {
   req.session.mode = req.body.mode;
@@ -28,8 +29,15 @@ router.get('/', requirelogin, async (req, res) => {
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
-    const result = connection.execute('select * from food');
+    const result = connection.execute(
+      'select * from food order by food_id asc'
+    );
+    const result2 = connection.execute(
+      'select CUSTOMER_ID,name,REVIEW_MESSAGE,RATING from customer_reviews'
+    );
     foodData = (await result).rows;
+    reviews = (await result2).rows;
+    console.log(reviews);
   } catch (err) {
     console.error(err);
   } finally {
@@ -42,6 +50,7 @@ router.get('/', requirelogin, async (req, res) => {
     }
   }
   const currentPage = req.query.page || 1; // Get current page from query parameter
+  const count = 0;
   console.log(currentPage);
   const itemsPerPage = 6; // Number of items per page
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -56,6 +65,8 @@ router.get('/', requirelogin, async (req, res) => {
     displayedItems,
     totalPages,
     currentPage,
+    reviews,
+    count,
   });
 });
 /////////////////////for vendor add food //////////////////////////
@@ -80,7 +91,7 @@ router.post(
     try {
       connection = await OracleDB.getConnection(dbConfig);
       const result = await connection.execute(
-        'INSERT INTO Food (food_name,price ,rating,ingredient,availability,Food_pic,orginal_path) values(:name,:price,:rating,:ingredient,:availability,:path,:originalname)',
+        'INSERT INTO Food (food_name,price ,rating,ingredient,availability,Food_pic,ORIGINAL_PATH) values(:name,:price,:rating,:ingredient,:availability,:path,:originalname)',
         { name, price, rating, ingredient, availability, path, originalname },
         { autoCommit: true }
       );
@@ -117,7 +128,7 @@ router.get('/update/:id', requirelogin, async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      'SELECT FOOD_ID, FOOD_NAME, PRICE, INGREDIENT, AVAILABILITY, ORGINAL_PATH, FOOD_PIC FROM food WHERE FOOD_ID = :id',
+      'SELECT FOOD_ID, FOOD_NAME, PRICE, INGREDIENT, AVAILABILITY, ORIGINAL_PATH, FOOD_PIC FROM food WHERE FOOD_ID = :id',
       [id]
     );
     console.log(result.rows[0]);
@@ -146,17 +157,34 @@ router.patch(
   '/update/:id',
   requirelogin,
   upload.single('image'),
-  (req, res) => {
+  async (req, res) => {
     const { id } = req.params;
-
-    let findfoodData = foodData.findIndex((c) => c.F_id === id);
-
-    const { F_id, name, price } = req.body;
-    console.log(req.body);
+    const { name, price, ingredient, availability } = req.body;
     const { path, originalname } = req.file;
-    const newfoodData = { F_id, name, price, imageUrl: path, originalname };
-    console.log(newfoodData);
-    foodData[findfoodData] = newfoodData;
+
+    console.log(req.body);
+    console.log(req.file);
+    let findfoodData = null;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      await connection.execute(
+        'update food set FOOD_NAME=:name,PRICE=:price,INGREDIENT=:ingredient,AVAILABILITY=:availability,ORIGINAL_PATH=:originalname, FOOD_PIC=:path  WHERE FOOD_ID = :id',
+        [name, price, ingredient, availability, originalname, path, id],
+        { autoCommit: true }
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
     req.flash('foodupdated', 'Food item updated successfully!');
 
     res.redirect('/vendor');
@@ -214,6 +242,10 @@ router.post('/logout', requirelogin, (req, res) => {
   req.session.user_id = null;
   req.flash('logout', 'successfully logout');
   res.redirect('/home');
+});
+///////////////////////////////////////test/////////////////////////////
+router.get('/totallength', (req, res) => {
+  res.json(foodData.length);
 });
 /////////////////////////////////export Router/////////////////////////////
 module.exports = router;

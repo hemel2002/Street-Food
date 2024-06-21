@@ -38,10 +38,15 @@
                     </p>
                     <div class="row">
 
-                      <div class="12"> <button type="button" class="btn btn-primary btn-lg btn-block"
-                          data-toggle="modal" data-target="#productModal" style="margin-bottom: 10px">
-                          Details
-                        </button></div>
+                      <div class="12"><button type="button" class="btn btn-primary btn-lg btn-block"
+                        data-toggle="modal" data-target="#productModal<%= i %>" style="margin-bottom: 10px">
+                        Details
+                      </button> </div>
+
+
+
+
+
 
                       <br /><br />
                       <a href="/vendor/update/<%= foodData[i].FOOD_ID %>">
@@ -164,165 +169,100 @@
         </div>
       </main>
       <!-- .............................foode details.................................. -->
+      <% for(let i = currentPage - 1; i < foodData.length; i++) { %>
+        <div class="modal fade" id="productModal<%= i %>" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productModalLabel">Food Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex justify-content-center">
+                          <img class="card-img-top" src="<%= foodData[i].FOOD_PIC %>" style="width: 100%; height: auto; border-radius: 20px;" alt="<%= foodData[i].FOOD_NAME %>">
+                        </div>
+                        <div class="mt-3">
+                            <h3><%= foodData[i].FOOD_NAME %></h3>
+                            <p><%= foodData[i].INGREDIENT %></p>
+                            <span class="font-weight-bold">
+                                <h4>Tk <%= foodData[i].PRICE %></h4>
+                            </span>
+                        </div>
+                        <div class="mt-3">
+                            <h5>Overall Rating of this Food</h5>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: <%= foodData[i].RATING * 10 %>%;" aria-valuenow="<%= foodData[i].RATING * 10 %>" aria-valuemin="0" aria-valuemax="100">
+                                    <%= foodData[i].RATING %> out of 10
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Ratings -->
+                        <div class="mt-3">
+                            <h5>Ratings</h5>
+                            <table class="table table-striped rating-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Customer</th>
+                                        <th scope="col">Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ratingTableBody<%= i %>">
+                                    <% for(let j = 0; j < reviews.length; j++) { %>
+                                        <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
+                                            <td><%= reviews[j].NAME %></td>
+                                            <td><%= reviews[j].RATING %></td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-primary" id="showMoreRatingsBtn<%= i %>">Show More Ratings</button>
+                        </div>
+    
+                        <!-- Reviews -->
+                        <div class="mt-3">
+                            <h5>Reviews</h5>
+                            <table class="table table-striped review-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Customer</th>
+                                        <th scope="col">Review</th>
+                                        <th scope="col">Reply</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reviewTableBody<%= i %>">
+                                    <% for(let j = 0; j < reviews.length; j++) { %>
+                                        <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
+                                            <td><%= reviews[j].NAME %></td>
+                                            <td><%= reviews[j].REVIEW_MESSAGE %></td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Write a reply...">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-primary" type="button">Reply</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-primary" id="showMoreReviewsBtn<%= i %>">Show More Reviews</button>
+                        </div>
+    
+                        <!-- Other Images and Ratings -->
 
-
-      <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="productModalLabel">Food Information</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="d-flex justify-content-center">
-                <img class="img-fluid" src="https://images.deliveryhero.io/image/fd-bd/Products/641061.JPG?width=400"
-                  alt="Chicken Chowmein">
-              </div>
-              <div class="mt-3">
-                <h3>Chicken Chowmein</h3>
-                <p>Chicken chowmein contains shredded chicken, cabbage, oyster sauce & other ingredients</p>
-                <span class="font-weight-bold">
-                  <h4>Tk 139</h4>
-                </span>
-              </div>
-              <div class="mt-3">
-                <h5>Overall Rating of this Food</h5>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 90%;" aria-valuenow="90" aria-valuemin="0"
-                    aria-valuemax="100">9 out of 10</div>
+    
+                    </div>
                 </div>
-              </div>
-              <div class="mt-3">
-                <h5>Ratings</h5>
-                <table class="table table-striped rating-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Customer</th>
-                      <th scope="col">Rating</th>
-                    </tr>
-                  </thead>
-                  <tbody id="ratingTableBody">
-                    <tr>
-                      <td>Nahidur</td>
-                      <td>9</td>
-                    </tr>
-                    <tr>
-                      <td>Tusha</td>
-                      <td>8</td>
-                    </tr>
-                    <tr>
-                      <td>sakid</td>
-                      <td>10</td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>hello</td>
-                      <td>9</td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>Jasdhas</td>
-                      <td>8</td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>Eadsbbaon</td>
-                      <td>10</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button class="btn btn-primary" id="showMoreRatingsBtn">Show More Ratings</button>
-              </div>
-              <div class="mt-3">
-                <h5>Reviews</h5>
-                <table class="table table-striped review-table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Customer</th>
-                      <th scope="col">Review</th>
-                      <th scope="col">Reply</th>
-                    </tr>
-                  </thead>
-                  <tbody id="reviewTableBody">
-                    <tr>
-                      <td>hemal</td>
-                      <td>Delicious and well-cooked!</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>sakif</td>
-                      <td>Great taste, but could use more vegetables.</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>hemak</td>
-                      <td>Absolutely loved it!</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>tushu</td>
-                      <td>Delicious and well-cooked!</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>sakif</td>
-                      <td>Great taste, but could use more vegetables.</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr class="hidden-row">
-                      <td>fahimn</td>
-                      <td>Absolutely loved it!</td>
-                      <td>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Write a reply...">
-                          <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">Reply</button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button class="btn btn-primary" id="showMoreReviewsBtn">Show More Reviews</button>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+    <% } %>
+    
+    
+
 
       <!-- Button to Open Modal -->
 
@@ -333,25 +273,62 @@
       <!--Last-->
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="../"></script>
+    <script src="../ejs.min.js"></script>
 
-      <script>
-        document.getElementById('showMoreRatingsBtn').addEventListener('click', function () {
-          var rows = document.querySelectorAll('#ratingTableBody .hidden-row');
-          rows.forEach(function (row) {
-            row.classList.remove('hidden-row');
-          });
-          this.style.display = 'none';
-        });
+    <script>
+ document.addEventListener('DOMContentLoaded', function() {
+    // Event delegation for 'Show More Ratings' and 'Show More Reviews' buttons
+    document.addEventListener('click', function(event) {
+        if (event.target.matches('[id^="showMoreRatingsBtn"]')) {
+            var index = event.target.id.replace('showMoreRatingsBtn', '');
+            showMoreRatings(index);
+        }
+        if (event.target.matches('[id^="showMoreReviewsBtn"]')) {
+            var index = event.target.id.replace('showMoreReviewsBtn', '');
+            showMoreReviews(index);
+        }
+    });
 
-        document.getElementById('showMoreReviewsBtn').addEventListener('click', function () {
-          var rows = document.querySelectorAll('#reviewTableBody .hidden-row');
-          rows.forEach(function (row) {
+    function showMoreRatings(index) {
+        var rows = document.querySelectorAll('#ratingTableBody' + index + ' tr.hidden-row');
+        rows.forEach(function(row) {
             row.classList.remove('hidden-row');
-          });
-          this.style.display = 'none';
         });
-      </script>
+        document.getElementById('showMoreRatingsBtn' + index).style.display = 'none';
+    }
+
+    function showMoreReviews(index) {
+        var rows = document.querySelectorAll('#reviewTableBody' + index + ' tr.hidden-row');
+        rows.forEach(function(row) {
+            row.classList.remove('hidden-row');
+        });
+        document.getElementById('showMoreReviewsBtn' + index).style.display = 'none';
+    }
+});
+
+  </script>
+  
+
+<!-- <script>
+  $(document).ready(function() {
+      $('#showMoreRatingsBtn').click(function() {
+          $.ajax({
+              url: '/showmore',
+              type: 'GET',
+              success: function(data) {
+                  $('#hidden-row').text(data.val);
+              },
+              error: function(error) {
+                  console.error('Error:', error);
+              }
+          });
+      });
+  });
+</script> -->
+
+
+
+
       <script src="http://localhost:3000/js/vendor.js"></script>
       <!--Last --><!-- Footer -->
       <%- include('footer') %>
