@@ -32,6 +32,7 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
+    "places.js": "^1.19.0",
     "react-bootstrap": "^2.10.3",
     "uuid": "^10.0.0"
   }

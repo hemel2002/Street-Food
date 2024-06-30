@@ -1,103 +1,117 @@
-<body>
+<!--Nav Bar--><!--Nav Bar-->
+<nav class="navbar bg-body-tertiary" aria-label="Light offcanvas navbar">
+  <div class="container-fluid">
+    <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
+      <img src="http://localhost:3000/img/logo.png" alt="logo.png" height="50">
+      <span class="fs-4">Street Food Management</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarLight"
+      aria-controls="offcanvasNavbarLight" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarLight"
+      aria-labelledby="offcanvasNavbarLightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLightLabel">Street Food Management</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+               href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
+              Profile
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <a class="nav-link" href="#">Notification</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Switch account</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Settings
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+              <li><a class="dropdown-item" href="#">Forget Password</a></li>
+              <li><a class="dropdown-item" href="#">Help & Support</a></li>
+              <li> <a class="nav-link"
+                  href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/email">
+                  Contact
+                </a></li>
 
-  <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
 
-    <!--Nav Bar--><!--Nav Bar-->
-      <nav class="navbar bg-body-tertiary" aria-label="Light offcanvas navbar">
-      <div class="container-fluid">
-        <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
-          <img src="../img/logo_street_food.png" height="50">
-          <span class="fs-4">Street Food Management</span>
-        </a>    
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarLight" aria-controls="offcanvasNavbarLight" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarLight" aria-labelledby="offcanvasNavbarLightLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLightLabel">Street Food Management</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/vendor/profile">View Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Notification</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Switch account</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Settings
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Edit Profile</a></li>
-                  <li><a class="dropdown-item" href="#">Forget Password</a></li>
-                  <li><a class="dropdown-item" href="#">Help & Support</a></li>
-                  <li><a class="dropdown-item" href="/vendor/email">Contact</a></li>
-                  <li>
-                    <hr class="dropdown-divider">
-                  </li>
-                </ul>
+              <li>
+                <hr class="dropdown-divider">
               </li>
             </ul>
-            <form action="http://localhost:3000/vendor/navbar" method="post">
-              <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Switch mode!
+          </li>
+        </ul>
+        <form action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar" method="post">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Switch mode!
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <button type="submit" class="dropdown-item d-flex align-items-center" name="mode" value="light">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-sun-fill" viewBox="0 0 16 16">
+                    <path
+                      d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708" />
+                  </svg>
+                  Light
                 </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <button type="submit" class="dropdown-item d-flex align-items-center" name="mode" value="light">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sun-fill" viewBox="0 0 16 16">
-                        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
-                      </svg>
-                      Light
-                    </button>
-                  </li>
-                  <li>
-                    <button type="submit" name="mode" value="dark" class="dropdown-item d-flex align-items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-moon" viewBox="0 0 16 16">
-                        <path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/>
-                        <path d="M11.286 1.778a.5.5 0 0 0-.565-.755 4.595 4.595 0 0 0-3.18 5.003 5.5 5.5 0 0 1 1.055.209A3.6 3.6 0 0 1 9.83 2.617a4.593 4.593 0 0 0 4.31 5.744 3.58 3.58 0 0 1-2.241.634q.244.477.394 1a4.59 4.59 0 0 0 3.624-2.04.5.5 0 0 0-.565-.755 3.593 3.593 0 0 1-4.065-5.422z"/>
-                      </svg>
-                      Dark
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </form>
-            
-
-            <form class="d-flex mt-3" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <form action="http://localhost:3000/vendor/logout" method="post">
-              <ul class="navbar-nav mt-3">
-                <div class="col-12"> <!-- Full-width column -->
-                  <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button> <!-- Full-width button -->
-                </div>
-              </ul>
-            </form>
-         
+              </li>
+              <li>
+                <button type="submit" name="mode" value="dark" class="dropdown-item d-flex align-items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-cloud-moon" viewBox="0 0 16 16">
+                    <path
+                      d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z" />
+                    <path
+                      d="M11.286 1.778a.5.5 0 0 0-.565-.755 4.595 4.595 0 0 0-3.18 5.003 5.5 5.5 0 0 1 1.055.209A3.6 3.6 0 0 1 9.83 2.617a4.593 4.593 0 0 0 4.31 5.744 3.58 3.58 0 0 1-2.241.634q.244.477.394 1a4.59 4.59 0 0 0 3.624-2.04.5.5 0 0 0-.565-.755 3.593 3.593 0 0 1-4.065-5.422z" />
+                  </svg>
+                  Dark
+                </button>
+              </li>
+            </ul>
           </div>
-        </div>
-      </div>
-    </nav>
-    <!-- 2nd Nav Bar -->  
-    <header class="py-3 mb-4 border-bottom">
-      <div class="container d-flex flex-wrap justify-content-center">
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" style="max-width: 700px; width: 100%;">
-          <input type="search" class="form-control" placeholder="Search a stall ...." aria-label="Search">
         </form>
+
+
+        <form class="d-flex mt-3" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+        <form action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout" method="post">
+   
+          <ul class="navbar-nav mt-3">
+            <div class="col-12"> <!-- Full-width column -->
+              <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button> <!-- Full-width button -->
+            </div>
+          </ul>
+        </form>
+
       </div>
-    </header>
+    </div>
+  </div>
+</nav>
+<!-- 2nd Nav Bar -->
+<header class="py-3 mb-4 border-bottom">
+  <div class="container d-flex flex-wrap justify-content-center">
+    <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" style="max-width: 700px; width: 100%;">
+      <input type="search" class="form-control" placeholder="Search a stall ...." aria-label="Search">
+    </form>
+  </div>
+</header>

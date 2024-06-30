@@ -1,0 +1,22 @@
+.video-card .embed-responsive {
+    width: 400px;
+    height: 300px;
+  }
+  .video-card .embed-responsive-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .video-modal .modal-dialog {
+    max-width: 600px;
+    max-height: 500px;
+  }
+  .video-modal .modal-body {
+    width: 100%;
+    height: 100%;
+  }
+  .video-modal .modal-body video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }

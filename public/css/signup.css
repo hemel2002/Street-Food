@@ -6,7 +6,7 @@
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-html,body{
+body,html{
   display: grid;
   height: 100%;
   width: 100%;
@@ -24,7 +24,7 @@ html,body{
    justify-content: center !important;
 
 }
-.container{
+.signupcon{
     border: 2px solid rgba(255, 255, 255,.5) ;  
     border-radius: 20px !important;
   backdrop-filter:blur(20px);
@@ -49,4 +49,23 @@ html,body{
     padding-top: 0px;
     margin-top: 0px;
     
+}    #autocomplete {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.suggestions {
+  border: 1px solid #514f51;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.suggestion {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  background-color: #1f1f1f;
 }

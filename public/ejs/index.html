@@ -9,7 +9,33 @@
 </head>
 <body>
 
+  <button type="button" class="btn btn-primary" data-bs-toggle="op" data-bs-target="#stat">
+    Launch static backdrop modal
+  </button>
 
+  <!-- Modal -->
+  <div class="modal fade op" id="stat"  tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="statLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Ensure there is enough content to prevent modal resizing -->
+          <p>Modal content for item </p>
+          <p>Additional details or form fields...</p>
+          <!-- Add more content to prevent resizing issues -->
+          <p>More content...</p>
+          <p>Even more content...</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <!-- Optional: Include a script to handle theme switching logic -->
 <script>

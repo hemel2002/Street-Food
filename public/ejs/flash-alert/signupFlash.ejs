@@ -1,0 +1,18 @@
+<% if(passwordDontMatch && passwordDontMatch.length>0){ %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong style="text-align: center;"><%= passwordDontMatch %></strong> 
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if(userExist && userExist.length>0){ %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong style="text-align: center;"><%= userExist %></strong> 
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% } %>
+      <% if(userCreated && userCreated.length>0){ %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong style="text-align: center;"><%= userCreated %></strong> 
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>

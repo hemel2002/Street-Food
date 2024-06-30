@@ -7,6 +7,30 @@
   <link href="../css/vendor.css" rel="stylesheet"> <!-- Link to your custom CSS file -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    .video-card .embed-responsive {
+      width: 400px;
+      height: 300px;
+    }
+    .video-card .embed-responsive-item {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-modal .modal-dialog {
+      max-width: 600px;
+      max-height: 500px;
+    }
+    .video-modal .modal-body {
+      width: 100%;
+      height: 100%;
+    }
+    .video-modal .modal-body video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
 
 </head>
 <body>
@@ -95,6 +119,46 @@
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="food-list">
                     <!-- Food cards will be dynamically added here -->
+
+
+                 
+                      <div class="card video-card">
+                        <div class="embed-responsive embed-responsive-16by9">
+                          <video class="embed-responsive-item" controls>
+                            <source src="../videos/853865-hd_1920_1080_25fps.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                        <div class="card-body">
+                          <h5 class="card-title">Card title</h5>
+                          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                              Launch demo modal
+                          </button>
+                            
+                          <!-- Modal -->
+                          <div class="modal fade video-modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <video class="embed-responsive-item" controls>
+                                    <source src="../videos/853865-hd_1920_1080_25fps.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                  </video>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                 </div>
                 <!-- Pagination for Food List -->
                 <div class="bd-example-snippet bd-code-snippet mt-4">
@@ -259,7 +323,7 @@
   
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/vendor.js"></script> <!-- Link to external JavaScript file -->
 
