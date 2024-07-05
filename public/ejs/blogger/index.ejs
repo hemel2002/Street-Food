@@ -3,44 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geoapify Autocomplete with Map and Directions Example</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        #map {
-            height: 700px;
-            width: 100%;
-        }
-
-        .suggestion {
-            cursor: pointer;
-            padding: 5px;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .suggestion:hover {
-            background-color: #f0f0f0;
-        }
+        #map { height: 600px; }
+        .suggestion { cursor: pointer; }
     </style>
 </head>
 <body>
-    <h1>Geoapify Autocomplete with Map and Directions Example</h1>
-    <label for="locationInput">Enter a location:</label>
-    <input type="text" id="locationInput" placeholder="Enter a location...">
+    <input type="text" id="locationInput" placeholder="Enter a location" />
     <div id="suggestions"></div>
     <div id="map"></div>
-    <div>
-        <label for="showPathCheckbox">Show Path:</label>
-        <input type="checkbox" id="showPathCheckbox" checked>
-    </div>
 
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
         var map = L.map('map').setView([0, 0], 2); // Initialize map with a default view
         var marker; // Declare marker variable
         var currentLocationMarker; // Marker for current location
         var currentLocation; // Coordinates of current location
         var routeLayer; // Layer to display route
+        let address = [];
 
         // Add a tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,6 +54,21 @@
             }
             fetchSuggestions(input);
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3000/user/data')
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);
+          address = data;
+          addAddressMarkers(address); // Call the function to add markers after data is fetched
+      })
+      .catch(error => console.error('Error fetching data:', error));
+});
+
+
+
+
 
         // Function to fetch suggestions from Geoapify API
         function fetchSuggestions(input) {
@@ -149,6 +147,11 @@
 
                     // Display route instructions and mark waypoints
                     displayRouteInstructions(routeData.properties.legs[0].steps);
+
+                    // Display distance
+                    var distance = routeData.properties.distance; // Distance in meters
+                    var distanceKm = (distance / 1000).toFixed(2); // Convert to kilometers and format to 2 decimal places
+                    alert('Distance: ' + distanceKm + ' km');
                 })
                 .catch(function (error) {
                     console.error('Error fetching directions:', error);
@@ -186,6 +189,41 @@
                     console.error('Error reverse geocoding coordinates:', error);
                 });
         }
+
+        // Function to add address markers to the map and set up click event listeners
+        function addAddressMarkers(addresses) {
+            var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+
+            addresses.forEach(function(location) {
+                var query = location;
+                var url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${apiKey}`;
+
+                axios.get (url)
+                    .then(function(response) {
+                        if (response.data.features.length > 0) {
+                            var coordinates = response.data.features[0].geometry.coordinates;
+                            var latLng = [coordinates[1], coordinates[0]]; // Leaflet expects [lat, lng]
+
+                            var addressMarker = L.marker(latLng).addTo(map)
+                                .bindPopup(location);
+
+                            addressMarker.on('click', function() {
+                                if (currentLocation) {
+                                    fetchAndDisplayDirections(currentLocation, coordinates);
+                                } else {
+                                    alert("Current location not available.");
+                                }
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error geocoding address:', error);
+                    });
+            });
+        }
+
+        // Call the function to add markers
+        addAddressMarkers(address);
 
         // Add event listener to input field
         document.getElementById('locationInput').addEventListener('input', handleInput);

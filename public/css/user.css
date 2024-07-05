@@ -1,0 +1,44 @@
+
+.video-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.video-card .embed-responsive-item {
+  border-radius: 15px 15px 0 0;
+}
+
+.modal-content {
+  border-radius: 15px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-body .fixed-size-video {
+  width: 100%;
+  max-width: 700px; /* Adjust max-width to avoid overflow */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 15px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.card-body p {
+  margin-bottom: 15px;
+}
+
+.modal-body button {
+  margin-bottom: 15px;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Upload</title>
+</head>
+<body>
+  <h1>Upload Video to Cloudinary</h1>
+  <form action="http://localhost:3000/user/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="video" accept="video/*" />
+    <button type="submit">Upload</button>
+  </form>
+
+  <% if (typeof message !== 'undefined') { %>
+    <div id="upload-status">
+      <p><%= message %></p>
+      <% if (url) { %>
+        <p>Uploaded video URL: <a href="<%= url %>"><%= url %></a></p>
+      <% } %>
+    </div>
+  <% } %>
+</body>
+</html>

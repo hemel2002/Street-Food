@@ -76,10 +76,7 @@ router.post(
   upload.single('image'),
   async (req, res) => {
     const { name, price, rating = 0, ingredient, availability } = req.body;
-    if (req.file) {
-      const { path, originalname } = req.file;
-    }
-
+    const { path, originalname } = req.file;
     let connection;
     try {
       connection = await OracleDB.getConnection(dbConfig);

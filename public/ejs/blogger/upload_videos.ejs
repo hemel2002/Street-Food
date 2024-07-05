@@ -37,18 +37,16 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Upload Video</h5>
-          <form action="http://localhost:3000/user/<%=id%>/upload_video" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+          <form action="http://localhost:3000/user/<%= id %>/upload_video" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
+        
             <div class="row">
               <div class="col">
                 <label for="availability" class="form-label">Available Vendors</label>
                 <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required id="vendor" name="vendor">
                   <option selected disabled>Select vendor</option>
-                  <% for( let index = 0; index < vendor.length; index++ ) { %>
-                    <option value="<%= vendor[index].USER_ID %>"><%= vendor[index].USER_ID %> (<%= vendor[index].FIRST_NAME %>,<%= vendor[index].LAST_NAME  %>) FROM <%= vendor[index].DISTRICT  %>-<%= vendor[index].CITY  %>-<%= vendor[index].AREA  %></option>
+                  <% for(let index = 0; index < vendor.length; index++) { %>
+                    <option value="<%= vendor[index].USER_ID %>"><%= vendor[index].USER_ID %> (<%= vendor[index].FIRST_NAME %>, <%= vendor[index].LAST_NAME %>) FROM <%= vendor[index].DISTRICT %>-<%= vendor[index].CITY %>-<%= vendor[index].AREA %></option>
                   <% } %>
-                 
-
-                  
                 </select>
                 <div class="invalid-feedback">Please select the vendor.</div>
               </div>
@@ -56,29 +54,29 @@
             
             <div class="mb-3">
               <label for="videotitle" class="form-label">Video Title</label>
-              <input type="text" class="form-control" id="videotitle" name="name" required />
+              <input type="text" class="form-control" id="videotitle" name="VIDEO_TITLE" required />
               <div class="invalid-feedback">Please enter the video title.</div>
             </div> 
             
             <div class="mb-3">
               <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+              <textarea class="form-control" id="description" name="VIDEO_DESCRIPTION" rows="3" required></textarea>
               <div class="invalid-feedback">Please enter a description.</div>
             </div>
             
             <div class="mb-3">
               <label for="tags" class="form-label">Tags</label>
-              <input type="text" class="form-control" id="tags" name="tags" required />
+              <input type="text" class="form-control" id="tags" name="TAGS" required />
               <div class="invalid-feedback">Please enter some tags.</div>
             </div>
             
-            <div class="mb-3">
-              <label for="video" class="form-label">Choose Video</label>
-              <input class="form-control" id="video" type="file" name="video" required>
-              <div class="form-text">Video files only.</div>
-              <div class="invalid-feedback">Please choose a video file.</div>
-            </div>
-            
+              <div class="mb-3">
+                <label for="video" class="form-label">Choose Video</label>
+                <input type="file" name="video" accept="video/*" id="video" required>
+                <div class="form-text">Video files only.</div>
+                <div class="invalid-feedback">Please choose a video file.</div>
+              </div>
+              
             <div class="row">
               <div class="col-12">
                 <button type="submit" class="btn btn-primary btn-lg">Submit</button>
@@ -114,5 +112,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384```html
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1" crossorigin="anonymous"></script>
+
+
 
 <%- include('../vendor_ejs/footer') %>

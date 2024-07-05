@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard</title>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3000/user/data')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          document.getElementById('name').textContent = data.name;
+          document.getElementById('age').textContent = data.age;
+          const hobbiesList = document.getElementById('hobbies');
+          hobbiesList.innerHTML = ''; // Clear existing hobbies
+          data.hobbies.forEach(hobby => {
+            const li = document.createElement('li');
+            li.textContent = hobby;
+            hobbiesList.appendChild(li);
+          });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    });
+  </script>
+</head>
+<body>
+  <h1>Welcome, <span id="name">[Name]</span>!</h1>
+  <p>Age: <span id="age">[Age]</span></p>
+  <h2>Hobbies</h2>
+  <ul id="hobbies"></ul>
+</body>
+</html>
+
+
