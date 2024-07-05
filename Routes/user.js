@@ -25,26 +25,6 @@ router.get('/data', (req, res) => {
   res.json(shopdata);
 });
 
-// router.post('/upload', upload.single('video'), (req, res) => {
-//   const file = req.file;
-//   const blob = bucket.file(file.originalname);
-//   const blobStream = blob.createWriteStream({
-//     resumable: false,
-//   });
-
-//   blobStream.on('error', (err) => {
-//     res.status(500).send({ error: err.message });
-//   });
-
-//   blobStream.on('finish', () => {
-//     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-//     fs.unlinkSync(file.path); // Delete the temporary file
-//     res.status(200).send({ url: publicUrl });
-//   });
-
-//   blobStream.end(fs.readFileSync(file.path));
-// });
-
 router.get('/:id/upload_video', requireloginuser, (req, res) => {
   res.render('blogger/upload_videos', { vendor });
 });
