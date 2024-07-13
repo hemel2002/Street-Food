@@ -26,8 +26,10 @@ router.get('/:id', requirelogin, async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const foodResult = await connection.execute(
-      'SELECT * FROM food ORDER BY food_id ASC'
+      `SELECT * FROM food WHERE FOOD_ID IN (SELECT FOOD_ID FROM VENDOR_SELLS_FOOD WHERE V_ID = :id) ORDER BY FOOD_ID ASC`,
+      { id: id }
     );
+
     const reviewResult = await connection.execute(
       'SELECT CUSTOMER_ID, NAME, REVIEW_MESSAGE, RATING FROM customer_reviews'
     );
@@ -77,17 +79,39 @@ router.post(
   async (req, res) => {
     const { name, price, rating = 0, ingredient, availability } = req.body;
     const { path, originalname } = req.file;
+    const { id } = req.params;
     let connection;
     try {
       connection = await OracleDB.getConnection(dbConfig);
+
+      // Get the current maximum FOOD_ID
+      const result = await connection.execute(
+        'SELECT MAX(FOOD_ID) AS FOOD_ID FROM vendor_sells_food'
+      );
+
+      const currentFoodId = result.rows[0].FOOD_ID;
+      console.log(result.rows);
+      console.log(currentFoodId);
+
+      const currentNumber = parseInt(currentFoodId.split('_')[1]);
+      const nextFoodId = `F_${currentNumber + 1}`;
+
+      // Insert new food item into Food table
       await connection.execute(
         'INSERT INTO Food (food_name, price, rating, ingredient, availability, Food_pic, ORIGINAL_PATH) VALUES (:name, :price, :rating, :ingredient, :availability, :path, :originalname)',
         { name, price, rating, ingredient, availability, path, originalname },
         { autoCommit: true }
       );
+
+      // Link the new food item with the vendor in VENDOR_SELLS_FOOD table
+      await connection.execute(
+        'INSERT INTO VENDOR_SELLS_FOOD (V_ID, FOOD_ID) VALUES (:id, :nextFoodId)',
+        { id, nextFoodId },
+        { autoCommit: true }
+      );
     } catch (err) {
       console.error(err);
-      res.send('Database is not connected');
+      res.status(500).send('Database is not connected');
     } finally {
       if (connection) {
         try {
@@ -172,6 +196,32 @@ router.patch(
     res.redirect(`/vendor/${id}`);
   }
 );
+///////////////////////////////vendor delete food/////////////////////////////
+
+router.get('/:id/delete/:FOOD_ID', requirelogin, async (req, res) => {
+  const { id, FOOD_ID } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    await connection.execute(
+      'DELETE FROM vendor_sells_food WHERE FOOD_ID=:FOOD_ID',
+      [FOOD_ID],
+      { autoCommit: true }
+    );
+    req.flash('delete_success', 'item successfully deleted');
+    return res.redirect(`/vendor/${id}`);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
 
 /////////////////////for vendor email//////////////////////////
 router.get('/:id/email', requirelogin, (req, res) => {
@@ -189,7 +239,10 @@ router.post('/:id/email', async (req, res) => {
       user: process.env.Email_username,
       pass: process.env.Email_password,
     },
+    debug: true, // Enable debug output
+    logger: true, // Log information in console
   });
+
   try {
     const info = await transporter.sendMail({
       from: process.env.Email_username,
@@ -221,11 +274,6 @@ router.post('/:id/logout', requirelogin, (req, res) => {
   req.session.user_id = null;
   req.flash('logout', 'Successfully logged out');
   res.redirect('/home');
-});
-
-///////////////////////////////////////test/////////////////////////////
-router.get('/totallength', (req, res) => {
-  res.json(foodData.length);
 });
 
 /////////////////////////////////export Router/////////////////////////////

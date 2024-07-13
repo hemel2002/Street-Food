@@ -18,15 +18,15 @@
       <div class="offcanvas-body">
         <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link active" aria-current="page" href="http://localhost:3000/home">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link"
-               href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
+              href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
               Profile
             </a>
           </li>
-          
+
           <li class="nav-item">
             <a class="nav-link" href="#">Notification</a>
           </li>
@@ -56,7 +56,9 @@
             </ul>
           </li>
         </ul>
-        <form action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar" method="post">
+        <form
+          action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar"
+          method="post">
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
               aria-expanded="false">
@@ -94,8 +96,10 @@
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
-        <form action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout" method="post">
-   
+        <form
+          action="http://localhost:3000/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout"
+          method="post">
+
           <ul class="navbar-nav mt-3">
             <div class="col-12"> <!-- Full-width column -->
               <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button> <!-- Full-width button -->

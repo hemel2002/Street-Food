@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <!-- Created By CodingNepal -->
-<html lang="en" dir="ltr" >
-   <head>
-      <meta charset="utf-8">
-      <title>Login Form </title>
-      <link rel="stylesheet" href="../css/signin_2.css">
-      <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
-      <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-   </head>
-   <body data-bs-theme="<%= mode %>">
-      <!-- ..................nav bar.......................... -->
-      <%- include('../home/home_nav') %>
+<html lang="en" dir="ltr">
+
+<head>
+   <meta charset="utf-8">
+   <title>Login Form </title>
+   <link rel="stylesheet" href="../css/signin_2.css">
+   <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
+   <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body data-bs-theme="<%= mode %>">
+   <!-- ..................nav bar.......................... -->
+   <%- include('../home/home_nav') %>
       <div class="wrapper">
          <div class="title">
             Login Form
@@ -30,7 +32,7 @@
                   <label for="remember-me">Remember me</label>
                </div>
                <div class="pass-link">
-                  <a href="../html/forget.html">Forgot password?</a>
+                  <a href="http://localhost:3000/forget">Forgot password?</a>
                </div>
             </div>
             <div class="field">
@@ -41,5 +43,6 @@
             </div>
          </form>
       </div>
-   </body>
+</body>
+
 </html>

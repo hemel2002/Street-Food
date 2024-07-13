@@ -1,340 +1,375 @@
 <!-- ............header............. -->
 <%- include('header') %>
+  <%- include('../MDB/allCdn.ejs') %>
 
-  <link rel="stylesheet" href="../css/v_Food_info.css">
-  <%- include('../flash-alert/flash') %>
+    <link rel="stylesheet" href="../css/v_Food_info.css">
+    <%- include('../flash-alert/flash') %>
 
-    <!-- ...............navbar............... -->
-    <%- include('navbar') %>
+      <!-- ...............navbar............... -->
+      <%- include('navbar') %>
 
-      <!--Food item -->
-      <main>
-        <div class="text-center mt-5">
-          <h1>
-            Items of Food Today: <span id="food-count">
-              <%= foodData.length %>
-            </span>
-          </h1>
-        </div>
-        <div class="album py-5 bg-body-tertiary">
-          <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="food-list">
-              <!-- Food cards will be dynamically added here -->
-              <% for (let i = (currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
-                <div class="col">
-                  <div class="card h-100">
-                    <img src="<%= foodData[i].FOOD_PIC %>" class="card-img-top" alt="<%= foodData[i].FOOD_NAME %>" />
-                    <div class="card-body">
-                      <h5 class="card-title">
-                        <%= foodData[i].FOOD_NAME %>
-                      </h5>
-                      <p class="card-text">$<%= foodData[i].PRICE %></p>
-                      <p><%= foodData[i].FOOD_ID %></p>
-                      
-                      <div class="row">
-                        <!-- Button to trigger modal -->
-                        <button type="button" class="btn btn-primary btn-block" data-bs-toggle="modal"
-                          data-bs-target="#productModal<%= i %>">
-                          Details
-                        </button>
+        <!--Food item -->
+        <main>
+          <div class="text-center mt-5">
+            <h1>
+              Items of Food Today: <span id="food-count">
+                <%= foodData.length %>
+              </span>
+            </h1>
+          </div>
+          <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="food-list">
+                <!-- Food cards will be dynamically added here -->
+                <% for (let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
+                  <div class="col">
+                    <div class="card h-100">
+                      <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <img src="<%= foodData[i].FOOD_PIC %>" class="card-img-top" alt="<%= foodData[i].FOOD_NAME %>"
+                          data-mdb-ripple-init data-mdb-ripple-color="light" />
+                        <a href="#!">
+                          <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                        </a>
                       </div>
-              
-                      <div class="row mt-3" style="text-align: left;">
-                        <div class="col-6 mb-3">
-                          <a href="/vendor/<%= id %>/update/<%= foodData[i].FOOD_ID %>">
-                            <button type="button" class="btn btn-success btn-lg btn-block">Edit Items</button>
-                          </a>
-                        </div>
-                        <div class="col-6 mb-3">
-                          <!-- Button to trigger delete confirmation modal -->
-                          <button type="button" class="btn btn-danger btn-lg btn-block" data-bs-toggle="modal"
-                            data-bs-target="#modal-type2-<%= i %>">
-                            Delete Item
+                      <div class="card-body">
+                        <h5 class="card-title">
+                          <%= foodData[i].FOOD_NAME %>
+                        </h5>
+                        <p class="card-text">$<%= foodData[i].PRICE %>
+                        </p>
+                        <p>
+                          <%= foodData[i].FOOD_ID %>
+                        </p>
+
+                        <div class="row">
+                          <!-- Button to trigger modal -->
+                          <button type="button" class="btn btn-primary btn-block" data-mdb-toggle="modal"
+                            data-mdb-target="#productModal<%= i %>">
+                            Details
                           </button>
                         </div>
+
+                        <div class="row mt-3" style="text-align: left;">
+                          <div class="col-6 mb-3">
+                            <a href="/vendor/<%= id %>/update/<%= foodData[i].FOOD_ID %>">
+                              <button type="button" class="btn btn-success btn-lg btn-block">Edit Items</button>
+                            </a>
+                          </div>
+                          <div class="col-6 mb-3">
+                            <!-- Button to trigger delete confirmation modal -->
+                            <button type="button" class="btn btn-danger btn-lg btn-block" data-mdb-toggle="modal"
+                              data-mdb-target="#modal-type2-<%= i %>">
+                              Delete Item
+                            </button>
+                          </div>
+                        </div>
+
                       </div>
-                      
                     </div>
                   </div>
-                </div>
-              <% } %>
-              
-              
-            </div>
-            <!-- Pagination for Food List -->
-            <div class="bd-example-snippet bd-code-snippet mt-4">
-              <div class="bd-example m-0 border-0">
-                <nav aria-label="Pagination example">
-                  <ul class="pagination pagination-lg flex-wrap justify-content-center" id="food-pagination">
-                    <!-- Previous Button -->
-                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                      <a class="page-link" href="?page=<%= Math.max(currentPage - 1, 1) %>" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                      </a>
-                    </li>
-                    <!-- Page Numbers -->
-                    <% for (let i=1; i <=totalPages; i++) { %>
-                      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>">
-                          <%= i %>
+                  <% } %>
+              </div>
+
+              <!-- Pagination for Food List -->
+              <div class="bd-example-snippet bd-code-snippet mt-4">
+                <div class="bd-example m-0 border-0">
+                  <nav aria-label="Pagination example">
+                    <ul class="pagination pagination-lg flex-wrap justify-content-center" id="food-pagination">
+                      <!-- Previous Button -->
+                      <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= Math.max(currentPage - 1, 1) %>" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
                         </a>
                       </li>
-                      <% } %>
-                        <!-- Next Button -->
-                        <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                          <a class="page-link" href="?page=<%= Math.min(currentPage + 1, totalPages) %>"
-                            aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                      <!-- Page Numbers -->
+                      <% for (let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                          <a class="page-link" href="?page=<%= i %>">
+                            <%= i %>
                           </a>
                         </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="container">
-          <center>
-            <a href="/vendor/<%= id %>/add_food">
-              <button type="button" class="btn btn-primary btn-lg">Add new!</button>
-            </a>
-            <br /><br />
-          </center>
-        </div>
-      </main>
-
-      <!--review history  -->
-      <main>
-        <div class="text-center">
-          <h1>Review History</h1>
-        </div>
-        <div class="album py-5 bg-body-tertiary">
-          <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3" id="review-history">
-              <!-- Review cards will be dynamically added here -->
-            </div>
-            <!-- Pagination -->
-            <div class="bd-example-snippet bd-code-snippet">
-              <div class="bd-example m-0 border-0">
-                <nav aria-label="Pagination example">
-                  <ul class="pagination pagination-lg flex-wrap justify-content-center" id="pagination">
-                    <!-- Pagination items will be dynamically added here -->
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <main>
-        <div class="text-center mt-5">
-          <h1>Food Blogger List</h1>
-        </div>
-        <div class="album py-5 bg-body-tertiary">
-          <div class="container">
-            <div class="table-responsive">
-              <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                  <tr>
-                    <th>Serial No</th>
-                    <th>Customer ID</th>
-                    <th>Blogger Name</th>
-                    <th>Channel Name</th>
-                    <th>Video Title</th>
-                    <th>Video Description</th>
-                    <th>Reply</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody id="blogger-list">
-                  <!-- Blogger rows will be dynamically added here -->
-                </tbody>
-              </table>
-            </div>
-            <!-- Pagination for Food Blogger List -->
-            <div class="bd-example-snippet bd-code-snippet mt-4">
-              <div class="bd-example m-0 border-0">
-                <nav aria-label="Pagination example">
-                  <ul class="pagination pagination-lg flex-wrap justify-content-center" id="blogger-pagination">
-                    <!-- Pagination items will be dynamically added here -->
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-<!-- ................................................delete............................................. -->
-<% for(let i=currentPage - 1; i < foodData.length; i++) { %>
-
-<div class="modal fade" id="modal-type2-<%= i %>" tabindex="-1" aria-labelledby="modalType2Label-<%= i %>" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modalType2Label-<%= i %>">Modal Type 2 <%= i %></h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Modal Type 2 content for item <%= i %></p>
-        <p>Additional details or form fields...</p>
-        <p>More content...</p>
-        <p>Even more content...</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<% } %>
-
-
-
-      <!-- .............................food details.................................. -->
-      <% for(let i=currentPage - 1; i < foodData.length; i++) { %>
-        <div class="modal fade" id="productModal<%= i %>" tabindex="-1" aria-labelledby="productModalLabel"
-          aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="productModalLabel">Food Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <div class="d-flex justify-content-center">
-                  <img class="card-img-top" src="<%= foodData[i].FOOD_PIC %>"
-                    style="width: 100%; height: auto; border-radius: 20px;" alt="<%= foodData[i].FOOD_NAME %>">
+                        <% } %>
+                          <!-- Next Button -->
+                          <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= Math.min(currentPage + 1, totalPages) %>"
+                              aria-label="Next">
+                              <span aria-hidden="true">&raquo;</span>
+                            </a>
+                          </li>
+                    </ul>
+                  </nav>
                 </div>
-                <div class="mt-3">
-                  <h3>
-                    <%= foodData[i].FOOD_NAME %>
-                  </h3>
-                  <p>
-                    <%= foodData[i].INGREDIENT %>
-                  </p>
-                  <span class="font-weight-bold">
-                    <h4>Tk <%= foodData[i].PRICE %>
-                    </h4>
-                  </span>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <center>
+              <a href="/vendor/<%= id %>/add_food">
+                <button type="button" class="btn btn-primary btn-lg">Add new!</button>
+              </a>
+              <br /><br />
+            </center>
+          </div>
+        </main>
+
+        <!--review history  -->
+        <main>
+          <div class="text-center">
+            <h1>Review History</h1>
+          </div>
+          <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3" id="review-history">
+                <!-- Review cards will be dynamically added here -->
+              </div>
+              <!-- Pagination -->
+              <div class="bd-example-snippet bd-code-snippet">
+                <div class="bd-example m-0 border-0">
+                  <nav aria-label="Pagination example">
+                    <ul class="pagination pagination-lg flex-wrap justify-content-center" id="pagination">
+                      <!-- Pagination items will be dynamically added here -->
+                    </ul>
+                  </nav>
                 </div>
-                <div class="mt-3">
-                  <h5>Overall Rating of this Food</h5>
-                  <div class="progress">
-                    <div class="progress-bar" role="progressbar" style="width: <%= foodData[i].RATING * 10 %>%;"
-                      aria-valuenow="<%= foodData[i].RATING * 10 %>" aria-valuemin="0" aria-valuemax="100">
-                      <%= foodData[i].RATING %> out of 10
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <main>
+          <div class="text-center mt-5">
+            <h1>Food Blogger List</h1>
+          </div>
+          <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Serial No</th>
+                      <th>Customer ID</th>
+                      <th>Blogger Name</th>
+                      <th>Channel Name</th>
+                      <th>Video Title</th>
+                      <th>Video Description</th>
+                      <th>Reply</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="blogger-list">
+                    <!-- Blogger rows will be dynamically added here -->
+                  </tbody>
+                </table>
+              </div>
+              <!-- Pagination for Food Blogger List -->
+              <div class="bd-example-snippet bd-code-snippet mt-4">
+                <div class="bd-example m-0 border-0">
+                  <nav aria-label="Pagination example">
+                    <ul class="pagination pagination-lg flex-wrap justify-content-center" id="blogger-pagination">
+                      <!-- Pagination items will be dynamically added here -->
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <!-- Modal for deleting an item -->
+        <% for (let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
+          <!-- Modal -->
+          <div class="modal top fade" id="modal-type2-<%= i %>" tabindex="-1" aria-labelledby="modalType2Label-<%= i %>"
+            aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalType2Label-<%= i %>">Confirm Delete</h5>
+                  <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Are you sure you want to delete the item "<%= foodData[i].FOOD_NAME %>"?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-danger"
+                    onclick="window.location.href='http://localhost:3000/vendor/<%= id %>/delete/<%= foodData[i].FOOD_ID %>'">Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+
+
+            <!-- .............................food details.................................. -->
+            <% for(let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
+              <div class="modal fade" id="productModal<%= i %>" tabindex="-1" aria-labelledby="productModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="productModalLabel">Food Information</h5>
+                      <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="d-flex justify-content-center">
+                        <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                          <img class="card-img-top" src="<%= foodData[i].FOOD_PIC %>"
+                            style="width: 100%; height: auto; border-radius: 20px;" alt="<%= foodData[i].FOOD_NAME %>"
+                            data-mdb-ripple-init data-mdb-ripple-color="light">
+                          <a href="#!">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="mt-3">
+                        <h3>
+                          <%= foodData[i].FOOD_NAME %>
+                        </h3>
+                        <p>
+                          <%= foodData[i].INGREDIENT %>
+                        </p>
+                        <span class="font-weight-bold">
+                          <h4>Tk <%= foodData[i].PRICE %>
+                          </h4>
+                        </span>
+                      </div>
+                      <div class="mt-3">
+                        <h5>Overall Rating of this Food</h5>
+                        <div class="rating">
+                          <% for(let star=1; star <=10; star++) { %>
+                            <i
+                              class="fas fa-star <%= star <= foodData[i].RATING ? 'text-warning' : 'text-muted' %>"></i>
+                            <% } %>
+                              <span>
+                                <%= foodData[i].RATING %> out of 10
+                              </span>
+                        </div>
+                      </div>
+
+                      <!-- Ratings -->
+                      <div class="mt-3">
+                        <h5>Ratings</h5>
+                        <table class="table table-striped rating-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Customer</th>
+                              <th scope="col">Rating</th>
+                            </tr>
+                          </thead>
+                          <tbody id="ratingTableBody<%= i %>">
+                            <% for(let j=0; j < reviews.length; j++) { %>
+                              <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
+                                <td>
+                                  <%= reviews[j].NAME %>
+                                </td>
+                                <td>
+                                  <div class="rating">
+                                    <% for(let star=1; star <=10; star++) { %>
+                                      <i
+                                        class="fas fa-star <%= star <= reviews[j].RATING ? 'text-warning' : 'text-muted' %>"></i>
+                                      <% } %>
+                                        <span>
+                                          <%= reviews[j].RATING %> out of 10
+                                        </span>
+                                  </div>
+                                </td>
+                              </tr>
+                              <% } %>
+                          </tbody>
+                        </table>
+                        <button class="btn btn-primary" id="showMoreRatingsBtn<%= i %>">Show More Ratings</button>
+                      </div>
+
+                      <!-- Reviews -->
+                      <div class="mt-3">
+                        <h5>Reviews</h5>
+                        <table class="table table-striped review-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Customer</th>
+                              <th scope="col">Review</th>
+                              <th scope="col">Reply</th>
+                            </tr>
+                          </thead>
+                          <tbody id="reviewTableBody<%= i %>">
+                            <% for(let j=0; j < reviews.length; j++) { %>
+                              <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
+                                <td>
+                                  <%= reviews[j].NAME %>
+                                </td>
+                                <td>
+                                  <%= reviews[j].REVIEW_MESSAGE %>
+                                </td>
+                                <td>
+                                  <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Write a reply...">
+                                    <div class="input-group-append">
+                                      <button class="btn btn-primary" type="button">Reply</button>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                              <% } %>
+                          </tbody>
+                        </table>
+                        <button class="btn btn-primary" id="showMoreReviewsBtn<%= i %>">Show More Reviews</button>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                <!-- Ratings -->
-                <div class="mt-3">
-                  <h5>Ratings</h5>
-                  <table class="table table-striped rating-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Rating</th>
-                      </tr>
-                    </thead>
-                    <tbody id="ratingTableBody<%= i %>">
-                      <% for(let j=0; j < reviews.length; j++) { %>
-                        <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
-                          <td>
-                            <%= reviews[j].NAME %>
-                          </td>
-                          <td>
-                            <%= reviews[j].RATING %>
-                          </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                  </table>
-                  <button class="btn btn-primary" id="showMoreRatingsBtn<%= i %>">Show More Ratings</button>
-                </div>
-
-                <!-- Reviews -->
-                <div class="mt-3">
-                  <h5>Reviews</h5>
-                  <table class="table table-striped review-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Customer</th>
-                        <th scope="col">Review</th>
-                        <th scope="col">Reply</th>
-                      </tr>
-                    </thead>
-                    <tbody id="reviewTableBody<%= i %>">
-                      <% for(let j=0; j < reviews.length; j++) { %>
-                        <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
-                          <td>
-                            <%= reviews[j].NAME %>
-                          </td>
-                          <td>
-                            <%= reviews[j].REVIEW_MESSAGE %>
-                          </td>
-                          <td>
-                            <div class="input-group">
-                              <input type="text" class="form-control" placeholder="Write a reply...">
-                              <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">Reply</button>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        <% } %>
-                    </tbody>
-                  </table>
-                  <button class="btn btn-primary" id="showMoreReviewsBtn<%= i %>">Show More Reviews</button>
-                </div>
-
-                <!-- Other Images and Ratings -->
-
               </div>
-            </div>
-          </div>
-        </div>
-        <% } %>
+              <% } %>
 
-          <!-- Button to Open Modal -->
 
-          <!--Last-->
+                <!-- Button to Open Modal -->
 
-          <script>
-            document.addEventListener('DOMContentLoaded', function () {
-              // Event delegation for 'Show More Ratings' and 'Show More Reviews' buttons
-              document.addEventListener('click', function (event) {
-                if (event.target.matches('[id^="showMoreRatingsBtn"]')) {
-                  var index = event.target.id.replace('showMoreRatingsBtn', '');
-                  showMoreRatings(index);
-                }
-                if (event.target.matches('[id^="showMoreReviewsBtn"]')) {
-                  var index = event.target.id.replace('showMoreReviewsBtn', '');
-                  showMoreReviews(index);
-                }
-              });
+                <!--Last-->
 
-              function showMoreRatings(index) {
-                var rows = document.querySelectorAll('#ratingTableBody' + index + ' tr.hidden-row');
-                rows.forEach(function (row) {
-                  row.classList.remove('hidden-row');
-                });
-                document.getElementById('showMoreRatingsBtn' + index).style.display = 'none';
-              }
+                <script>
+                  document.addEventListener('DOMContentLoaded', function () {
+                    // Event delegation for 'Show More Ratings' and 'Show More Reviews' buttons
+                    document.addEventListener('click', function (event) {
+                      if (event.target.matches('[id^="showMoreRatingsBtn"]')) {
+                        var index = event.target.id.replace('showMoreRatingsBtn', '');
+                        showMoreRatings(index);
+                      }
+                      if (event.target.matches('[id^="showMoreReviewsBtn"]')) {
+                        var index = event.target.id.replace('showMoreReviewsBtn', '');
+                        showMoreReviews(index);
+                      }
+                    });
 
-              function showMoreReviews(index) {
-                var rows = document.querySelectorAll('#reviewTableBody' + index + ' tr.hidden-row');
-                rows.forEach(function (row) {
-                  row.classList.remove('hidden-row');
-                });
-                document.getElementById('showMoreReviewsBtn' + index).style.display = 'none';
-              }
-            });
-          </script>
+                    function showMoreRatings(index) {
+                      var rows = document.querySelectorAll('#ratingTableBody' + index + ' tr.hidden-row');
+                      rows.forEach(function (row) {
+                        row.classList.remove('hidden-row');
+                      });
+                      document.getElementById('showMoreRatingsBtn' + index).style.display = 'none';
+                    }
 
-          <script src="http://localhost:3000/js/vendor.js"></script>
-          <!--Last --><!-- Footer -->
-          <%- include('footer') %>
+                    function showMoreReviews(index) {
+                      var rows = document.querySelectorAll('#reviewTableBody' + index + ' tr.hidden-row');
+                      rows.forEach(function (row) {
+                        row.classList.remove('hidden-row');
+                      });
+                      document.getElementById('showMoreReviewsBtn' + index).style.display = 'none';
+                    }
+                  });
+                </script>
+                <!-- jQuery -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+                  integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6"
+                  crossorigin="anonymous"></script>
+                <!-- Popper.js -->
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+                  integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03"
+                  crossorigin="anonymous"></script>
+                <!-- Bootstrap JS -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                  integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1"
+                  crossorigin="anonymous"></script>
+                <!-- Custom JS -->
+                <script src="http://localhost:3000/js/vendor.js"></script>
+                <!--Last --><!-- Footer -->
+                <%- include('footer') %>

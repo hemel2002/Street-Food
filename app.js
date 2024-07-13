@@ -19,7 +19,8 @@ const dbConfig = require('./Routes/dbConfig');
 const multer = require('multer');
 const { storage } = require('./Routes/cloudinary');
 const upload = multer({ storage });
-
+const require_email = require('./Routes/require_email.js');
+const sendOtpEmail = require('./Routes/emai.js');
 const app = express();
 const port = 3000;
 
@@ -57,7 +58,10 @@ app.use((req, res, next) => {
   res.locals.userCreated = req.flash('userCreated');
   res.locals.error_upload_video = req.flash('error_upload_video');
   res.locals.upload_video = req.flash('upload_video');
+  res.locals.forget_error = req.flash('forget_error');
+  res.locals.forget_success = req.flash('forget_success');
 
+  res.locals.delete_success = req.flash('delete_success');
   next();
 });
 //////////////////////////require login middleware/////////////////////////
@@ -110,8 +114,8 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
     terms,
   } = req.body;
   const stallPic = req.file ? req.file.path : '';
-
   console.log(req.body);
+
   if (password !== confirmPassword) {
     req.flash('dontMatch', 'Passwords do not match.');
     return res.redirect('/home/signup');
@@ -125,27 +129,7 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
       { email }
     );
     console.log(resfind_id.rows);
-    if (resfind_id.rows.length === 0) {
-      await connection.execute(
-        'INSERT INTO users (ACCOUNT_TYPE, FIRST_NAME, LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, stallName, stallPic, shopLocationUrl, PASSWORD, TERMS) VALUES (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location, :stallName, :stallPic, :shopLocationUrl, :password, :terms)',
-        {
-          accountType,
-          firstName,
-          lastName,
-          email,
-          phone,
-          district,
-          city,
-          location,
-          stallName,
-          stallPic,
-          shopLocationUrl,
-          password,
-          terms,
-        },
-        { autoCommit: true }
-      );
-    } else {
+    if (resfind_id.rows.length !== 0) {
       req.flash('userExist', 'User already exists.');
       return res.redirect('/home/signup');
     }
@@ -163,8 +147,22 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
     }
   }
 
-  req.flash('userCreated', 'Signup completed, please login.');
-  return res.redirect('/home');
+  const queryParams = new URLSearchParams({
+    accountType,
+    firstName,
+    lastName,
+    email,
+    phone,
+    district,
+    city,
+    location,
+    stallName,
+    stallPic,
+    shopLocationUrl,
+    password,
+    terms,
+  }).toString();
+  return res.redirect(`/emailVerification/otp?${queryParams}`);
 });
 
 app.use('/vendor', vendor);
@@ -178,6 +176,9 @@ app.get('/home/login', (req, res) => {
 
 app.post('/home/login', async (req, res) => {
   let connection;
+  let USER_ID;
+  let EMAIL;
+
   try {
     connection = await OracleDB.getConnection({
       user: 'system',
@@ -189,47 +190,57 @@ app.post('/home/login', async (req, res) => {
     console.log(req.body);
 
     if (email && password) {
-      try {
-        const result = await connection.execute(
-          `SELECT EMAIL,USER_ID, PASSWORD FROM USERS WHERE USER_ID = :email OR EMAIL = :email`,
-          [email, email]
+      let result;
+
+      // Check in the VENDORS table
+      result = await connection.execute(
+        `SELECT EMAIL, V_ID, PASSWORD FROM vendors WHERE V_ID = :email OR EMAIL = :email`,
+        { email: email }
+      );
+
+      if (result.rows.length > 0) {
+        const [{ EMAIL: vendorEmail, V_ID, PASSWORD: vendorPassword }] =
+          result.rows;
+        USER_ID = V_ID;
+        EMAIL = vendorEmail;
+      } else {
+        // Check in the CUSTOMERS table
+        result = await connection.execute(
+          `SELECT EMAIL, C_ID, PASSWORD FROM customers WHERE C_ID = :email OR EMAIL = :email`,
+          { email: email }
         );
 
-        console.log(result);
-        const [{ EMAIL, USER_ID }] = result.rows;
-        console.log(EMAIL);
-        req.session.user_id = USER_ID;
-        console.log(req.session.user_id);
-
         if (result.rows.length > 0) {
-          const storedPassword = result.rows[0].PASSWORD;
+          const [{ EMAIL: customerEmail, C_ID, PASSWORD: customerPassword }] =
+            result.rows;
+          USER_ID = C_ID;
+          EMAIL = customerEmail;
+        }
+      }
 
-          if (storedPassword === password) {
-            if (USER_ID[0] === 'A') {
-              req.flash(
-                'success',
-                "Welcome back, Admin! We're glad to see you."
-              );
+      if (result.rows.length > 0) {
+        const storedPassword = result.rows[0].PASSWORD;
 
-              res.redirect(`/admin/${USER_ID}`);
-            } else if (USER_ID[0] === 'U') {
-              req.flash('success', `Welcome back,  We\'re glad to see you.`);
-              res.redirect(`/user/${USER_ID}`);
-            } else {
-              req.flash('success', `Welcome back,  We\'re glad to see you.`);
-              return res.redirect(`/vendor/${USER_ID}`);
-            }
+        if (storedPassword === password) {
+          req.session.user_id = USER_ID;
+          console.log(`Logged in as: ${EMAIL}, ID: ${USER_ID}`);
+
+          if (USER_ID[0] === 'A') {
+            req.flash('success', "Welcome back, Admin! We're glad to see you.");
+            return res.redirect(`/admin/${USER_ID}`);
+          } else if (USER_ID[0] === 'U') {
+            req.flash('success', "Welcome back! We're glad to see you.");
+            return res.redirect(`/user/${USER_ID}`);
           } else {
-            req.flash('error', 'Invalid email or password');
-            return res.redirect('/home/login');
+            req.flash('success', "Welcome back! We're glad to see you.");
+            return res.redirect(`/vendor/${USER_ID}`);
           }
         } else {
           req.flash('error', 'Invalid email or password');
           return res.redirect('/home/login');
         }
-      } catch (error) {
-        console.error('Error executing query:', error);
-        req.flash('error', 'Internal server error');
+      } else {
+        req.flash('error', 'Invalid email or password');
         return res.redirect('/home/login');
       }
     } else {
@@ -294,23 +305,203 @@ app.post('/home/login', async (req, res) => {
 
 // module.exports = { app, mode };
 
-/////////////////////////////////////////////////////////////////
+/////////////////////////////forget password///////////////////////////////
+app.get('/forget', (req, res) => {
+  res.render('login_signup_ejs/forget');
+});
+app.post('/forget', async (req, res) => {
+  let connection;
+  const { email } = req.body;
+  console.log(req.body);
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      `SELECT EMAIL, FIRST_NAME FROM USERS WHERE EMAIL = :email`,
+      [email]
+    );
 
-let mockData = [
-  { name: 'Apple' },
-  { name: 'Banana' },
-  { name: 'Cherry' },
-  { name: 'Date' },
-  { name: 'Elderberry' },
-];
+    const { EMAIL, FIRST_NAME } = result.rows[0] || {};
+    console.log(result.rows);
 
-app.get('/upload', (req, res) => {
-  res.render('blogger/test_video');
+    if (!result.rows.length) {
+      req.flash(
+        'forget_error',
+        'An error occurred during password reset, please try again later'
+      );
+      return res.redirect('/forget');
+    }
+
+    req.session.user_email = EMAIL;
+    req.flash('forget_success', `An OTP has been sent to your email: ${EMAIL}`);
+    res.redirect(`/forget/otp?email=${EMAIL}&firstName=${FIRST_NAME}`);
+  } catch (err) {
+    console.error(err);
+    req.flash(
+      'forget_error',
+      'An error occurred during password reset, please try again later'
+    );
+    return res.redirect('/forget');
+  } finally {
+    try {
+      if (connection) {
+        await connection.close();
+      }
+    } catch (err) {
+      console.error(err);
+      req.flash(
+        'forget_error',
+        'An error occurred during password reset, please try again later'
+      );
+      return res.redirect('/forget');
+    }
+  }
+});
+let otp;
+app.get('/forget/otp', require_email, async (req, res) => {
+  res.render('login_signup_ejs/forget_otp', { email, firstName });
 });
 
-// Route to handle file upload
-app.post('/upload', upload.single('video'), async (req, res) => {
-  console.log(req.file);
+app.get('/otp_val', (req, res) => {
+  otp = uuid();
+  const { email, firstName } = req.query;
+
+  const message = `Hello, ${firstName}. Your reset code is: ${otp}`;
+  sendOtpEmail(email, firstName, message);
+  res.json(otp);
+});
+
+app.get('/otp_val_verify', (req, res) => {
+  otp = uuid();
+  const { email, firstName } = req.query;
+
+  const message = `Hello, ${firstName}. Your verification otp is: ${otp}`;
+  sendOtpEmail(email, firstName, message);
+  console.log(otp);
+  res.json(otp);
+});
+/////////////////////////////////////email verification//////////////////////////
+app.get('/emailVerification/otp', async (req, res) => {
+  const {
+    accountType,
+    firstName,
+    lastName,
+    email,
+    phone,
+    district,
+    city,
+    location,
+    stallName,
+    stallPic,
+    shopLocationUrl,
+    password,
+    terms,
+  } = req.query;
+
+  const queryParams = new URLSearchParams({
+    accountType,
+    firstName,
+    lastName,
+    email,
+    phone,
+    district,
+    city,
+    location,
+    stallName,
+    stallPic,
+    shopLocationUrl,
+    password,
+    terms,
+  }).toString();
+
+  res.render('login_signup_ejs/verify_email', { queryParams });
+});
+
+/////////////////////////////////////insert data after verification otp//////////////////////////
+
+app.post('/emailVerification/otp', async (req, res) => {
+  const {
+    accountType,
+    firstName,
+    lastName,
+    email,
+    phone,
+    district,
+    city,
+    location,
+    stallName,
+    stallPic,
+    shopLocationUrl,
+    password,
+    terms,
+  } = req.query;
+
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    if (accountType === 'Seller') {
+      await connection.execute(
+        `INSERT SO vendors 
+        (ACCOUNT_TYPE, V_FIRST_NAME, V_LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, stall_Name, stall_Pic, LocationUrl, PASSWORD, TERMS) 
+        VALUES 
+        (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location, :stallName, :stallPic, :shopLocationUrl, :password, :terms)`,
+        {
+          accountType,
+          firstName,
+          lastName,
+          email,
+          phone,
+          district,
+          city,
+          location,
+          stallName,
+          stallPic,
+          shopLocationUrl,
+          password,
+          terms,
+        },
+        { autoCommit: true }
+      );
+    } else {
+      await connection.execute(
+        `INSERT INTO customers 
+        (ACCOUNT_TYPE, FIRST_NAME, LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, PASSWORD, TERM) 
+        VALUES 
+        (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location,:password, :terms)`,
+        {
+          accountType,
+          firstName,
+          lastName,
+          email,
+          phone,
+          district,
+          city,
+          location,
+          password,
+          terms,
+        },
+        { autoCommit: true }
+      );
+    }
+
+    req.flash('userCreated', 'Signup completed, please login.');
+    return res.redirect('http://localhost:3000/home');
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'An error occurred during signup.');
+    return res.redirect('http://localhost:3000/home/signup');
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+////////////////////////////////////view shop////////////////////////
+app.get('/home/ViewShop', (req, res) => {
+  res.render('home/viewShop');
 });
 
 app.listen(port, () => {

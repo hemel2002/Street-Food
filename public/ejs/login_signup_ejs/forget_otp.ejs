@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <style>
+        @media (min-width: 992px) {
+            .cascading-right {
+                margin-right: -50px;
+            }
+
+            .rotate-lg-6 {
+                transform: rotate(3deg);
+            }
+        }
+
+        .form-outline {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            pointer-events: none;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .form-control:focus~.form-label,
+        .form-control:not(:placeholder-shown)~.form-label {
+            top: -0.75rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            opacity: 1;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../flash-alert/forgetFlash') %>
+        <section class="mb-10 text-center text-lg-start">
+            <div class="container py-4">
+                <div class="row g-0 align-items-center">
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <div class="card cascading-right"
+                            style="background: hsla(0, 0%, 100%, 0.55); backdrop-filter: blur(30px); z-index: 1;">
+                            <div class="card-body py-5 px-md-5 shadow-5">
+                                <h1 class="mb-4 display-4 fw-bold ls-tight">Welcome ,<%= firstName %> <br> <span
+                                            class="text-danger">Enter the
+                                            OTP</span></h1>
+                                <div class="d-md-flex flex-row">
+                                    <div class="form-outline flex-fill me-1 mb-4 mb-md-0">
+                                        <input type="text" id="formControlOtp" class="form-control form-control-lg"
+                                            placeholder=" ">
+                                        <label class="form-label" for="formControlOtp" style="margin-left: 0px;">Enter
+                                            OTP
+                                            code...</label>
+                                    </div>
+                                    <button type="button" class="btn btn-danger btn-lg ms-md-2" id="next"
+                                        style="min-width: auto;" onclick="verifyOtp()">Next</button>
+                                </div>
+                                <div id="newPasswordFields" class="hidden">
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="formControlNewPassword"
+                                            class="form-control form-control-lg" placeholder=" ">
+                                        <label class="form-label" for="formControlNewPassword">New Password</label>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input type="password" id="formControlConfirmPassword"
+                                            class="form-control form-control-lg" placeholder=" ">
+                                        <label class="form-label" for="formControlConfirmPassword">Confirm
+                                            Password</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-lg">Confirm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 mb-5 mb-lg-0">
+                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDR8fGZvb2R8ZW58MHx8fHwxNzIwNDQ2MDA2fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080"
+                            class="w-100 rounded-4 shadow-4 rotate-lg-6" alt="">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            let otp = '';
+
+            document.addEventListener('DOMContentLoaded', () => {
+                fetch('http://localhost:3000/otp_val')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        otp = data;
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            });
+
+            function verifyOtp() {
+                const otpInput = document.getElementById('formControlOtp');
+                const newPasswordFields = document.getElementById('newPasswordFields');
+                const nextBtn = document.getElementById('next');
+                const otpValue = otpInput.value;
+
+                // Replace with actual OTP verification logic
+                if (otpValue === otp) {
+                    otpInput.readOnly = true;
+                    newPasswordFields.classList.remove('hidden');
+                    nextBtn.disabled = true;
+                    nextBtn.style.display = 'none'; // Hide the button
+                } else {
+                    alert('Invalid OTP');
+                }
+            }
+        </script>
+</body>
+
+</html>

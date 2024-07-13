@@ -1,226 +1,233 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaflet Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        #map { height: 600px; }
-        .suggestion { cursor: pointer; }
-    </style>
+    <title>DataTable Example</title>
+    <!-- MDB CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+<style>
+    .white {
+        background-color: #FFF !important;
+    }
+
+    .blue-grey {
+        background-color: #ECEFF1 !important;
+    }
+
+    .light-blue {
+        background-color: #E3F2FD !important;
+    }
+
+    .deep-purple {
+        background-color: #EDE7F6 !important;
+    }
+
+    .grey {
+        background-color: #EEEEEE !important;
+    }
+
+    .dark {
+        background-color: #212121 !important;
+    }
+
+    .blue-grey-dark {
+        background-color: #37474F !important;
+    }
+
+    .teal-dark {
+        background-color: #004D40 !important;
+    }
+
+    .deep-purple-dark {
+        background-color: #4527A0 !important;
+    }
+
+    .grey-dark {
+        background-color: #424242 !important;
+    }
+</style>
 </head>
+
 <body>
-    <input type="text" id="locationInput" placeholder="Enter a location" />
-    <div id="suggestions"></div>
-    <div id="map"></div>
+    <div id="datatable-container"></div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- MDB JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
     <script>
-        var map = L.map('map').setView([0, 0], 2); // Initialize map with a default view
-        var marker; // Declare marker variable
-        var currentLocationMarker; // Marker for current location
-        var currentLocation; // Coordinates of current location
-        var routeLayer; // Layer to display route
-        let address = [];
+        document.addEventListener('DOMContentLoaded', function () {
+            const element = document.getElementById('datatable-container');
+            const data = {
+                columns: [
+                    { label: 'Name', field: 'name', width: 150 },
+                    { label: 'Position', field: 'position', width: 200 },
+                    { label: 'Office', field: 'office', width: 100 },
+                    { label: 'Age', field: 'age', width: 50 },
+                    { label: 'Start Date', field: 'start_date', width: 100 },
+                    { label: 'Salary', field: 'salary', width: 100 }
+                ],
+                rows: [
+                    { name: 'Michelle House', position: 'Integration Specialist', office: 'Sidney', age: 37, start_date: '2011/06/02', salary: 95 },
+                    { name: 'Suki Burks', position: 'Developer', office: 'London', age: 53, start_date: '2009/10/22', salary: 114 },
+                    { name: 'Prescott Bartlett', position: 'Technical Author', office: 'London', age: 27, start_date: '2011/05/07', salary: 145 },
+                    { name: 'Gavin Cortez', position: 'Team Leader', office: 'San Francisco', age: 22, start_date: '2008/10/26', salary: 235 },
+                    { name: 'Martena Mccray', position: 'Post-Sales support', office: 'Edinburgh', age: 46, start_date: '2011/03/09', salary: 324 },
+                    { name: 'Unity Butler', position: 'Marketing Designer', office: 'San Francisco', age: 47, start_date: '2009/12/09', salary: 85 },
+                    { name: 'Howard Hatfield', position: 'Office Manager', office: 'San Francisco', age: 51, start_date: '2008/12/16', salary: 164 },
+                    { name: 'Hope Fuentes', position: 'Secretary', office: 'San Francisco', age: 41, start_date: '2010/02/12', salary: 109 },
+                    { name: 'Vivian Harrell', position: 'Financial Controller', office: 'San Francisco', age: 62, start_date: '2009/02/14', salary: 452 },
+                    { name: 'Timothy Mooney', position: 'Office Manager', office: 'London', age: 37, start_date: '2008/12/11', salary: 136 },
+                    { name: 'Jennifer Acosta', position: 'Junior Javascript Developer', office: 'Edinburgh', age: 43, start_date: '2013/02/01', salary: 75 },
+                    { name: 'Cara Stevens', position: 'Sales Assistant', office: 'New York', age: 46, start_date: '2011/12/06', salary: 145 },
+                    { name: 'Hermione Butler', position: 'Regional Director', office: 'London', age: 47, start_date: '2011/03/21', salary: 356 },
+                    { name: 'Lael Greer', position: 'Systems Administrator', office: 'London', age: 21, start_date: '2009/07/14', salary: 103 },
+                    { name: 'Jonas Alexander', position: 'Developer', office: 'San Francisco', age: 30, start_date: '2010/07/14', salary: 86 },
+                    { name: 'Shad Decker', position: 'Regional Director', office: 'Edinburgh', age: 51, start_date: '2008/11/13', salary: 183 },
+                    { name: 'Michael Bruce', position: 'Javascript Developer', office: 'Singapore', age: 29, start_date: '2011/06/27', salary: 183 },
+                    { name: 'Donna Snider', position: 'Customer Support', office: 'New York', age: 27, start_date: '2011/01/25', salary: 112 },
+                    { name: 'Paul Byrd', position: 'Chief Financial Officer (CFO)', office: 'New York', age: 64, start_date: '2010/06/09', salary: 725 },
+                    { name: 'Gloria Little', position: 'Systems Administrator', office: 'New York', age: 59, start_date: '2009/04/10', salary: 237 }
+                ]
+            };
 
-        // Add a tile layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        // Get current location of the user
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                currentLocation = [position.coords.latitude, position.coords.longitude];
-                currentLocationMarker = L.marker(currentLocation).addTo(map)
-                    .bindPopup("You are here")
-                    .openPopup();
-                map.setView(currentLocation, 12);
-            }, function (error) {
-                console.error("Error getting location: ", error);
+            new mdb.Datatable(element, {
+                data: data,
+                paging: true,
+                pageLength: 10,
+                lengthChange: false,
+                info: false,
+                responsive: true,
+                fullPagination: true
             });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-
-        // Fetch vendor data using fetch API
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('http://localhost:3000/user/data')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    address = data;
-                    addAddressMarkers(address); // Call the function to add markers after data is fetched
-                })
-                .catch(error => console.error('Error fetching data:', error));
         });
-
-        // Function to handle input change event
-        function handleInput() {
-            var input = document.getElementById('locationInput').value;
-            if (input.trim() === '') {
-                clearSuggestions();
-                return;
-            }
-            fetchSuggestions(input);
-        }
-
-        // Function to fetch suggestions from Geoapify API
-        function fetchSuggestions(input) {
-            var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
-            var url = 'https://api.geoapify.com/v1/geocode/autocomplete?text=' + encodeURIComponent(input) + '&apiKey=' + apiKey;
-
-            axios.get(url)
-                .then(function (response) {
-                    displaySuggestions(response.data.features);
-                })
-                .catch(function (error) {
-                    console.error('Error fetching suggestions:', error);
-                });
-        }
-
-        // Function to display suggestions
-        function displaySuggestions(suggestions) {
-            var suggestionsContainer = document.getElementById('suggestions');
-            suggestionsContainer.innerHTML = '';
-
-            suggestions.forEach(function (suggestion) {
-                var suggestionText = suggestion.properties.formatted;
-                var suggestionItem = document.createElement('div');
-                suggestionItem.textContent = suggestionText;
-                suggestionItem.classList.add('suggestion');
-                suggestionItem.addEventListener('click', function () {
-                    document.getElementById('locationInput').value = suggestionText;
-                    clearSuggestions();
-                    var coordinates = suggestion.geometry.coordinates;
-                    centerMapAndAddMarker(coordinates, suggestionText);
-                    if (currentLocation) {
-                        fetchAndDisplayDirections(currentLocation, coordinates);
-                    }
-                });
-                suggestionsContainer.appendChild(suggestionItem);
-            });
-        }
-
-        // Function to clear suggestions
-        function clearSuggestions() {
-            document.getElementById('suggestions').innerHTML = '';
-        }
-
-        // Function to center the map and add a marker on a specific location
-        function centerMapAndAddMarker(coordinates, label) {
-            var latLng = [coordinates[1], coordinates[0]]; // Leaflet expects [lat, lng]
-            map.setView(latLng, 12);
-            
-            if (marker) {
-                marker.setLatLng(latLng).bindPopup(label).openPopup();
-            } else {
-                marker = L.marker(latLng).addTo(map).bindPopup(label).openPopup();
-            }
-        }
-
-        // Function to fetch and display directions
-        function fetchAndDisplayDirections(start, end) {
-            var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
-            var url = 'https://api.geoapify.com/v1/routing?waypoints=' + start[0] + ',' + start[1] + '|' + end[1] + ',' + end[0] + '&mode=drive&lang=en&details=instruction_details&apiKey=' + apiKey;
-
-            axios.get(url)
-                .then(function (response) {
-                    // Extracting route information from the response
-                    var routeData = response.data.features[0];
-                    var routeCoordinates = routeData.geometry.coordinates[0]; // Assuming the first set of coordinates
-
-                    // Draw route polyline on the map
-                    if (routeLayer) {
-                        map.removeLayer(routeLayer);
-                    }
-
-                    routeLayer = L.polyline(routeCoordinates.map(function(coord) {
-                        return [coord[1], coord[0]]; // GeoJSON coordinates are [lng, lat], Leaflet expects [lat, lng]
-                    }), { color: 'blue' }).addTo(map);
-                    map.fitBounds(routeLayer.getBounds());
-
-                    // Display route instructions and mark waypoints
-                    displayRouteInstructions(routeData.properties.legs[0].steps);
-
-                    // Display distance
-                    var distance = routeData.properties.distance; // Distance in meters
-                    var distanceKm = (distance / 1000).toFixed(2); // Convert to kilometers and format to 2 decimal places
-                    alert('Distance: ' + distanceKm + ' km');
-                })
-                .catch(function (error) {
-                    console.error('Error fetching directions:', error);
-                });
-        }
-
-        // Function to display route instructions and mark waypoints
-        function displayRouteInstructions(instructions) {
-            instructions.forEach(function (instruction) {
-                var instructionText = instruction.instruction.text;
-                console.log(instructionText); // Output the instruction text to console
-                
-                // Reverse geocode the coordinates to get the address
-                if (instruction.instruction && instruction.instruction.location) {
-                    var coordinates = instruction.instruction.location;
-                    reverseGeocode(coordinates, instructionText);
-                }
-            });
-        }
-
-        // Function to reverse geocode coordinates and mark waypoints on the map
-        function reverseGeocode(coordinates, instructionText) {
-            var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
-            var url = 'https://api.geoapify.com/v1/geocode/reverse?lat=' + coordinates[1] + '&lon=' + coordinates[0] + '&apiKey=' + apiKey;
-
-            axios.get(url)
-                .then(function (response) {
-                    var address = response.data.features[0].properties.formatted;
-                    console.log("Address:", address); // Output the reverse geocoded address to console
-
-                    // Mark waypoint on the map
-                    var marker = L.marker([coordinates[1], coordinates[0]]).addTo(map).bindPopup(instructionText + '<br>' + address).openPopup();
-                })
-                .catch(function (error) {
-                    console.error('Error reverse geocoding coordinates:', error);
-                });
-        }
-
-        // Function to add address markers to the map and set up click event listeners
-        function addAddressMarkers(addresses) {
-            var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
-
-            addresses.forEach(function(location) {
-                var query = `${location.add}, ${location.area}`;
-                var url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(query)}&apiKey=${apiKey}`;
-
-                axios.get(url)
-                    .then(function(response) {
-                        if (response.data.features.length > 0) {
-                            var coordinates = response.data.features[0].geometry.coordinates;
-                            var latLng = [coordinates[1], coordinates[0]]; // Leaflet expects [lat, lng]
-
-                            var addressMarker = L.marker(latLng).addTo(map)
-                                .bindPopup(`${location.add}, ${location.area}`);
-
-                            addressMarker.on('click', function() {
-                                if (currentLocation) {
-                                    fetchAndDisplayDirections(currentLocation, coordinates);
-                                } else {
-                                    alert("Current location not available.");
-                                }
-                            });
-                        }
-                    })
-                    .catch(function(error) {
-                        console.error('Error geocoding address:', error);
-                    });
-            });
-        }
-
-        // Add event listener to input field
-        document.getElementById('locationInput').addEventListener('input', handleInput);
     </script>
 </body>
+
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css">
+    <title>Header Example</title>
+    <style>
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+
+        .modal-lg {
+            max-width: 80%;
+        }
+
+        .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid bg-danger text-white py-2">
+        <div class="container d-flex justify-content-between">
+            <div>
+                <i class="bi bi-geo-alt-fill"></i>
+                <span id="locationLink" class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#locationModal">
+                    Select Location: 101 Shahid Colonel Gulzar Uddin Rd, Dhaka 1212, Bangladesh >>>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <header class="py-3 border-bottom">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center">
+            <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+                <img src="../Picture/Home_street shop.png" height="50">
+                <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="#" class="btn btn-outline-danger me-2">Sign in</a>
+                <a href="#" class="btn btn-danger">Sign up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Location Modal -->
+    <div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel">Select Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="map"></div>
+                    <form>
+                        <div class="mb-3">
+                            <label for="locationInput" class="form-label">Enter your location</label>
+                            <input type="text" class="form-control" id="locationInput"
+                                placeholder="Type your location here">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" async
+        defer></script>
+    <script>
+        function initMap() {
+            const location = { lat: 23.8103, lng: 90.4125 }; // Coordinates for Dhaka, Bangladesh
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: location,
+            });
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+        }
+
+        document.getElementById('locationModal').addEventListener('shown.bs.modal', function () {
+            initMap();
+        });
+    </script>
+
+
+
+
+</body>
+
 </html>

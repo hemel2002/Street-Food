@@ -17,7 +17,7 @@ let vendor = [];
 let shoplocation = [];
 
 router.get('/shopdata', (req, res) => {
-  res.render('blogger/index');
+  res.render('blogger/map');
 });
 
 router.get('/data', (req, res) => {
