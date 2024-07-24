@@ -1,17 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const qr = require('qr-image');
+const path = require('path');
+const fs = require('fs');
+
+const { cloudinary } = require('./cloudinary');
+const { requirelogin } = require('./requirelogin_middleware');
 const OracleDB = require('oracledb');
 const multer = require('multer');
 const { storage } = require('./cloudinary');
 const upload = multer({ storage });
-const { requirelogin } = require('./requirelogin_middleware');
 const dbConfig = require('./dbConfig');
 const { v4: uuid } = require('uuid');
 const nodemailer = require('nodemailer');
-
 let foodData = [];
 let reviews = [];
-
 ///////////////////////////////dark_mode////////////////////////
 router.post('/:id/navbar', (req, res) => {
   req.session.mode = req.body.mode;
@@ -274,6 +277,37 @@ router.post('/:id/logout', requirelogin, (req, res) => {
   req.session.user_id = null;
   req.flash('logout', 'Successfully logged out');
   res.redirect('/home');
+});
+////////////////////////////////////////////////vendor qr-code///////////////////////
+router.get('/:id/qr', requirelogin, (req, res) => {
+  res.render('vendor_ejs/test');
+});
+
+router.post('/:id/qr', requirelogin, (req, res) => {
+  console.log(req.body);
+  const qr_svg = qr.image(req.body.url);
+  const outputPath = path.join(__dirname, 'qr.png');
+
+  const writeStream = fs.createWriteStream(outputPath);
+  qr_svg.pipe(writeStream);
+
+  writeStream.on('finish', () => {
+    cloudinary.uploader
+      .upload(outputPath, { folder: 'qr-image' })
+      .then((result) => {
+        fs.unlinkSync(outputPath);
+        console.log(result);
+        res.redirect(`/vendor/${req.params.id}`);
+      })
+      .catch((error) => {
+        fs.unlinkSync(outputPath);
+        res.status(500).send(error.message);
+      });
+  });
+
+  writeStream.on('error', (err) => {
+    res.status(500).send(err.message);
+  });
 });
 
 /////////////////////////////////export Router/////////////////////////////

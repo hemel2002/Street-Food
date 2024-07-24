@@ -208,12 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
         blogger.videoTitle
       }</a></td>
           <td>${blogger.videoDescription}</td>
-          <td><textarea data-id="${blogger.customerId}">${
-        blogger.reply
-      }</textarea></td>
-          <td><button class="btn-reply" data-id="${
-            blogger.customerId
-          }">Reply</button></td>
+
+          
         `;
       bloggerContainer.appendChild(row);
     }

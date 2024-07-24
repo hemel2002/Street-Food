@@ -4,63 +4,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Street Food Bangladesh</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <link href="../../css/viewShop.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
-        .rating {
-            list-style-type: none;
-            padding: 0;
-            margin: 0 0 20px 0;
-            display: flex;
-            justify-content: center;
+        .bg-image {
+            background-size: cover;
+            background-position: 50% 50%;
+            height: 500px;
         }
 
-        .rating li {
-            font-size: 1.5em;
-            margin-right: 5px;
+        .mask {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 100%;
+            overflow: hidden;
+            background-attachment: fixed;
+        }
+
+        @media (max-width: 767.98px) {
+            .mask {
+                background-attachment: scroll;
+            }
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            /* Adjust this value as needed */
+            object-fit: cover;
         }
 
         .card-custom {
-            height: 100%;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
 
         .card-body {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 1.5rem;
         }
 
-        .pagination-center {
-            display: flex;
-            justify-content: center;
+        .card-title {
+            margin-top: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .card-text {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .btn-primary {
+            align-self: center;
+            margin-top: auto;
+        }
+
+        .bg-image {
+            max-height: 300px;
         }
     </style>
 </head>
 
 <body>
-    <section draggable="false" class="overflow-hidden pt-0" data-v-271253ee="">
+    <section draggable="false" class="overflow-hidden pt-0">
         <section class="mb-10">
-            <!-- Background image -->
-            <div class="p-5 text-center bg-image"
-                style="background-image: url('https://images.unsplash.com/photo-1620646146961-fb8c077b6b61?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjI0M3wwfDF8c2VhcmNofDl8fGZhc3Rmb29kfGVufDB8fHx8MTcyMDcyNTQyOHww&ixlib=rb-4.0.3&q=80&w=1080'); height: 500px; background-size: cover; background-position: 50% 50%; background-color: transparent;"
-                data-builder-edit="background" data-builder-name="background1" aria-controls="#picker-editor"></div>
-            <!-- Background image -->
+            <div class="p-5 text-center bg-image" style="background-image: url('<%= viewshop[0].STALL_PIC %>');"
+                aria-controls="#picker-editor" alt="Background Image"></div>
             <div class="container">
                 <div class="card mx-4 mx-md-5 text-center shadow-5-strong"
                     style="margin-top: -170px; background: hsla(0, 0%, 100%, 0.7); backdrop-filter: blur(30px);">
                     <div class="card-body px-4 py-5 px-md-5">
                         <h1 class="display-3 fw-bold ls-tight mb-4">
-                            <span data-builder-edit="text" data-builder-name="text1" contenteditable="true">The best
-                                offer on the market</span>
+                            <span>The best offer on the market</span>
                             <br>
-                            <span class="text-primary" data-builder-edit="text" data-builder-name="text2"
-                                contenteditable="true">for your business</span>
+                            <span class="text-primary">for your business</span>
                         </h1>
                         <a class="btn btn-primary btn-lg py-3 px-5 mb-2 mb-md-0 me-md-2" href="#" role="button"
-                            data-builder-edit="button" data-builder-name="button1" aria-controls="#picker-editor"
-                            draggable="false" style="min-width: auto;">Shop details<i
+                            aria-controls="#picker-editor" draggable="false" style="min-width: auto;">Shop details <i
                                 class="fas fa-cart-arrow-down p-1 ps-2"></i></a>
                     </div>
                 </div>
@@ -68,721 +106,221 @@
         </section>
     </section>
 
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
+    <section draggable="false" class="container pt-5">
         <section class="mb-10 text-center text-lg-start">
-            <h2 class="fw-bold mb-5 text-center" data-builder-edit="text" data-builder-name="text1"
-                contenteditable="true">Available Foods</h2>
-            <div class="row gx-lg-5">
-                <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
-                    <div class="card card-custom">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
-                            <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjI0M3wwfDF8c2VhcmNofDl8fGZvb2R8ZW58MHx8fHwxNzIwNzE1NDIyfDA&ixlib=rb-4.0.3&q=80&w=1080"
-                                class="img-fluid" data-builder-edit="image" data-builder-name="image1" alt=""
-                                aria-controls="#picker-editor" draggable="false" loading="lazy">
-                            <svg class="position-absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
-                                style="left: 0; bottom: 0">
-                                <path fill="#fff"
-                                    d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title" data-builder-edit="text" data-builder-name="text2"
-                                contenteditable="true">Nostalgic waves</h5>
-                            <section class="p-4 d-flex justify-content-center text-center w-100">
-                                <ul class="rating" data-mdb-rating-init tabindex="0" data-mdb-rating-initialized="true">
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#673ab7"
-                                            style="color: rgb(103, 58, 183);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#3f51b5"
-                                            style="color: rgb(63, 81, 181);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#2196f3"
-                                            style="color: rgb(33, 150, 243);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#03a9f4"
-                                            style="color: rgb(3, 169, 244);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#00bcd4"
-                                            style="color: rgb(0, 188, 212);"></i></li>
-                                </ul>
-                            </section>
-                            <p class="card-text" data-builder-edit="text" data-builder-name="text3"
-                                contenteditable="true">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <a href="#!" class="btn btn-primary" data-builder-edit="button" data-builder-name="button1"
-                                aria-controls="#picker-editor" draggable="false" style="min-width: auto;">Details</a>
-                        </div>
-                        <div class="card-footer">2 days ago</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <div class="card card-custom">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
-                            <img src="https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&ixlib=rb-4.0.3&q=80&w=1080"
-                                class="img-fluid" data-builder-edit="image" data-builder-name="image1" alt=""
-                                aria-controls="#picker-editor" draggable="false" loading="lazy">
-                            <svg class="position-absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
-                                style="left: 0; bottom: 0">
-                                <path fill="#fff"
-                                    d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title" data-builder-edit="text" data-builder-name="text2"
-                                contenteditable="true">Nostalgic waves</h5>
-                            <section class="p-4 d-flex justify-content-center text-center w-100">
-                                <ul class="rating" data-mdb-rating-init tabindex="0" data-mdb-rating-initialized="true">
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#673ab7"
-                                            style="color: rgb(103, 58, 183);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#3f51b5"
-                                            style="color: rgb(63, 81, 181);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#2196f3"
-                                            style="color: rgb(33, 150, 243);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#03a9f4"
-                                            style="color: rgb(3, 169, 244);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#00bcd4"
-                                            style="color: rgb(0, 188, 212);"></i></li>
-                                </ul>
-                            </section>
-                            <p class="card-text" data-builder-edit="text" data-builder-name="text3"
-                                contenteditable="true">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <a href="#!" class="btn btn-primary" data-builder-edit="button" data-builder-name="button1"
-                                aria-controls="#picker-editor" draggable="false" style="min-width: auto;">Details</a>
-                        </div>
-                        <div class="card-footer">2 days ago</div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-4 mb-lg-0">
-                    <div class="card card-custom">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
-                            <img src="https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&ixlib=rb-4.0.3&q=80&w=1080"
-                                class="img-fluid" data-builder-edit="image" data-builder-name="image1" alt=""
-                                aria-controls="#picker-editor" draggable="false" loading="lazy">
-                            <svg class="position-absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"
-                                style="left: 0; bottom: 0">
-                                <path fill="#fff"
-                                    d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title" data-builder-edit="text" data-builder-name="text2"
-                                contenteditable="true">Nostalgic waves</h5>
-                            <section class="p-4 d-flex justify-content-center text-center w-100">
-                                <ul class="rating" data-mdb-rating-init tabindex="0" data-mdb-rating-initialized="true">
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#673ab7"
-                                            style="color: rgb(103, 58, 183);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#3f51b5"
-                                            style="color: rgb(63, 81, 181);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#2196f3"
-                                            style="color: rgb(33, 150, 243);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#03a9f4"
-                                            style="color: rgb(3, 169, 244);"></i></li>
-                                    <li><i class="fa-star fa-sm far" data-mdb-color="#00bcd4"
-                                            style="color: rgb(0, 188, 212);"></i></li>
-                                </ul>
-                            </section>
-                            <p class="card-text" data-builder-edit="text" data-builder-name="text3"
-                                contenteditable="true">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <a href="#!" class="btn btn-primary" data-builder-edit="button" data-builder-name="button1"
-                                aria-controls="#picker-editor" draggable="false" style="min-width: auto;">Details</a>
-                        </div>
-                        <div class="card-footer">2 days ago</div>
-                    </div>
-                </div>
+            <h2 class="fw-bold mb-5 text-center">Available Foods</h2>
+            <div class="row gx-lg-3" id="food-cards">
+                <!-- Food cards will be injected here by JavaScript -->
             </div>
         </section>
+        <div class="pagination-center">
+            <button id="prev-btn" class="btn btn-primary">Previous</button>
+            <div id="page-numbers"></div>
+            <button id="next-btn" class="btn btn-primary">Next</button>
+        </div>
     </section>
-
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
+    <section draggable="false" class="container pt-5">
         <section class="mb-10">
             <div class="row d-flex justify-content-center">
                 <div class="col-md-10 col-xl-8 text-center">
-                    <h3 class="fw-bold mb-4" data-builder-edit="text" data-builder-name="text1" contenteditable="true">
-                    </h3>
-                    What clients say</h3>
+                    <h3 class="fw-bold mb-4">What clients say</h3>
                 </div>
             </div>
-            <div class="row text-center d-flex align-items-stretch">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <svg class="me-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18"
-                                    height="18">
-                                    <path fill="currentColor"
-                                        d="M10.5 7C10.5 7.78 10.22 8.53 9.72 9.11C9.36 9.54 8.88 9.85 8.34 10.03C7.91 10.18 7.5 10.5 7.29 10.93L6.6 12.53C6.27 13.3 5.44 13.75 4.58 13.58C3.7 13.4 3.17 12.42 3.58 11.59L4.27 10C4.79 8.87 5.62 7.91 6.68 7.2C7.66 6.56 8.81 6.15 10 6.02C10.27 6 10.5 6.22 10.5 6.5V7M22 7V6.5C22 6.22 21.78 6 21.5 6C20.3 6.15 19.15 6.56 18.18 7.2C17.11 7.91 16.29 8.87 15.76 10L15.07 11.59C14.66 12.42 15.2 13.4 16.07 13.58C16.93 13.75 17.77 13.3 18.1 12.53L18.79 10.93C19 10.5 19.41 10.18 19.84 10.03C20.38 9.85 20.86 9.54 21.22 9.11C21.72 8.53 22 7.78 22 7M1 21V19H23V21H1Z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <p class="mb-4" data-builder-edit="text" data-builder-name="text2" contenteditable="true">Ut
-                                pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <h5 class="mb-2" data-builder-edit="text" data-builder-name="text3" contenteditable="true">
-                                John Doe</h5>
-                            <p class="text-muted" data-builder-edit="text" data-builder-name="text4"
-                                contenteditable="true">Web Developer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <svg class="me-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18"
-                                    height="18">
-                                    <path fill="currentColor"
-                                        d="M10.5 7C10.5 7.78 10.22 8.53 9.72 9.11C9.36 9.54 8.88 9.85 8.34 10.03C7.91 10.18 7.5 10.5 7.29 10.93L6.6 12.53C6.27 13.3 5.44 13.75 4.58 13.58C3.7 13.4 3.17 12.42 3.58 11.59L4.27 10C4.79 8.87 5.62 7.91 6.68 7.2C7.66 6.56 8.81 6.15 10 6.02C10.27 6 10.5 6.22 10.5 6.5V7M22 7V6.5C22 6.22 21.78 6 21.5 6C20.3 6.15 19.15 6.56 18.18 7.2C17.11 7.91 16.29 8.87 15.76 10L15.07 11.59C14.66 12.42 15.2 13.4 16.07 13.58C16.93 13.75 17.77 13.3 18.1 12.53L18.79 10.93C19 10.5 19.41 10.18 19.84 10.03C20.38 9.85 20.86 9.54 21.22 9.11C21.72 8.53 22 7.78 22 7M1 21V19H23V21H1Z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <p class="mb-4" data-builder-edit="text" data-builder-name="text2" contenteditable="true">Ut
-                                pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <h5 class="mb-2" data-builder-edit="text" data-builder-name="text3" contenteditable="true">
-                                John Doe</h5>
-                            <p class="text-muted" data-builder-edit="text" data-builder-name="text4"
-                                contenteditable="true">Web Developer</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <svg class="me-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18"
-                                    height="18">
-                                    <path fill="currentColor"
-                                        d="M10.5 7C10.5 7.78 10.22 8.53 9.72 9.11C9.36 9.54 8.88 9.85 8.34 10.03C7.91 10.18 7.5 10.5 7.29 10.93L6.6 12.53C6.27 13.3 5.44 13.75 4.58 13.58C3.7 13.4 3.17 12.42 3.58 11.59L4.27 10C4.79 8.87 5.62 7.91 6.68 7.2C7.66 6.56 8.81 6.15 10 6.02C10.27 6 10.5 6.22 10.5 6.5V7M22 7V6.5C22 6.22 21.78 6 21.5 6C20.3 6.15 19.15 6.56 18.18 7.2C17.11 7.91 16.29 8.87 15.76 10L15.07 11.59C14.66 12.42 15.2 13.4 16.07 13.58C16.93 13.75 17.77 13.3 18.1 12.53L18.79 10.93C19 10.5 19.41 10.18 19.84 10.03C20.38 9.85 20.86 9.54 21.22 9.11C21.72 8.53 22 7.78 22 7M1 21V19H23V21H1Z">
-                                    </path>
-                                </svg>
-                            </div>
-                            <p class="mb-4" data-builder-edit="text" data-builder-name="text2" contenteditable="true">Ut
-                                pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a ullamcorper
-                                diam.</p>
-                            <h5 class="mb-2" data-builder-edit="text" data-builder-name="text3" contenteditable="true">
-                                John Doe</h5>
-                            <p class="text-muted" data-builder-edit="text" data-builder-name="text4"
-                                contenteditable="true">Web Developer</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="row text-center d-flex align-items-stretch" id="testimonial-cards">
+                <!-- Testimonial cards will be injected here by JavaScript -->
             </div>
         </section>
+        <div class="pagination-center">
+            <button id="testimonial-prev-btn" class="btn btn-primary">Previous</button>
+            <div id="testimonial-page-numbers"></div>
+            <button id="testimonial-next-btn" class="btn btn-primary">Next</button>
+        </div>
     </section>
 
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
+    <!-- Videos Section -->
+    <section draggable="false" class="container pt-5">
         <section class="mb-10">
-            <style>
-                .bg-image {
-                    position: relative;
-                    overflow: hidden;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                }
-
-                .mask {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    height: 100%;
-                    overflow: hidden;
-                    background-attachment: fixed;
-                }
-
-                @media (max-width: 767.98px) {
-                    .mask {
-                        background-attachment: scroll;
-                    }
-                }
-            </style>
-            <div class="row gx-lg-5">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="row gx-lg-5" id="video-cards">
+                <!-- Video cards will be inserted here by JavaScript -->
+            </div>
+            <div class="pagination-center">
+                <button id="video-prev-btn" class="btn btn-primary">Previous</button>
+                <div id="video-page-numbers"></div>
+                <button id="video-next-btn" class="btn btn-primary">Next</button>
             </div>
         </section>
     </section>
 
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
-        <section class="mb-10">
-            <style>
-                .bg-image {
-                    position: relative;
-                    overflow: hidden;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                }
-
-                .mask {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    height: 100%;
-                    overflow: hidden;
-                    background-attachment: fixed;
-                }
-
-                @media (max-width: 767.98px) {
-                    .mask {
-                        background-attachment: scroll;
-                    }
-                }
-            </style>
-            <div class="row gx-lg-5">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
-
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
-        <section class="mb-10">
-            <style>
-                .bg-image {
-                    position: relative;
-                    overflow: hidden;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                }
-
-                .mask {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    height: 100%;
-                    overflow: hidden;
-                    background-attachment: fixed;
-                }
-
-                @media (max-width: 767.98px) {
-                    .mask {
-                        background-attachment: scroll;
-                    }
-                }
-            </style>
-            <div class="row gx-lg-5">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
-
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
-        <section class="mb-10">
-            <style>
-                .bg-image {
-                    position: relative;
-                    overflow: hidden;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                }
-
-                .mask {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    height: 100%;
-                    overflow: hidden;
-                    background-attachment: fixed;
-                }
-
-                @media (max-width: 767.98px) {
-                    .mask {
-                        background-attachment: scroll;
-                    }
-                }
-            </style>
-            <div class="row gx-lg-5">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
-
-    <section draggable="false" class="container pt-5" data-v-271253ee="">
-        <section class="mb-10">
-            <style>
-                .bg-image {
-                    position: relative;
-                    overflow: hidden;
-                    background-position: center;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                }
-
-                .mask {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                    height: 100%;
-                    overflow: hidden;
-                    background-attachment: fixed;
-                }
-
-                @media (max-width: 767.98px) {
-                    .mask {
-                        background-attachment: scroll;
-                    }
-                }
-            </style>
-            <div class="row gx-lg-5">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <div class="card">
-                        <div class="bg-image hover-overlay ripple ripple-surface-light" data-mdb-ripple-color="light"
-                            style="background-image: url(&quot;https://images.unsplash.com/photo-1594007654729-407eedc4be65?crop=entropy&amp;cs=tinysrgb&amp;fit=max&amp;fm=jpg&amp;ixid=M3w5NjI0M3wwfDF8c2VhcmNofDN8fGZvb2R8ZW58MHx8fHwxNzIwNzE1Mzg0fDA&amp;ixlib=rb-4.0.3&amp;q=80&amp;w=1080&quot;); height: 250px;">
-                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15); height: 250px;">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Beach Wave</h5>
-                            <p class="card-text">Ut pretium ultricies dignissim. Sed sit amet mi eget urna
-                                placerat vulputate. Ut vulputate est non quam dignissim elementum. Donec a
-                                ullamcorper diam.</p>
-                            <a href="#!" class="btn btn-primary" aria-controls="#picker-editor" draggable="false"
-                                style="min-width: auto;">Button</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </section>
-    </section>
-
-
-    <!-- MDB Bootstrap JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.2/mdb.min.js"></script>
     <script>
+        let foodData = [];
+        let videoData = [];
+
+        const getdata = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sellerId = urlParams.get('id');
+
+            try {
+                const res = await axios.get(`http://localhost:3000/home/ViewShop?id=${sellerId}&responseType=json`);
+                foodData = res.data.viewshop;
+                videoData = res.data.video;
+                console.log('foodData', foodData);
+                console.log('videoData', videoData);
+
+                initializeFoodPagination();
+                initializeVideoPagination();
+            } catch (error) {
+                console.log('error', error);
+            }
+        }
+
+        getdata();
+
         document.addEventListener('DOMContentLoaded', () => {
-            const videos = [
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720197503/food/kqwj8plwxlvac4cspwms.mp4",
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720197804/food/zodx0o3pw7fqzbkgreop.mp4",
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720198903/food/wxca5rnlhwlfr5yba5xz.mp4",
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720212477/food/zbyd87lydoayozcotofx.mp4",
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720215242/food/vi5nee8ufxe0jcagerby.mp4",
-                "https://res.cloudinary.com/da7hqzvvf/video/upload/v1720512025/food/ta7h0rrmx6gfarnn5sn8.mp4"
-            ];
-
-            let currentPage = 0;
-            const itemsPerPage = 1;
-
-            function openModal(page) {
-                currentPage = page;
-                updateVideoSource();
-                updatePagination();
-                const modal = new mdb.Modal(document.getElementById('videoModal'));
-                modal.show();
-            }
-
-            function updateVideoSource() {
-                const videoSource = document.getElementById('videoSource');
-                videoSource.src = videos[currentPage];
-                const videoPlayer = document.getElementById('videoPlayer');
-                videoPlayer.load();
-            }
-
-            function updatePagination() {
-                const totalPages = Math.ceil(videos.length / itemsPerPage);
-                const paginationContainer = document.querySelector('.pagination');
-
-                // Remove existing page links
-                while (paginationContainer.children.length > 2) {
-                    paginationContainer.removeChild(paginationContainer.children[1]);
-                }
-
-                // Add page links
-                for (let i = 0; i < totalPages; i++) {
-                    const li = document.createElement('li');
-                    li.className = 'page-item' + (i === currentPage ? ' active' : '');
-                    const a = document.createElement('a');
-                    a.className = 'page-link';
-                    a.href = '#';
-                    a.textContent = i + 1;
-                    a.onclick = (event) => {
-                        event.preventDefault();
-                        openModal(i);
-                    };
-                    li.appendChild(a);
-                    paginationContainer.insertBefore(li, paginationContainer.children[paginationContainer.children.length - 1]);
-                }
-            }
-
-            // Event listeners for previous and next buttons
-            document.getElementById('prevPage').onclick = (event) => {
-                event.preventDefault();
-                if (currentPage > 0) {
-                    openModal(currentPage - 1);
-                }
-            };
-
-            document.getElementById('nextPage').onclick = (event) => {
-                event.preventDefault();
-                const totalPages = Math.ceil(videos.length / itemsPerPage);
-                if (currentPage < totalPages - 1) {
-                    openModal(currentPage + 1);
-                }
-            };
-
-            // Event listener for "Play in Modal" buttons
-            document.querySelectorAll('.play-video-btn').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const videoSrc = button.getAttribute('data-video-src');
-                    document.getElementById('videoSource').src = videoSrc;
-                    document.getElementById('videoPlayer').load();
-                    const modal = new mdb.Modal(document.getElementById('videoModal'));
-                    modal.show();
-                });
-            });
+            initializeFoodPagination();
+            initializeTestimonialsPagination();
+            initializeVideoPagination();
         });
+
+        function initializeFoodPagination() {
+            const itemsPerPage = 3;
+            let currentPage = 1;
+            const totalPages = Math.ceil(foodData.length / itemsPerPage);
+
+            const foodCardsContainer = document.getElementById('food-cards');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const pageNumbers = document.getElementById('page-numbers');
+
+            function renderFoodItems() {
+                foodCardsContainer.innerHTML = '';
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const itemsToRender = foodData.slice(start, end);
+
+                itemsToRender.forEach(item => {
+                    const foodCard = document.createElement('div');
+                    foodCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
+                    foodCard.innerHTML = `
+                        <div class="card card-custom">
+                            <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
+                                <img src="${item.FOOD_PIC}" class="img-fluid" alt="" loading="lazy">
+                                <svg class="position-absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="left: 0; bottom: 0">
+                                    <path fill="#fff" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+                                </svg>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">${item.FOOD_NAME}</h5>
+                                <p class="card-text">${item.FOOD_DESCPRIPTION}</p>
+                                <button class="btn btn-primary btn-md">Add to cart</button>
+                            </div>
+                        </div>
+                    `;
+                    foodCardsContainer.appendChild(foodCard);
+                });
+            }
+
+            function renderPageNumbers() {
+                pageNumbers.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageNumber = document.createElement('button');
+                    pageNumber.classList.add('btn', 'btn-light', 'btn-md', 'me-2');
+                    pageNumber.textContent = i;
+                    pageNumber.addEventListener('click', () => {
+                        currentPage = i;
+                        renderFoodItems();
+                    });
+                    pageNumbers.appendChild(pageNumber);
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderFoodItems();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderFoodItems();
+                }
+            });
+
+            renderFoodItems();
+            renderPageNumbers();
+        }
+
+        function initializeVideoPagination() {
+            const itemsPerPage = 3;
+            let currentPage = 1;
+            const totalPages = Math.ceil(videoData.length / itemsPerPage);
+
+            const videoCardsContainer = document.getElementById('video-cards');
+            const prevBtn = document.getElementById('video-prev-btn');
+            const nextBtn = document.getElementById('video-next-btn');
+            const pageNumbers = document.getElementById('video-page-numbers');
+
+            function renderVideoItems() {
+                videoCardsContainer.innerHTML = '';
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const itemsToRender = videoData.slice(start, end);
+
+                itemsToRender.forEach(item => {
+                    const videoCard = document.createElement('div');
+                    videoCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
+                    videoCard.innerHTML = `
+                        <div class="card card-custom">
+                            <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
+                                <video src="${item.VIDEO_LINKS}" class="img-fluid" controls></video>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">${item.VIDEO_NAME}</h5>
+                                <p class="card-text">${item.VIDEO_DESCRIPTION}</p>
+                                <button class="btn btn-primary btn-md">Watch</button>
+                            </div>
+                        </div>
+                    `;
+                    videoCardsContainer.appendChild(videoCard);
+                });
+            }
+
+            function renderPageNumbers() {
+                pageNumbers.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageNumber = document.createElement('button');
+                    pageNumber.classList.add('btn', 'btn-light', 'btn-md', 'me-2');
+                    pageNumber.textContent = i;
+                    pageNumber.addEventListener('click', () => {
+                        currentPage = i;
+                        renderVideoItems();
+                    });
+                    pageNumbers.appendChild(pageNumber);
+                }
+            }
+
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderVideoItems();
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderVideoItems();
+                }
+            });
+
+            renderVideoItems();
+            renderPageNumbers();
+        }
+
+        function initializeTestimonialsPagination() {
+            // Add testimonial pagination logic here if needed
+        }
     </script>
 </body>
 

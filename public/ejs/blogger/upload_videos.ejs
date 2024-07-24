@@ -1,118 +1,147 @@
 <%- include('../vendor_ejs/header.ejs') %>
-<link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css">
 
-<style>
-  /* Custom styles to center the container */
-  .container {
-    margin-top: 20px;
-    padding-top: 60px;
-    padding-bottom: 80px;
-  }
-  .card {
-    width: 100%; /* Set the width of the card to 100% */
-    border-radius: 20px;
-    border-width: 4px;
-  }
-  .btn-lg {
-    width: 100%; /* Make the button take the entire width of its container */
-  }
-  /* Increase the width of input boxes */
-  input.form-control {
-    width: 100%;
-  }
-  .row {
-    padding-bottom: 20px;
-  }
-</style>
-</head>
-<body>
+  <style>
+    /* Custom styles to center the container */
+    .container {
+      margin-top: 20px;
+      padding-top: 60px;
+      padding-bottom: 80px;
+    }
 
-<!--Nav Bar-->
-<%- include('../vendor_ejs/navbar') %>
+    .card {
+      width: 100%;
+      /* Set the width of the card to 100% */
+      border-radius: 20px;
+      border-width: 4px;
+    }
 
-<!-- Card for video upload -->
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Upload Video</h5>
-          <form action="http://localhost:3000/user/<%= id %>/upload_video" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
-        
-            <div class="row">
-              <div class="col">
-                <label for="availability" class="form-label">Available Vendors</label>
-                <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required id="vendor" name="vendor">
-                  <option selected disabled>Select vendor</option>
-                  <% for(let index = 0; index < vendor.length; index++) { %>
-                    <option value="<%= vendor[index].USER_ID %>"><%= vendor[index].USER_ID %> (<%= vendor[index].FIRST_NAME %>, <%= vendor[index].LAST_NAME %>) FROM <%= vendor[index].DISTRICT %>-<%= vendor[index].CITY %>-<%= vendor[index].AREA %></option>
-                  <% } %>
-                </select>
-                <div class="invalid-feedback">Please select the vendor.</div>
+    .btn-lg {
+      width: 100%;
+      /* Make the button take the entire width of its container */
+    }
+
+    /* Increase the width of input boxes */
+    input.form-control {
+      width: 100%;
+    }
+
+    .row {
+      padding-bottom: 20px;
+    }
+  </style>
+  </head>
+
+  <body>
+
+    <!--Nav Bar-->
+    <%- include('../vendor_ejs/navbar') %>
+
+      <!-- Card for video upload -->
+      <!-- Card for video upload -->
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Upload Video</h5>
+                <form action="http://localhost:3000/user/<%= id %>/upload_video" class="needs-validation" method="post"
+                  enctype="multipart/form-data" novalidate>
+
+                  <div class="mb-3">
+                    <label for="availability" class="form-label">Available Vendors</label>
+                    <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required
+                      id="vendor" name="vendor">
+                      <option selected disabled>Select vendor</option>
+                      <% for(let index=0; index < vendor.length; index++) { %>
+                        <option value="<%= vendor[index].USER_ID %>">
+                          <%= vendor[index].USER_ID %> (<%= vendor[index].FIRST_NAME %>, <%= vendor[index].LAST_NAME %>)
+                                FROM <%= vendor[index].DISTRICT %>-<%= vendor[index].CITY %>-<%= vendor[index].AREA %>
+                        </option>
+                        <% } %>
+                    </select>
+                    <div class="invalid-feedback">Please select the vendor.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="videotitle" class="form-label">Video Title</label>
+                    <input type="text" class="form-control" id="videotitle" name="VIDEO_TITLE" required />
+                    <div class="invalid-feedback">Please enter the video title.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="VIDEO_DESCRIPTION" rows="3"
+                      required></textarea>
+                    <div class="invalid-feedback">Please enter a description.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="tags" class="form-label">Tags</label>
+                    <input type="text" class="form-control" id="tags" name="TAGS" required />
+                    <div class="invalid-feedback">Please enter some tags.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="video" class="form-label">Choose Video</label>
+                    <input type="file" name="video" accept="video/*" id="video" required>
+                    <div class="form-text">Video files only.</div>
+                    <div class="invalid-feedback">Please choose a video file.</div>
+                  </div>
+                  <div class="mb-3">
+                    <!-- Input for Image -->
+                    <label for="image" class="form-label">Choose Thumbnail</label>
+                    <input class="form-control form-control-sm" id="image" name="image" type="file" required>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
-            
-            <div class="mb-3">
-              <label for="videotitle" class="form-label">Video Title</label>
-              <input type="text" class="form-control" id="videotitle" name="VIDEO_TITLE" required />
-              <div class="invalid-feedback">Please enter the video title.</div>
-            </div> 
-            
-            <div class="mb-3">
-              <label for="description" class="form-label">Description</label>
-              <textarea class="form-control" id="description" name="VIDEO_DESCRIPTION" rows="3" required></textarea>
-              <div class="invalid-feedback">Please enter a description.</div>
-            </div>
-            
-            <div class="mb-3">
-              <label for="tags" class="form-label">Tags</label>
-              <input type="text" class="form-control" id="tags" name="TAGS" required />
-              <div class="invalid-feedback">Please enter some tags.</div>
-            </div>
-            
-              <div class="mb-3">
-                <label for="video" class="form-label">Choose Video</label>
-                <input type="file" name="video" accept="video/*" id="video" required>
-                <div class="form-text">Video files only.</div>
-                <div class="invalid-feedback">Please choose a video file.</div>
-              </div>
-              
-            <div class="row">
-              <div class="col-12">
-                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Bootstrap form validation script -->
-<script>
-  (function() {
-    'use strict';
-    window.addEventListener('load', function() {
-      var forms = document.getElementsByClassName('needs-validation');
-      var validation = Array.prototype.filter.call(forms, function(form) {
-        form.addEventListener('submit', function(event) {
-          if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-          form.classList.add('was-validated');
-        }, false);
-      });
-    }, false);
-  })();
-</script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384```html
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1" crossorigin="anonymous"></script>
+      </div>
+      </option>
+      </div>
 
 
 
-<%- include('../vendor_ejs/footer') %>
+
+      <!-- Bootstrap form validation script -->
+      <script>
+        (function () {
+          'use strict';
+          window.addEventListener('load', function () {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function (form) {
+              form.addEventListener('submit', function (event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+      </script>
+
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6"
+        crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03"
+        crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384```html
+  <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1"
+        crossorigin="anonymous"></script>
+
+
+
+      <%- include('../vendor_ejs/footer') %>

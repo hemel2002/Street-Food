@@ -90,9 +90,50 @@ app.post('/home', (req, res) => {
   res.redirect('/home'); // Adjust the redirection URL as needed
 });
 ///////////////////////////home///////////////////////////////////////
-app.get('/home', (req, res) => {
-  res.render('home/home');
+let shop = [];
+
+app.get('/home', async (req, res) => {
+  const currentPage = parseInt(req.query.page) || 1;
+  const itemsPerPage = 6;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const request = req.query.request;
+
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT STALL_PIC, STALL_NAME, V_ID FROM vendors'
+    );
+    shop = result.rows;
+    if (request === 'json') {
+      return res.json(shop);
+    }
+    console.log(result.rows);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+
+  const displayedItems = shop.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(shop.length / itemsPerPage);
+
+  res.render('home/home', {
+    currentPage,
+    itemsPerPage,
+    displayedItems,
+    totalPages,
+    shop,
+  });
 });
+
 ////////////////////////signup//////////////////////////////
 app.get('/home/signup', (req, res) => {
   res.render('login_signup_ejs/signup');
@@ -434,14 +475,14 @@ app.post('/emailVerification/otp', async (req, res) => {
     password,
     terms,
   } = req.query;
-
+  console.log(req.query);
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
     if (accountType === 'Seller') {
       await connection.execute(
-        `INSERT SO vendors 
-        (ACCOUNT_TYPE, V_FIRST_NAME, V_LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, stall_Name, stall_Pic, LocationUrl, PASSWORD, TERMS) 
+        `INSERT INTO vendors 
+        (ACCOUNT_TYPE, V_FIRST_NAME, V_LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, stall_Name, stall_Pic, LOCATION_URL, PASSWORD, TERMS) 
         VALUES 
         (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location, :stallName, :stallPic, :shopLocationUrl, :password, :terms)`,
         {
@@ -500,8 +541,47 @@ app.post('/emailVerification/otp', async (req, res) => {
   }
 });
 ////////////////////////////////////view shop////////////////////////
-app.get('/home/ViewShop', (req, res) => {
-  res.render('home/viewShop');
+app.get('/home/ViewShop', async (req, res) => {
+  const seller_id = req.query.id;
+  const responseType = req.query.responseType || 'view'; // Default to rendering view
+  console.log(seller_id);
+  let connection;
+  let viewshop = [];
+  let video = [];
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      `SELECT v.V_ID, v.V_FIRST_NAME, v.V_LAST_NAME, v.EMAIL, v.PHONE, v.AREA, v.STALL_PIC, f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC 
+       FROM vendors v, food f 
+       WHERE v.V_ID = :seller_id 
+         AND f.FOOD_ID IN (SELECT vsf.FOOD_ID FROM VENDOR_SELLS_FOOD vsf WHERE vsf.V_ID = v.V_ID)`,
+      [seller_id]
+    );
+    viewshop = result.rows;
+    const videoresult = await connection.execute(
+      `SELECT VIDEO_ID,VIDEO_DESCRIPTION,VIDEO_TITLE,IMAGE_LINKS,VIDEO_LINKS FROM uploaded_videos WHERE VIDEO_ID IN (SELECT VIDEO_ID FROM user_promotes_vendor WHERE V_ID=:seller_id)`,
+      [seller_id]
+    );
+    video = videoresult.rows;
+
+    console.log(viewshop);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    try {
+      if (connection) {
+        await connection.close();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  if (responseType === 'json') {
+    res.json({ viewshop, video });
+  } else {
+    res.render('home/viewShop', { viewshop });
+  }
 });
 
 app.listen(port, () => {

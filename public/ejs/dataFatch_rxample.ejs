@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Dashboard</title>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       fetch('http://localhost:3000/user/data')
@@ -24,12 +26,12 @@
     });
   </script>
 </head>
+
 <body>
   <h1>Welcome, <span id="name">[Name]</span>!</h1>
   <p>Age: <span id="age">[Age]</span></p>
   <h2>Hobbies</h2>
   <ul id="hobbies"></ul>
 </body>
+
 </html>
-
-

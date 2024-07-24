@@ -29,45 +29,63 @@ router.get('/:id/upload_video', requireloginuser, (req, res) => {
   res.render('blogger/upload_videos', { vendor });
 });
 
-router.post('/:id/upload_video', upload.single('video'), async (req, res) => {
-  const C_ID = req.params.id;
-  const { VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, vendor } = req.body;
-  const video_id = uuid();
-  console.log('Request Body:', {
-    C_ID,
-    VIDEO_TITLE,
-    VIDEO_DESCRIPTION,
-    TAGS,
-    vendor,
-  });
-  const { originalname, path } = req.file;
-  console.log(req.file);
+router.post(
+  '/:id/upload_video',
+  upload.fields([
+    { name: 'video', maxCount: 1 },
+    { name: 'image', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    const C_ID = req.params.id;
+    const { VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, vendor } = req.body;
+    const video_id = uuid();
+    const { originalname: videoName, path: videoPath } = req.files['video'][0];
+    const { originalname: imageName, path: imagePath } = req.files['image'][0];
+    console.log('Request Body:', {
+      C_ID,
+      VIDEO_TITLE,
+      VIDEO_DESCRIPTION,
+      TAGS,
+      vendor,
+      videoName,
+      imageName,
+    });
 
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    await connection.execute(
-      'INSERT INTO UPLOADED_VIDEOS (video_id,C_ID, VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, VIDEO_LINKS) VALUES (:video_id,:C_ID, :VIDEO_TITLE, :VIDEO_DESCRIPTION, :TAGS, :path)',
-      { video_id, video_id, C_ID, VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, path },
-      { autoCommit: true }
-    );
-  } catch (err) {
-    console.error(err);
-    req.flash(
-      'error_upload_video',
-      'An error occur during Uploading please try again'
-    );
-    return res.redirect(`/user/${req.params.id}`);
-  } finally {
+    let connection;
     try {
-      await connection.close();
+      connection = await OracleDB.getConnection(dbConfig);
+      await connection.execute(
+        'INSERT INTO UPLOADED_VIDEOS (video_id,C_ID, VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, VIDEO_LINKS, IMAGE_LINKS) VALUES (:video_id,:C_ID, :VIDEO_TITLE, :VIDEO_DESCRIPTION, :TAGS, :videoPath, :imagePath)',
+        {
+          video_id,
+          video_id,
+          C_ID,
+          VIDEO_TITLE,
+          VIDEO_DESCRIPTION,
+          TAGS,
+          videoPath,
+          imagePath,
+        },
+        { autoCommit: true }
+      );
     } catch (err) {
       console.error(err);
+      req.flash(
+        'error_upload_video',
+        'An error occurred during uploading, please try again'
+      );
+      return res.redirect(`/user/${req.params.id}`);
+    } finally {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
     }
+    req.flash('upload_video', 'Video and image uploaded successfully!');
+    res.redirect(`/user/${req.params.id}`);
   }
-  req.flash('upload_video', 'Video uploaded successfully!');
-  res.redirect(`/user/${req.params.id}`);
-});
+);
 
 router.post('/:id/navbar', (req, res) => {
   req.session.mode = req.body.mode;
