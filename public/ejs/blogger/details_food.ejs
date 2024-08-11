@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Details - MDB</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .left-card,
+        .right-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-card {
+            flex: 0 0 45%;
+            text-align: center;
+        }
+
+        .right-card {
+            flex: 0 0 50%;
+        }
+
+        .food-image {
+            width: 100%;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+        }
+
+        .rating {
+            color: #ffc107;
+            margin: 15px 0;
+        }
+
+        .details h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .details p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .details ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .details ul li {
+            font-size: 16px;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            position: relative;
+        }
+
+        .details ul li::before {
+            content: "•";
+            color: #ff6347;
+            font-size: 20px;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .nutrition-facts {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nutrition-facts div {
+            background-color: #ff6347;
+            color: white;
+            padding: 10px;
+            width: 22%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .reviews-section {
+            margin-top: 40px;
+        }
+
+        .review-card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-card .rating {
+            color: #ffc107;
+        }
+
+        .review-card .admin-reply {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .form-outline.mb-4 {
+            margin-top: 30px;
+        }
+
+        .star {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .star.filled {
+            color: #ffc107;
+        }
+
+        .star.empty {
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Row with Two Cards -->
+        <div class="row">
+            <!-- Left Card: Image and Rating -->
+            <div class="left-card">
+                <div class="food-image" style="background-image: url('<%= FOOD_DATA.FOOD_PIC %>');"></div>
+                <div class="rating">
+                    <% let fullStars=Math.floor(FOOD_DATA.RATING); let hasHalfStar=FOOD_DATA.RATING> fullStars; %>
+                        <% for (let i=0; i < fullStars; i++) { %>
+                            <i class="fas fa-star"></i>
+                            <% } %>
+                                <% if (hasHalfStar) { %>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <% } %>
+                </div>
+                <p>Overall Rating: <%= FOOD_DATA.RATING %>/5</p>
+            </div>
+
+            <!-- Right Card: Food Details -->
+            <div class="right-card">
+                <div class="details">
+                    <h1>
+                        <%= FOOD_DATA.FOOD_NAME %>
+                    </h1>
+                    <p>This pasta dish is a delightful blend of fresh ingredients, perfect for a wholesome meal. It’s
+                        made with the finest quality ingredients, offering a burst of flavors with every bite.</p>
+
+                    <h2>Ingredients</h2>
+                    <ul>
+                        <% for (let j=0; j < INGREDIENT.length; j++) { %>
+                            <li>
+                                <%= INGREDIENT[j] %>
+                            </li>
+                            <% } %>
+                    </ul>
+
+                    <div class="nutrition-facts">
+                        <div>
+                            <h3>Calories</h3>
+                            <p>450 kcal</p>
+                        </div>
+                        <div>
+                            <h3>Fat</h3>
+                            <p>12g</p>
+                        </div>
+                        <div>
+                            <h3>Protein</h3>
+                            <p>15g</p>
+                        </div>
+                        <div>
+                            <h3>Carbs</h3>
+                            <p>70g</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h2>Customer Reviews</h2>
+
+            <% if (userHasReviewed) { %>
+                <% if (Array.isArray(review_reply_data) && review_reply_data.length> 0) { %>
+                    <% review_reply_data.forEach(data=> { %>
+                        <% if (data.REVIEW_C_ID===c_id) { %>
+                            <div class="review-card">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5>
+                                            <%= data.EMAIL %>
+                                        </h5>
+                                        <div class="rating">
+                                            <% for (let i=0; i < 5; i++) { %>
+                                                <% if (i < data.FOOD_RATING) { %>
+                                                    <i class="fas fa-star filled"></i>
+                                                    <% } else { %>
+                                                        <i class="far fa-star"></i>
+                                                        <% } %>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Posted on <%= data.C_DATE %></small>
+                                </div>
+                                <p>
+                                    <%= data.FOOD_REVIEW %>
+                                </p>
+                                <div class="admin-reply">
+                                    <strong>Vendor Reply:</strong>
+                                    <%= data.REPLY ? data.REPLY : "No reply yet" %>
+                                </div>
+                                <button class="btn btn-primary btn-sm" data-mdb-toggle="modal"
+                                    data-mdb-target="#editReviewModal_<%= c_id %>">Edit</button>
+                            </div>
+
+                            <!-- Modal for editing review -->
+                            <div class="modal fade" id="editReviewModal_<%= c_id %>" tabindex="-1"
+                                aria-labelledby="editReviewModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editReviewModalLabel">Edit Your Review</h5>
+                                            <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form action="http://localhost:3000/user/<%- id %>/edit_review/<%= c_id %>"
+                                            method="post">
+                                            <div class="modal-body">
+                                                <div class="form-outline mb-4">
+                                                    <textarea class="form-control" id="editReview" rows="4"
+                                                        name="FOOD_REVIEW" required><%= data.FOOD_REVIEW %></textarea>
+                                                    <label class="form-label" for="editReview">Your Review</label>
+                                                    <div class="invalid-feedback">Review is required.</div>
+                                                </div>
+
+                                                <div class="form-outline mb-4">
+                                                    <label>Rating</label>
+                                                    <div class="star-rating" data-rating="<%= data.RATING %>">
+                                                        <% for (let i=1; i <=5; i++) { %>
+                                                            <i class="star <%= i <= data.RATING ? 'fas filled' : 'far empty' %> fa-star"
+                                                                data-value="<%= i %>"></i>
+                                                            <% } %>
+                                                    </div>
+                                                    <input type="hidden" name="RATING" id="ratingInput_<%= data._id %>"
+                                                        value="<%= data.RATING %>" required />
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-mdb-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                                <% }) %>
+                                    <% } %>
+                                        <% } %>
+
+                                            <!-- Display all reviews -->
+                                            <% if (Array.isArray(review_reply_data) && review_reply_data.length> 0) { %>
+                                                <% review_reply_data.forEach(data=> { %>
+                                                    <% if (data.REVIEW_C_ID !==c_id) { %>
+                                                        <div class="review-card">
+                                                            <div class="d-flex justify-content-between">
+                                                                <div>
+                                                                    <h5>
+                                                                        <%= data.EMAIL %>
+                                                                    </h5>
+                                                                    <div class="rating">
+                                                                        <% for (let i=0; i < 5; i++) { %>
+                                                                            <i
+                                                                                class="<%= i < data.FOOD_RATING ? 'fas fa-star filled' : 'far fa-star' %>"></i>
+                                                                            <% } %>
+                                                                    </div>
+                                                                </div>
+                                                                <small class="text-muted">Posted on <%= data.C_DATE %>
+                                                                </small>
+                                                            </div>
+                                                            <p>
+                                                                <%= data.FOOD_REVIEW %>
+                                                            </p>
+                                                            <div class="admin-reply">
+                                                                <strong>Vendor Reply:</strong>
+                                                                <%= data.REPLY ? data.REPLY : "No reply yet" %>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                                            <% }) %>
+                                                                <% } %>
+
+                                                                    <!-- If the user hasn't reviewed yet, show an empty review form -->
+                                                                    <% if (!userHasReviewed) { %>
+                                                                        <div class="form-section">
+                                                                            <h2>Add a Review</h2>
+                                                                            <form class="needs-validation"
+                                                                                id="reviewForm"
+                                                                                action="http://localhost:3000/user/<%- id %>/food_review"
+                                                                                method="post" novalidate>
+                                                                                <div class="form-outline mb-4">
+                                                                                    <input type="text" id="name"
+                                                                                        class="form-control"
+                                                                                        value="<%= EMAIL %>" readonly
+                                                                                        required />
+                                                                                    <label class="form-label"
+                                                                                        for="name">Your email</label>
+                                                                                    <div class="invalid-feedback">Name
+                                                                                        is required.</div>
+                                                                                </div>
+                                                                                <div class="form-outline mb-4">
+                                                                                    <textarea class="form-control"
+                                                                                        id="review" rows="4"
+                                                                                        name="FOOD_REVIEW"
+                                                                                        required></textarea>
+                                                                                    <label class="form-label"
+                                                                                        for="review">Your Review</label>
+                                                                                    <div class="invalid-feedback">Review
+                                                                                        is required.</div>
+                                                                                </div>
+                                                                                <div class="form-outline mb-4">
+                                                                                    <label>Rating</label>
+                                                                                    <div class="star-rating"
+                                                                                        data-rating="0">
+                                                                                        <i class="far fa-star star"
+                                                                                            data-value="1"></i>
+                                                                                        <i class="far fa-star star"
+                                                                                            data-value="2"></i>
+                                                                                        <i class="far fa-star star"
+                                                                                            data-value="3"></i>
+                                                                                        <i class="far fa-star star"
+                                                                                            data-value="4"></i>
+                                                                                        <i class="far fa-star star"
+                                                                                            data-value="5"></i>
+                                                                                    </div>
+                                                                                    <input type="hidden"
+                                                                                        name="FOOD_RATING" id="rating"
+                                                                                        required />
+                                                                                    <div class="invalid-feedback">Rating
+                                                                                        is required.</div>
+                                                                                </div>
+                                                                                <button type="submit"
+                                                                                    class="btn btn-primary btn-block"
+                                                                                    name="FOOD_ID"
+                                                                                    value="<%= FOOD_DATA.FOOD_ID %>">Submit
+                                                                                    Review</button>
+                                                                            </form>
+                                                                        </div>
+                                                                        <% } %>
+        </div>
+    </div>
+
+    <!-- MDBootstrap JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Handle star rating click
+            $('.star-rating .star').click(function () {
+                var starRating = $(this).closest('.star-rating');
+                var rating = $(this).data('value');
+                starRating.attr('data-rating', rating);
+                starRating.find('.star').each(function (index) {
+                    $(this).toggleClass('fas filled', index < rating);
+                    $(this).toggleClass('far empty', index >= rating);
+                });
+                starRating.next('input').val(rating);
+            });
+
+            // Fill stars in modals
+            $('.modal').on('show.bs.modal', function (e) {
+                var starRating = $(this).find('.star-rating');
+                var rating = starRating.data('rating');
+                starRating.find('.star').each(function (index) {
+                    $(this).toggleClass('fas filled', index < rating);
+                    $(this).toggleClass('far empty', index >= rating);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,23 +1,39 @@
-<div class="form-group">
-    <label for="input-datalist">Timezone</label>
-    <input type="text" class="form-control" placeholder="Timezone" list="list-timezone" id="input-datalist">
-    <datalist id="list-timezone">
-        <option>Asia/Aden</option>
-        <option>Asia/Aqtau</option>
-        <option>Asia/Baghdad</option>
-        <option>Asia/Barnaul</option>
-        <option>Asia/Chita</option>
-        <option>Asia/Dhaka</option>
-        <option>Asia/Famagusta</option>
-        <option>Asia/Hong_Kong</option>
-        <option>jhalmuri</option>
-        <option>Asia/Kuala_Lumpur</option>
-        <option>Asia/Jakarta</option>
-    </datalist>
-</div>
+<!DOCTYPE html>
+<html lang="en">
 
-<script>
-    document.addEventListener('DOMContentLoaded', e => {
-        $('#input-datalist').autocomplete()
-    }, false);
-</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+
+</head>
+
+<body>
+    <div class="form-group">
+        <label for="input-datalist">Timezone</label>
+        <input type="text" class="form-control" placeholder="Timezone" list="list-timezone" id="input-datalist">
+        <datalist id="list-timezone">
+            <option>Asia/Aden</option>
+            <option>Asia/Aqtau</option>
+            <option>Asia/Baghdad</option>
+            <option>Asia/Barnaul</option>
+            <option>Asia/Chita</option>
+            <option>Asia/Dhaka</option>
+            <option>Asia/Famagusta</option>
+            <option>Asia/Hong_Kong</option>
+            <option>jhalmuri</option>
+            <option>Asia/Kuala_Lumpur</option>
+            <option>Asia/Jakarta</option>
+        </datalist>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', e => {
+            $('#input-datalist').autocomplete()
+        }, false);
+    </script>
+</body>
+
+</html>

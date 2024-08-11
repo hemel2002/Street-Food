@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Street Food Bangladesh</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
-    <link href="../../css/viewShop.css" rel="stylesheet">
+    <link href="../../css/viewShop.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
@@ -86,19 +86,22 @@
 <body>
     <section draggable="false" class="overflow-hidden pt-0">
         <section class="mb-10">
-            <div class="p-5 text-center bg-image" style="background-image: url('<%= viewshop[0].STALL_PIC %>');"
+            <div class="p-5 text-center bg-image" style="background-image: url('<%= viewshop[0].STALL_PIC %>')"
                 aria-controls="#picker-editor" alt="Background Image"></div>
             <div class="container">
-                <div class="card mx-4 mx-md-5 text-center shadow-5-strong"
-                    style="margin-top: -170px; background: hsla(0, 0%, 100%, 0.7); backdrop-filter: blur(30px);">
+                <div class="card mx-4 mx-md-5 text-center shadow-5-strong" style="
+              margin-top: -170px;
+              background: hsla(0, 0%, 100%, 0.7);
+              backdrop-filter: blur(30px);
+            ">
                     <div class="card-body px-4 py-5 px-md-5">
                         <h1 class="display-3 fw-bold ls-tight mb-4">
                             <span>The best offer on the market</span>
-                            <br>
+                            <br />
                             <span class="text-primary">for your business</span>
                         </h1>
                         <a class="btn btn-primary btn-lg py-3 px-5 mb-2 mb-md-0 me-md-2" href="#" role="button"
-                            aria-controls="#picker-editor" draggable="false" style="min-width: auto;">Shop details <i
+                            aria-controls="#picker-editor" draggable="false" style="min-width: auto">Shop details <i
                                 class="fas fa-cart-arrow-down p-1 ps-2"></i></a>
                     </div>
                 </div>
@@ -131,7 +134,9 @@
             </div>
         </section>
         <div class="pagination-center">
-            <button id="testimonial-prev-btn" class="btn btn-primary">Previous</button>
+            <button id="testimonial-prev-btn" class="btn btn-primary">
+                Previous
+            </button>
             <div id="testimonial-page-numbers"></div>
             <button id="testimonial-next-btn" class="btn btn-primary">Next</button>
         </div>
@@ -151,16 +156,20 @@
         </section>
     </section>
 
+
     <script>
         let foodData = [];
         let videoData = [];
+        let userId = '<%= id %>'; // Ensure id is defined and accessible
 
         const getdata = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sellerId = urlParams.get('id');
 
             try {
-                const res = await axios.get(`http://localhost:3000/home/ViewShop?id=${sellerId}&responseType=json`);
+                const res = await axios.get(
+                    `http://localhost:3000/home/ViewShop?id=${sellerId}&responseType=json`
+                );
                 foodData = res.data.viewshop;
                 videoData = res.data.video;
                 console.log('foodData', foodData);
@@ -171,7 +180,7 @@
             } catch (error) {
                 console.log('error', error);
             }
-        }
+        };
 
         getdata();
 
@@ -197,7 +206,7 @@
                 const end = start + itemsPerPage;
                 const itemsToRender = foodData.slice(start, end);
 
-                itemsToRender.forEach(item => {
+                itemsToRender.forEach((item) => {
                     const foodCard = document.createElement('div');
                     foodCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
                     foodCard.innerHTML = `
@@ -210,13 +219,29 @@
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">${item.FOOD_NAME}</h5>
-                                <p class="card-text">${item.FOOD_DESCPRIPTION}</p>
-                                <button class="btn btn-primary btn-md">Add to cart</button>
+                                <p class="card-text">${item.INGREDIENT}</p>
+                                <p class="card-text">Price: ${item.PRICE} Tk</p>
+                                <div class="rating">
+                                    ${generateStars(item.RATING)}
+                                </div>
+                                <button class="btn btn-success btn-md" onclick="window.location.href='http://localhost:3000/user${userId ? '/' + userId : ''}/details_food?FOOD_ID=${item.FOOD_ID}'">Details</button>
                             </div>
                         </div>
                     `;
                     foodCardsContainer.appendChild(foodCard);
                 });
+            }
+
+            function generateStars(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star"></i>'; // Filled star
+                    } else {
+                        stars += '<i class="far fa-star"></i>'; // Empty star
+                    }
+                }
+                return stars;
             }
 
             function renderPageNumbers() {
@@ -267,16 +292,16 @@
                 const end = start + itemsPerPage;
                 const itemsToRender = videoData.slice(start, end);
 
-                itemsToRender.forEach(item => {
+                itemsToRender.forEach((item) => {
                     const videoCard = document.createElement('div');
                     videoCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
                     videoCard.innerHTML = `
-                        <div class="card card-custom">
-                            <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
-                                <video src="${item.VIDEO_LINKS}" class="img-fluid" controls></video>
+                        <div class="card card-custom h-100">
+                            <div class="bg-image hover-overlay ripple ripple-surface-light h-100" data-ripple-color="light">
+                                <video src="${item.VIDEO_LINKS}" class="img-fluid w-100 h-100" controls poster="${item.IMAGE_LINKS}"></video>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">${item.VIDEO_NAME}</h5>
+                                <h5 class="card-title">${item.VIDEO_TITLE}</h5>
                                 <p class="card-text">${item.VIDEO_DESCRIPTION}</p>
                                 <button class="btn btn-primary btn-md">Watch</button>
                             </div>

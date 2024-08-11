@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <title>Admin Analytics</title>
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .complain-section {
+            margin-top: 20px;
+        }
+
+
+
+        .profile-photo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .dark-mode {
+            margin-top: 20px;
+        }
+
+        .profile {
+            margin-top: 20px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar Section -->
+                <%- include('side_navbar') %>
+                    <!-- End of Sidebar Section -->
+
+                    <!-- Main Content -->
+                    <main class="col-md-7 p-4">
+                        <h1 class="mb-4">Customer List</h1>
+
+                        <!-- Customer List Table -->
+                        <div class="table-responsive  p-4 rounded shadow-sm">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">C-ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Join Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Customer rows go here -->
+                                    <% for( let i=0; i < customersdata.length; i++ ) { %>
+                                        <tr>
+                                            <td>
+                                                <%= customersdata[i].C_ID %>
+                                            </td>
+                                            <td>
+                                                <%= customersdata[i].FIRST_NAME %>
+                                            </td>
+                                            <td>
+                                                <%= customersdata[i].EMAIL %>
+                                            </td>
+                                            <td>
+                                                <%= customersdata[i].PHONE %>
+                                            </td>
+                                            <td>
+                                                <%= customersdata[i].JOIN_DATE %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                            </ul>
+                        </nav>
+                    </main>
+                    <!-- End of Main Content -->
+
+                    <!-- Right Section -->
+                    <%- include('Admin_Complaints_Section') %>
+                        <!-- End of Right Section -->
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

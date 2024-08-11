@@ -1,0 +1,37 @@
+<!--
+// v0 by Vercel.
+// https://v0.dev/t/RGN9rgAxK6R
+-->
+
+<div class="relative flex min-h-screen items-center justify-center bg-muted">
+    <img src="/placeholder.svg" alt="Food Dish"
+        class="absolute inset-0 h-full w-full object-cover object-center blur-sm" width="1600" height="900"
+        style="aspect-ratio: 1600 / 900; object-fit: cover;" />
+    <div class="relative z-10 w-full max-w-md space-y-6 rounded-lg bg-background p-8 shadow-lg">
+        <div class="space-y-2 text-center">
+            <h1 class="text-3xl font-bold">Login</h1>
+            <p class="text-muted-foreground">Enter your credentials to access your account.</p>
+        </div>
+        <form class="space-y-4">
+            <div>
+                <label
+                    class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    for="username">
+                    Username
+                </label>
+                <input
+                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    id="username" placeholder="Enter your username" required="" />
+            </div>
+            <div>
+                <div class="flex items-center justify-between">
+                    <label
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        for="password">
+                        Password
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

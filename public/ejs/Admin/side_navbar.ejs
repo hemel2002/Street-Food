@@ -1,0 +1,60 @@
+<aside class="col-md-2 sidebar p-3">
+    <div class="d-flex flex-column align-items-center">
+        <div class="logo my-4 text-center">
+            <img src="#" alt="Logo" class="img-fluid mb-2">
+            <h2>Street<span class="text-danger">Food</span></h2>
+        </div>
+        <nav class="nav flex-column w-100">
+            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>">
+                <span class="material-icons-sharp">dashboard</span>
+                Dashboard
+            </a>
+            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_customers">
+                <span class="material-icons-sharp">person_outline</span>
+                Customers
+            </a>
+            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_vendors">
+                <span class="material-icons-sharp">receipt_long</span>
+                Vendors
+            </a>
+            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_complaints_dashboard">
+                <span class="material-icons-sharp">report_problem</span>
+                Complaints
+                <span class="badge bg-danger ms-2">
+                    <%= pending_complaints %>
+                </span>
+            </a>
+            <a class="nav-link" href="#">
+                <span class="material-icons-sharp">logout</span>
+                Logout
+            </a>
+        </nav>
+    </div>
+</aside>
+<script>
+    function setActive() {
+        // Get the current URL path
+        const currentPath = window.location.pathname;
+
+        // Loop through all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            // Remove active class from all nav links
+            link.classList.remove('active');
+
+            // Skip the "Logout" link
+            if (link.getAttribute('href') === '#') {
+                return;
+            }
+
+            // Check if the href attribute matches the current path exactly
+            const linkPath = new URL(link.href).pathname;
+            if (linkPath === currentPath) {
+                // Add active class to the matching nav link
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Call setActive when the page loads
+    window.onload = setActive;
+</script>

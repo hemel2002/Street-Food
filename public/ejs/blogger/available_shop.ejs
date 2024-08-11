@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Food</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        .vendor-card {
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row" id="vendor-cards">
+            <!-- Vendor Cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Pagination items will be inserted here by JavaScript -->
+            </ul>
+        </nav>
+    </div>
+
+    <!-- MDBootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"></script>
+    <script>
+        let vendors = [];
+
+        const getdata = async () => {
+            try {
+                const res = await axios.get('http://localhost:3000/home?request=json');
+                vendors = res.data;
+                console.log(vendors);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('vendor-cards').innerHTML = '<p class="text-danger">Failed to load vendors. Please try again later.</p>';
+            }
+        }
+
+        const itemsPerPage = 6;
+        let currentPage = 1;
+
+        function renderVendors() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedVendors = vendors.slice(startIndex, endIndex);
+
+            const vendorCardsContainer = document.getElementById('vendor-cards');
+            vendorCardsContainer.innerHTML = '';
+
+            paginatedVendors.forEach(vendor => {
+                const vendorCard = `
+                    <div class="col-lg-4 col-md-6 vendor-card">
+                        <div class="card">
+                            <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                                <img src="${vendor.STALL_PIC}" class="img-fluid" alt="${vendor.STALL_NAME}" />
+                                <a href="#!">
+                                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                                </a>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">${vendor.V_FIRST_NAME} ${vendor.V_LAST_NAME}</h5>
+                                <p class="card-text">${vendor.STALL_TITLE}</p>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <a href="http://localhost:3000/home/viewShop?id=${vendor.V_ID}" class="btn btn-primary btn-block">Detail</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="http://localhost:3000/user/<%= id %>/review?vendor=${vendor.V_ID}" class="btn btn-secondary btn-block">Review</a>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <a href="http://localhost:3000/user/<%= id %>/complaint?V_ID=${vendor.V_ID}" class="btn btn-danger btn-block">Complaint</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">Member since ${vendor.JOIN_DATE}</div>
+                        </div>
+                    </div>
+                `;
+                vendorCardsContainer.insertAdjacentHTML('beforeend', vendorCard);
+            });
+        }
+
+        function renderPagination() {
+            const pageCount = Math.ceil(vendors.length / itemsPerPage);
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            for (let i = 1; i <= pageCount; i++) {
+                const paginationItem = `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    </li>
+                `;
+                paginationContainer.insertAdjacentHTML('beforeend', paginationItem);
+            }
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderVendors();
+            renderPagination();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await getdata();
+            renderVendors();
+            renderPagination();
+        });
+    </script>
+</body>
+
+</html>

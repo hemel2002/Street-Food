@@ -32,7 +32,7 @@ router.get('/:id', requirelogin, async (req, res) => {
       `SELECT * FROM food WHERE FOOD_ID IN (SELECT FOOD_ID FROM VENDOR_SELLS_FOOD WHERE V_ID = :id) ORDER BY FOOD_ID ASC`,
       { id: id }
     );
-
+    console.log(foodResult.rows);
     const reviewResult = await connection.execute(
       'SELECT CUSTOMER_ID, NAME, REVIEW_MESSAGE, RATING FROM customer_reviews'
     );
@@ -280,7 +280,7 @@ router.post('/:id/logout', requirelogin, (req, res) => {
 });
 ////////////////////////////////////////////////vendor qr-code///////////////////////
 router.get('/:id/qr', requirelogin, (req, res) => {
-  res.render('vendor_ejs/test');
+  res.render('vendor_ejs/qr');
 });
 
 router.post('/:id/qr', requirelogin, (req, res) => {
@@ -308,6 +308,101 @@ router.post('/:id/qr', requirelogin, (req, res) => {
   writeStream.on('error', (err) => {
     res.status(500).send(err.message);
   });
+});
+//////////////////////////////////////vendor review and reply/////////////////////////////
+router.get('/:id/review', requirelogin, async (req, res) => {
+  const { id } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const reviewResult = await connection.execute(
+      'select * from CUSTOMERREVIEWSVENDOR where V_ID = :id',
+      { id: id }
+    );
+    const result = await connection.execute(
+      'SELECT AVG(RATING) FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :id',
+      { id: id }
+    );
+    const result2 = await connection.execute(
+      'SELECT V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,V.SHOP_DATA.STALL_NAME AS STALL_NAME FROM VENDORS V WHERE V_ID = :id',
+      { id: id }
+    );
+
+    const reviews = reviewResult.rows;
+    const avg_rating = result.rows[0]['AVG(RATING)'];
+    const vendordata = result2.rows[0];
+
+    console.log(reviews);
+    res.render('vendor_ejs/vendor_reviews', {
+      reviews,
+      id,
+      avg_rating,
+      vendordata,
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+
+router.post('/:id/review', requirelogin, async (req, res) => {
+  const { reply_msg, C_ID } = req.body;
+  const V_ID = req.session.user_id; // Correctly accessing V_ID
+  console.log(V_ID);
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'UPDATE CUSTOMERREVIEWSVENDOR SET REPLY = :reply_msg, V_REPLY_DATE = SYSTIMESTAMP WHERE C_ID = :C_ID AND V_ID = :V_ID',
+      { reply_msg, C_ID, V_ID },
+      { autoCommit: true }
+    );
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+  req.flash('review', 'Review added successfully!');
+  res.redirect(`/vendor/${V_ID}`);
+});
+router.patch('/:id/review', requirelogin, async (req, res) => {
+  const { reply_msg, C_ID } = req.body;
+  const V_ID = req.session.user_id; // Correctly accessing V_ID
+  console.log(V_ID);
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'UPDATE CUSTOMERREVIEWSVENDOR SET REPLY = :reply_msg, V_REPLY_DATE = SYSTIMESTAMP WHERE C_ID = :C_ID AND V_ID = :V_ID',
+      { reply_msg, C_ID, V_ID },
+      { autoCommit: true }
+    );
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+  req.flash('review', 'Review updated successfully!');
+  res.redirect(`/vendor/${V_ID}`);
 });
 
 /////////////////////////////////export Router/////////////////////////////

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Analytics</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('header') %>
+
+        <div class="container-fluid">
+            <!-- Sidebar Section -->
+            <div class="row">
+                <%- include('side_navbar') %>
+
+                    <!-- Main Content -->
+                    <main class="col-md-8">
+                        <div class="container">
+                            <!-- Analyses -->
+                            <div class="row my-4">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h3>Total Customers</h3>
+                                            <h1>
+                                                <%= total_customers %>
+                                            </h1>
+                                            <div class="progress my-3" style="height: 8px;">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                    style="width: 81%;">
+                                                </div>
+                                            </div>
+                                            <p class="text-success">+81%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h3>Total Vendors</h3>
+                                            <h1>
+                                                <%= total_vendors %>
+                                            </h1>
+                                            <div class="progress my-3" style="height: 8px;">
+                                                <div class="progress-bar bg-success" role="progressbar"
+                                                    style="width: 31%;">
+                                                </div>
+                                            </div>
+                                            <p class="text-success">+31%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card text-center">
+                                        <div class="card-body">
+                                            <h3>Active Vendors</h3>
+                                            <h1>
+                                                <%= active_vendors %>
+                                            </h1>
+                                            <div class="progress my-3" style="height: 8px;">
+                                                <div class="progress-bar bg-primary" role="progressbar"
+                                                    style="width: 21%;">
+                                                </div>
+                                            </div>
+                                            <p class="text-primary">+21%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End of Analyses -->
+
+                            <!-- New Customers Section -->
+                            <div class="mb-4">
+                                <h2>New Customers</h2>
+                                <div class="d-flex flex-wrap">
+                                    <% for (let i=0; i < Math.min(C_data.length, 8); i++) { %>
+                                        <div class="card m-2" style="width: 12rem;">
+
+                                            <img src="<%= C_data[i].profile_picture || '/path/to/default-avatar.png' %>"
+                                                alt="<%= C_data[i].FIRST_NAME %>">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">
+                                                    <%= C_data[i].FIRST_NAME %>
+                                                        <%= C_data[i].LAST_NAME %>
+                                                </h5>
+                                                <% for (let j=0; j < Math.min(customersdata.length, 8); j++) { %>
+
+                                                    <% if (customersdata[j].C_ID===C_data[i].C_ID) { %>
+                                                        <p class="card-text">
+
+                                                            <% if (C_data[i].DAYS> 0) { %>
+
+                                                                <span class="time-unit">
+                                                                    <%=C_data[i].DAYS %> days
+                                                                </span>
+                                                                <% } else if (C_data[i].HOURS> 0) { %>
+                                                                    <span class="time-unit">
+                                                                        <%= C_data[i].HOURS %> hours
+                                                                    </span>
+                                                                    <% } else if (C_data[i].MINUTES> 0) { %>
+                                                                        <span class="time-unit">
+                                                                            <%= C_data[i].MINUTES %> minutes
+                                                                        </span>
+                                                                        <% } else { %>
+                                                                            <span class="time-unit">
+                                                                                <%= C_data[i].SECONDS %> seconds ago
+                                                                            </span>
+                                                                            <% } %>
+                                                        </p>
+                                                        <% } %>
+
+                                                            <% } %>
+
+
+
+
+
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                </div>
+                            </div>
+                            <!-- End of New Customers Section -->
+
+                            <!-- New Vendors Section -->
+                            <div class="mb-4">
+                                <h2>New Vendors</h2>
+                                <div class="d-flex flex-wrap">
+                                    <% for (let i=0; i < Math.min(v_data.length, 4); i++) { %>
+                                        <div class="card m-2" style="width: 12rem;">
+                                            <img src="<%= v_data[i].profile_picture || '/path/to/default-avatar.png' %>"
+                                                alt="<%= v_data[i].V_FIRST_NAME %>">
+                                            <div class="card-body text-center">
+                                                <h5 class="card-title">
+                                                    <%= v_data[i].V_FIRST_NAME %>
+                                                        <%= v_data[i].V_LAST_NAME %>
+                                                </h5>
+                                                <% for (let j=0; j < Math.min(vendorsdata.length, 4); j++) { %>
+
+                                                    <% if (vendorsdata[j].V_ID===v_data[i].V_ID) { %>
+                                                        <p class="card-text">
+
+                                                            <% if (v_data[i].DAYS> 0) { %>
+
+                                                                <span class="time-unit">
+                                                                    <%=v_data[i].DAYS %> days
+                                                                </span>
+                                                                <% } else if (v_data[i].HOURS> 0) { %>
+                                                                    <span class="time-unit">
+                                                                        <%= v_data[i].HOURS %> hours
+                                                                    </span>
+                                                                    <% } else if (v_data[i].MINUTES> 0) { %>
+                                                                        <span class="time-unit">
+                                                                            <%= v_data[i].MINUTES %> minutes
+                                                                        </span>
+                                                                        <% } else { %>
+                                                                            <span class="time-unit">
+                                                                                <%= v_data[i].SECONDS %> seconds ago
+                                                                            </span>
+                                                                            <% } %>
+                                                        </p>
+                                                        <% } %>
+
+                                                            <% } %>
+
+
+
+
+
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                </div>
+                            </div>
+
+
+                            <!-- End of New Vendor Section -->
+
+                            <!-- Recent Activities Section -->
+                            <div class="mb-4 Recent_Activities" data-mdb-theme="dark">
+                                <h2>Recent Activities</h2>
+                                <div class="card bg-dark">
+                                    <div class="card-body">
+                                        <table class="table table-striped ">
+                                            <thead>
+                                                <tr>
+                                                    <th>Activity</th>
+                                                    <th>User</th>
+                                                    <th>Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>New Vendor Registered</td>
+                                                    <td>Jack</td>
+                                                    <td>August 2, 2024</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>New Customer Added</td>
+                                                    <td>Amir</td>
+                                                    <td>August 2, 2024</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Vendor Profile Updated</td>
+                                                    <td>Ember</td>
+                                                    <td>August 2, 2024</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vendor Categories Section -->
+                            <div class="mb-4">
+                                <h2>Vendor Categories</h2>
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card text-center bg-primary text-white">
+                                            <div class="card-body">
+                                                <h3>Food</h3>
+                                                <h1>250</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card text-center bg-secondary text-white">
+                                            <div class="card-body">
+                                                <h3>Drinks</h3>
+                                                <h1>150</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card text-center bg-success text-white">
+                                            <div class="card-body">
+                                                <h3>Desserts</h3>
+                                                <h1>100</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="card text-center bg-danger text-white">
+                                            <div class="card-body">
+                                                <h3>Others</h3>
+                                                <h1>50</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End of Vendor Categories Section -->
+
+                            <!-- Vendor Categories Chart -->
+
+                            <div class="mb-4">
+                                <h2>Vendor Categories Chart</h2>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <canvas id="vendorCategoriesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vendor Overview Section -->
+                            <div class="mb-4">
+                                <h2>Vendor Overview</h2>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h4>Vendor Statistics</h4>
+                                                <ul class="list-unstyled">
+                                                    <li>Total Active Vendors: <b>500</b></li>
+                                                    <li>Average Rating: <b>4.5/5</b></li>
+                                                    <li>Total Revenue: <b>$15,000</b></li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <h4>Vendor Categories</h4>
+                                                <ul class="list-unstyled">
+                                                    <li>Food Trucks: <b>200</b></li>
+                                                    <li>Restaurants: <b>150</b></li>
+                                                    <li>Street Stalls: <b>100</b></li>
+                                                    <li>Carts: <b>50</b></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- Right Section -->
+
+                    <div class="p-3">
+                        <div class="reminders p-3">
+                            <div class="card mb-3">
+                                <div class="card-body text-center">
+                                    <h4>Registrations</h4>
+                                    <h3>
+                                        <%= recentVendorsCount+recentCustomersCount %>
+                                    </h3>
+                                    <p>Last 24 Hours</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h4>Activity</h4>
+                                    <h3>15</h3>
+                                    <p>Last 24 Hours</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- MDB JavaScript -->
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Custom JavaScript -->
+
+        <script>
+            // Vendor Categories Chart
+            const ctxVendorCategories = document.getElementById('vendorCategoriesChart').getContext('2d');
+            new Chart(ctxVendorCategories, {
+                type: 'bar',
+                data: {
+                    labels: ['Food Trucks', 'Restaurants', 'Street Stalls', 'Carts'],
+                    datasets: [{
+                        label: 'Number of Vendors',
+                        data: [200, 150, 100, 50],
+                        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Calendar Widget
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    events: [
+                        { title: 'Event 1', start: '2024-08-10' },
+                        { title: 'Event 2', start: '2024-08-15' }
+                    ]
+                });
+                calendar.render();
+            });
+
+            // Dark/Light Mode Toggle
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+
+        </script>
+</body>
+
+</html>

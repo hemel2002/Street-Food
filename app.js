@@ -20,7 +20,8 @@ const multer = require('multer');
 const { storage } = require('./Routes/cloudinary');
 const upload = multer({ storage });
 const require_email = require('./Routes/require_email.js');
-const sendOtpEmail = require('./Routes/emai.js');
+const sendOtpEmail = require('./Routes/email.js');
+const admin = require('./Routes/admin');
 const app = express();
 const port = 3000;
 
@@ -62,6 +63,10 @@ app.use((req, res, next) => {
   res.locals.forget_success = req.flash('forget_success');
 
   res.locals.delete_success = req.flash('delete_success');
+  res.locals.review = req.flash('review');
+  res.locals.review_error = req.flash('review_error');
+  res.locals.success_comment = req.flash('success_comment');
+  res.locals.comment_error = req.flash('comment_error');
   next();
 });
 //////////////////////////require login middleware/////////////////////////
@@ -78,6 +83,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.mode = req.session.mode || 'light';
   res.locals.id = req.session.user_id;
+  res.locals.pending_complaints = req.session.pending_complaints;
+
   next();
 });
 app.post('/home', (req, res) => {
@@ -91,7 +98,9 @@ app.post('/home', (req, res) => {
 });
 ///////////////////////////home///////////////////////////////////////
 let shop = [];
-
+app.get('/landing', async (req, res) => {
+  res.render('home/home1');
+});
 app.get('/home', async (req, res) => {
   const currentPage = parseInt(req.query.page) || 1;
   const itemsPerPage = 6;
@@ -103,7 +112,7 @@ app.get('/home', async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      'SELECT STALL_PIC, STALL_NAME, V_ID FROM vendors'
+      'SELECT V.SHOP_DATA.STALL_PIC AS STALL_PIC , V.SHOP_DATA.STALL_NAME AS STALL_NAME, V_ID,V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,JOIN_DATE,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE FROM vendors V'
     );
     shop = result.rows;
     if (request === 'json') {
@@ -125,7 +134,7 @@ app.get('/home', async (req, res) => {
   const displayedItems = shop.slice(startIndex, endIndex);
   const totalPages = Math.ceil(shop.length / itemsPerPage);
 
-  res.render('home/home', {
+  res.render('home/services', {
     currentPage,
     itemsPerPage,
     displayedItems,
@@ -163,12 +172,26 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
   }
 
   let connection;
+  let resfind_id;
   try {
     connection = await OracleDB.getConnection(dbConfig);
-    const resfind_id = await connection.execute(
-      'SELECT USER_ID FROM USERS WHERE EMAIL = :email',
-      { email }
-    );
+    if (accountType === 'Seller') {
+      resfind_id = await connection.execute(
+        'SELECT V_ID FROM VENDORS WHERE EMAIL = :email',
+        { email }
+      );
+    } else if (accountType === 'User') {
+      resfind_id = await connection.execute(
+        'SELECT C_ID FROM CUSTOMERS WHERE EMAIL = :email',
+        { email }
+      );
+    } else {
+      resfind_id = await connection.execute(
+        'SELECT USER_ID FROM USERS WHERE EMAIL = :email',
+        { email }
+      );
+    }
+
     console.log(resfind_id.rows);
     if (resfind_id.rows.length !== 0) {
       req.flash('userExist', 'User already exists.');
@@ -207,6 +230,7 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
 });
 
 app.use('/vendor', vendor);
+app.use('/admin', admin);
 app.use('/user', user);
 ////////////////////////home page/////////////////////////////
 //////////////////login//////////////////
@@ -219,6 +243,7 @@ app.post('/home/login', async (req, res) => {
   let connection;
   let USER_ID;
   let EMAIL;
+  let FIRST_NAME;
 
   try {
     connection = await OracleDB.getConnection({
@@ -235,7 +260,7 @@ app.post('/home/login', async (req, res) => {
 
       // Check in the VENDORS table
       result = await connection.execute(
-        `SELECT EMAIL, V_ID, PASSWORD FROM vendors WHERE V_ID = :email OR EMAIL = :email`,
+        `SELECT V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,EMAIL, V_ID, PASSWORD FROM vendors V WHERE V_ID = :email OR EMAIL = :email`,
         { email: email }
       );
 
@@ -244,10 +269,11 @@ app.post('/home/login', async (req, res) => {
           result.rows;
         USER_ID = V_ID;
         EMAIL = vendorEmail;
+        FIRST_NAME = result.rows[0].V_FIRST_NAME;
       } else {
         // Check in the CUSTOMERS table
         result = await connection.execute(
-          `SELECT EMAIL, C_ID, PASSWORD FROM customers WHERE C_ID = :email OR EMAIL = :email`,
+          `SELECT FIRST_NAME,EMAIL, C_ID, PASSWORD FROM customers WHERE C_ID = :email OR EMAIL = :email`,
           { email: email }
         );
 
@@ -256,6 +282,16 @@ app.post('/home/login', async (req, res) => {
             result.rows;
           USER_ID = C_ID;
           EMAIL = customerEmail;
+          FIRST_NAME = result.rows[0].FIRST_NAME;
+        } else {
+          // Check in the USERS table
+          result = await connection.execute(
+            `SELECT FIRST_NAME, EMAIL, USER_ID, PASSWORD FROM users WHERE USER_ID = :email OR EMAIL = :email`,
+            { email: email }
+          );
+          USER_ID = result.rows[0].USER_ID;
+          EMAIL = result.rows[0].EMAIL;
+          FIRST_NAME = result.rows[0].FIRST_NAME;
         }
       }
 
@@ -264,6 +300,9 @@ app.post('/home/login', async (req, res) => {
 
         if (storedPassword === password) {
           req.session.user_id = USER_ID;
+          req.session.email = EMAIL;
+          req.session.FIRST_NAME = FIRST_NAME;
+
           console.log(`Logged in as: ${EMAIL}, ID: ${USER_ID}`);
 
           if (USER_ID[0] === 'A') {
@@ -482,21 +521,15 @@ app.post('/emailVerification/otp', async (req, res) => {
     if (accountType === 'Seller') {
       await connection.execute(
         `INSERT INTO vendors 
-        (ACCOUNT_TYPE, V_FIRST_NAME, V_LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, stall_Name, stall_Pic, LOCATION_URL, PASSWORD, TERMS) 
+        (ACCOUNT_TYPE,  EMAIL, PHONE, PASSWORD, TERMS) 
         VALUES 
-        (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location, :stallName, :stallPic, :shopLocationUrl, :password, :terms)`,
+        (:accountType, :email, :phone, :password, :terms)`,
         {
           accountType,
-          firstName,
-          lastName,
+
           email,
           phone,
-          district,
-          city,
-          location,
-          stallName,
-          stallPic,
-          shopLocationUrl,
+
           password,
           terms,
         },
@@ -551,7 +584,7 @@ app.get('/home/ViewShop', async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      `SELECT v.V_ID, v.V_FIRST_NAME, v.V_LAST_NAME, v.EMAIL, v.PHONE, v.AREA, v.STALL_PIC, f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC 
+      `SELECT v.V_ID, v.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME , v.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME, v.EMAIL, v.PHONE, v.SHOP_DATA.AREA AS AREA, v.SHOP_DATA.STALL_PIC AS STALL_PIC , f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC ,f.FOOD_ID
        FROM vendors v, food f 
        WHERE v.V_ID = :seller_id 
          AND f.FOOD_ID IN (SELECT vsf.FOOD_ID FROM VENDOR_SELLS_FOOD vsf WHERE vsf.V_ID = v.V_ID)`,
@@ -582,6 +615,86 @@ app.get('/home/ViewShop', async (req, res) => {
   } else {
     res.render('home/viewShop', { viewshop });
   }
+});
+///////////////////////////shop location data////////////////////////
+app.get('/home/shopLocation', async (req, res) => {
+  let connection;
+  let shoplocation = [];
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+
+    // Execute the first query to get vendor data
+    const result = await connection.execute(
+      'SELECT V.SHOP_DATA.AREA AS AREA, V.SHOP_DATA.STALL_PIC AS STALL_PIC,V.SHOP_DATA.STALL_NAME AS STALL_NAME, PHONE, JOIN_DATE, V.SHOP_DATA.STATUS AS ACTIVE, V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME, V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME, V_ID FROM vendors V ORDER BY V_ID'
+    );
+
+    // Execute the second query to get average ratings
+    const result2 = await connection.execute(
+      'SELECT AVG(rating) AS avg_rating, v_id FROM customerreviewsvendor GROUP BY v_id'
+    );
+
+    // Append avg_rating to each vendor without using Map
+    shoplocation = result.rows.map((vendor) => {
+      const ratingData = result2.rows.find(
+        (rating) => rating.V_ID === vendor.V_ID
+      );
+      return {
+        ...vendor,
+        AVG_RATING: ratingData ? ratingData.AVG_RATING : null, // Default to null if no rating is found
+      };
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+  res.json(shoplocation);
+});
+/////////////////////////////////////food////////////////////////
+app.get('/home/food', async (req, res) => {
+  // const seller_id = req.query.id;
+  // console.log(seller_id);
+  // let connection;
+  // let food = [];
+  // try {
+  //   connection = await OracleDB.getConnection(dbConfig);
+  //   const result = await connection.execute(
+  //     `SELECT f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC ,f.FOOD_ID
+  //      FROM food f
+  //      WHERE f.FOOD_ID IN (SELECT vsf.FOOD_ID FROM VENDOR_SELLS_FOOD vsf WHERE vsf.V_ID = :seller_id)`,
+  //     [seller_id]
+  //   );
+  //   food = result.rows;
+  //   console.log(food);
+  // } catch (err) {
+  //   console.error(err);
+  // } finally {
+  //   try {
+  //     if (connection) {
+  //       await connection.close();
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
+
+  // res.render('home/food', { food });
+  res.render('home/foods');
+});
+/////////////////////////////////////contact us////////////////////////
+app.get('/home/contacts', async (req, res) => {
+  res.render('home/contacts');
+});
+/////////////////////////////////////team////////////////////////
+app.get('/home/team', async (req, res) => {
+  res.render('home/team');
 });
 
 app.listen(port, () => {

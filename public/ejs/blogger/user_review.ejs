@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Reviews</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .star-rating .filled {
+            color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Vendor Reviews</h1>
+                <p class="card-text">Share your experience with this vendor.</p>
+
+                <!-- Review Form -->
+                <form class="needs-validation" novalidate action="http://localhost:3000/user/<%= id %>/review"
+                    method="post">
+                    <div class="form-outline mb-4">
+                        <input type="text" id="name" class="form-control" readonly value="<%= FIRST_NAME %>" required />
+                        <label class="form-label readonly" for="name">Name</label>
+                        <div class="invalid-feedback">Name is required.</div>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <input type="email" id="email" class="form-control" readonly value="<%= email %>" required />
+                        <label class="form-label" for="email">Email</label>
+                        <div class="invalid-feedback">Email is required.</div>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <textarea class="form-control" id="review" name="message" rows="4" minlength="30"
+                            maxlength="3500" required></textarea>
+                        <label class="form-label" for="review">Your Review</label>
+                        <div class="invalid-feedback">Please share a review between 30 and 3500 words.</div>
+                    </div>
+                    <div class="form-outline mb-4">
+                        <label>Rating</label>
+                        <div class="star-rating" data-rating="0">
+                            <i class="far fa-star" data-value="1"></i>
+                            <i class="far fa-star" data-value="2"></i>
+                            <i class="far fa-star" data-value="3"></i>
+                            <i class="far fa-star" data-value="4"></i>
+                            <i class="far fa-star" data-value="5"></i>
+                        </div>
+                        <input type="hidden" id="rating" value="0" name="rating" required>
+                        <div class="invalid-feedback">Rating is required.</div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block" name="V_ID" value="<%= V_ID %>">Submit
+                        Review</button>
+                </form>
+
+                <!-- Reviews Section -->
+                <h3 class="mt-5">Recent Reviews</h3>
+                <% for(let i=0; i < 5; i++) { %>
+                    <% if (i < reviewddata.length) { %>
+                        <div id="reviews">
+                            <!-- Review -->
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <%= reviewddata[i].C_NAME %>
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        <%= reviewddata[i].C_EMAIL %>
+                                    </h6>
+                                    <p class="card-text">
+                                        <%= reviewddata[i].MESSAGE %>
+                                    </p>
+                                    <div class="star-rating" data-rating="<%= reviewddata[i].RATING %>">
+                                        <% for(let j=0; j < 5; j++) { %>
+                                            <% if (reviewddata[i].RATING> j) { %>
+                                                <i class="fas fa-star filled"></i>
+                                                <% } else { %>
+                                                    <i class="far fa-star"></i>
+                                                    <% } %>
+                                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                            <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- MDB JS -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script>
+        (() => {
+            'use strict';
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms).forEach((form) => {
+                form.addEventListener('submit', (event) => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+
+        // Star Rating for Review Form
+        document.querySelector('.star-rating').addEventListener('click', function (e) {
+            if (e.target.classList.contains('fa-star')) {
+                let rating = e.target.getAttribute('data-value');
+                let stars = this.querySelectorAll('.fa-star');
+                document.getElementById('rating').value = rating;
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('fas', 'filled');
+                        star.classList.remove('far');
+                    } else {
+                        star.classList.remove('fas', 'filled');
+                        star.classList.add('far');
+                    }
+                });
+            }
+        });
+
+        // Initialize star ratings on page load
+        document.querySelectorAll('.star-rating').forEach(starRating => {
+            let rating = starRating.getAttribute('data-rating');
+            let stars = starRating.querySelectorAll('.fa-star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('fas', 'filled');
+                    star.classList.remove('far');
+                } else {
+                    star.classList.remove('fas', 'filled');
+                    star.classList.add('far');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -33,16 +33,14 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Dashboard</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Switch account</a>
-          </li>
+
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Settings
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#">Edit Profile</a></li>
-              <li><a class="dropdown-item" href="#">Forget Password</a></li>
+              <li><a class="dropdown-item" href="#">change Password</a></li>
               <li><a class="dropdown-item" href="#">Help & Support</a></li>
               <li> <a class="nav-link"
                   href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/email">
@@ -113,9 +111,15 @@
 </nav>
 <!-- 2nd Nav Bar -->
 <header class="py-3 mb-4 border-bottom">
-  <div class="container d-flex flex-wrap justify-content-center">
-    <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" style="max-width: 700px; width: 100%;">
-      <input type="search" class="form-control" placeholder="Search a stall ...." aria-label="Search">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <a href="http://localhost:3000/user/<%= id %>/shop" class="btn btn-outline-primary me-2">Available Shops</a>
+      <a href="http://localhost:3000/<%= id[0] === 'U' ? 'user' : 'home' %>/nearbyshop"
+        class="btn btn-outline-primary me-2">Nearby Shops</a>
+    </div>
+    <form class="d-flex mt-3" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
   </div>
 </header>

@@ -1,0 +1,38 @@
+<div class="col-md-3  p-4 complain-section">
+    <div class="reminders">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Complain</h2>
+            <span class="material-icons-sharp">notifications_none</span>
+        </div>
+        <% customers_complaint_data.forEach(data=> { %>
+            <a
+                href="http://localhost:3000/admin/<%= id %>/complain_details?V_ID=<%= data.V_ID %>&C_ID=<%= data.C_ID %>">
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="#" class="img-fluid rounded-start" alt="Customer Pic">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Customer ID : <%=data.C_ID %>
+                                        </h>
+                                        <h6 class="card-title">Email: <%= data.C_EMAIL %>
+                                        </h6>
+                                        <p class="card-text">Subject: <%= data.COMPLAINT_DETAILS.SUBJECT %>
+                                        </p>
+                                        <p class="card-text">Post: <%= data.COMPLAINT_DETAILS.C_COMPLAINT_DATE %>
+                                        </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+            <% }) %>
+
+
+
+                <a href=""><button class="btn btn-success w-100">Show More</button></a>
+    </div>
+</div>

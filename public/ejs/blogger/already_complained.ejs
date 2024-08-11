@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints and Replies</title>
+    <!-- MDBootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        .complaint-card {
+            margin-bottom: 2rem;
+        }
+
+        .reply-card {
+            margin-left: 2rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Submitted Complaints and Admin Replies</h1>
+        <div class="row" id="complaints-section">
+            <!-- Complaint and Reply Cards will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- MDBootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"></script>
+    <script>
+        const queryString = window.location.search;
+
+
+        const urlParams = new URLSearchParams(queryString);
+        const V_ID = urlParams.get('V_ID');
+        let complaints = [];
+
+
+        const getComplaints = async () => {
+            try {
+                const res = await axios.get(`http://localhost:3000/user/<%= id %>/complaint?request=json&V_ID=${V_ID}`);
+                complaints = res.data;
+                console.log(complaints);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('complaints-section').innerHTML = '<p class="text-danger">Failed to load complaints. Please try again later.</p>';
+            }
+        }
+
+        function renderComplaints() {
+            const complaintsSection = document.getElementById('complaints-section');
+            complaintsSection.innerHTML = '';
+
+            complaints.forEach(complaint => {
+                const complaintCard = `
+                    <div class="col-12 complaint-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Complaint from ${complaint.C_EMAIL}</h5>
+                                <p class="card-text">${complaint.COMPLAINT.COMPLAINT}</p>
+                                <p class="text-muted mb-0">Submitted on: ${complaint.COMPLAINT.C_COMPLAINT_DATE}</p>
+                            </div>
+                        </div>
+                        <div class="card reply-card">
+                            <div class="card-body">
+                                <h6 class="card-title">Admin Reply</h6>
+                                <p class="card-text">${complaint.COMPLAINT.MESSAGE}</p>
+                                <p class="text-muted mb-0">Replied on: ${complaint.COMPLAINT.A_REPLY_DATE}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                complaintsSection.insertAdjacentHTML('beforeend', complaintCard);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await getComplaints();
+            renderComplaints();
+        });
+    </script>
+</body>
+
+</html>

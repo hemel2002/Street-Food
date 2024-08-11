@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .complain-section {
+            margin-top: 20px;
+        }
+
+
+
+        .profile-photo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .dark-mode {
+            margin-top: 20px;
+        }
+
+        .profile {
+            margin-top: 20px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+
+        <div class="container-fluid">
+            <div class="row">
+                <aside class="col-md-2 sidebar p-3">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="logo my-4 text-center">
+                            <img src="#" alt="Logo" class="img-fluid mb-2">
+                            <h2>Street<span class="text-danger">Food</span></h2>
+                        </div>
+                        <nav class="nav flex-column w-100">
+                            <a class="nav-link active" href="http://localhost:3000/admin/<%= id %>/admin">
+                                <span class="material-icons-sharp">dashboard</span>
+                                Dashboard
+                            </a>
+                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_customers">
+                                <span class="material-icons-sharp">person_outline</span>
+                                Customers
+                            </a>
+                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_vendors">
+                                <span class="material-icons-sharp">receipt_long</span>
+                                Vendors
+                            </a>
+                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_complaints_dashboard">
+                                <span class="material-icons-sharp">report_problem</span>
+                                Complaints
+                                <span class="badge bg-danger ms-2">3</span> <!-- Change "3" to dynamic number -->
+                            </a>
+                            <a class="nav-link" href="#">
+                                <span class="material-icons-sharp">logout</span>
+                                Logout
+                            </a>
+                        </nav>
+                    </div>
+                </aside>
+                <div class="col-md-10">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="mb-0">Complaint Details</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5>Complaint ID:</h5>
+                                    <p>
+                                        <%= complaintsdata.COMPLAINT_ID %>
+                                    </p>
+                                    <h5>Customer Name:</h5>
+                                    <p>
+                                        <%= complaintsdata.C_NAME %>
+                                    </p>
+                                    <h5>Email:</h5>
+                                    <p>
+                                        <%= complaintsdata.C_EMAIL %>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Complaint Date:</h5>
+                                    <p>
+                                        <%= complaintsdata.C_COMPLAINT_DATE %>
+                                    </p>
+                                    <h5>Subject:</h5>
+                                    <p>
+                                        <%= complaintsdata.SUBJECT %>
+                                    </p>
+                                    <h5>Status:</h5>
+                                    <% if (complaintsdata.STATUS==='Pending' ) { %>
+                                        <p class="badge bg-warning text-dark">
+                                            <%= complaintsdata.STATUS %>
+                                        </p>
+                                        <% } else { %>
+                                            <p class="badge bg-success">
+                                                <%= complaintsdata.STATUS %>
+                                            </p>
+                                            <% } %>
+
+                                </div>
+                            </div>
+                            <hr>
+                            <h5>Description:</h5>
+                            <p>
+                                <%= complaintsdata.COMPLAINT %>
+                            </p>
+                            <hr>
+                            <h5>Actions:</h5>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#resolveModal">Resolve</button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#dismissModal">Dismiss</button>
+                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                data-bs-target="#warningModal">Warning</button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                data-bs-target="#banModal">Ban</button>
+                            <hr>
+                            <a href="#replyCollapse" class="link-info" data-bs-toggle="collapse" aria-expanded="false"
+                                aria-controls="replyCollapse">
+                                Reply to Customer
+                            </a>
+                            <div class="collapse mt-3" id="replyCollapse">
+                                <div class="card card-body">
+                                    <form id="replyForm">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="replyMessage" rows="4"
+                                                placeholder="Write your reply here..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Send Reply</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal fade" id="resolveModal" tabindex="-1" aria-labelledby="resolveModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resolveModalLabel">Resolve Complaint</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to resolve this complaint?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Resolve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dismissModal" tabindex="-1" aria-labelledby="dismissModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dismissModalLabel">Dismiss Complaint</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to dismiss this complaint?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger">Dismiss</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="warningModalLabel">Issue Warning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Select Warning Type:</h5>
+                        <form id="warningForm">
+                            <div class="mb-3">
+                                <label for="warningType" class="form-label">Warning Type:</label>
+                                <select class="form-select" id="warningType" required>
+                                    <option value="" disabled selected>Select a warning</option>
+                                    <option value="restrict_food_creation">Restrict Food Creation (Max 2 posts/day)
+                                    </option>
+                                    <option value="prevent_promotion">Prevent Promotion (5 Days)</option>
+                                    <option value="ban_2_days">Ban for 2 Days</option>
+                                    <option value="ban_7_days">Ban for 7 Days</option>
+                                    <option value="ban_15_days">Ban for 15 Days</option>
+                                    <option value="ban_30_days">Ban for 30 Days</option>
+                                    <option value="permanent_ban">Permanent Ban</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Apply Warning</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="banModal" tabindex="-1" aria-labelledby="banModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="banModalLabel">Ban Options</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Select Ban Duration:</h5>
+                        <form id="banForm">
+                            <div class="mb-3">
+                                <select class="form-select" id="banDuration" required>
+                                    <option value="" disabled selected>Select a duration</option>
+                                    <option value="2_days">Ban for 2 Days</option>
+                                    <option value="7_days">Ban for 7 Days</option>
+                                    <option value="15_days">Ban for 15 Days</option>
+                                    <option value="30_days">Ban for 30 Days</option>
+                                    <option value="permanent">Permanent Ban</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Apply Ban</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

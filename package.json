@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@geoapify/geocoder-autocomplete": "^2.0.1",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
@@ -38,8 +39,12 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
     "places.js": "^1.19.0",
+    "postcss": "^8.4.41",
     "qr-image": "^3.2.0",
     "react-bootstrap": "^2.10.3",
     "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.9"
   }
 }

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-mdb-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <title>Admin Analytics</title>
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        body.dark-mode {
+            background-color: #343a40;
+            color: #e9ecef;
+        }
+
+        body.dark-mode .card {
+            background-color: #495057;
+            color: #e9ecef;
+        }
+
+        body.dark-mode .sidebar,
+        body.dark-mode .table,
+        body.dark-mode .th,
+        body.dark-mode .td,
+        body.dark-mode .pagination .page-item .page-link {
+            background-color: #495057;
+        }
+
+        body.dark-mode .bg-light {
+            background-color: #6c757d;
+        }
+
+        body.dark-mode .nav-link {
+            color: #e9ecef;
+        }
+
+        body.dark-mode .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        body.dark-mode .text-muted {
+            color: #adb5bd;
+        }
+
+        body.dark-mode .form-check-input {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="d-flex justify-content-between align-items-center p-3  border-bottom">
+        <h1>Admin Dashboard</h1>
+        <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Section -->
+            <aside class="col-md-2 bg-light sidebar p-3">
+                <div class="d-flex flex-column align-items-center">
+                    <div class="logo my-4 text-center">
+                        <img src="#" alt="Logo" class="img-fluid mb-2">
+                        <h2>Street<span class="text-danger">Food</span></h2>
+                    </div>
+                    <nav class="nav flex-column w-100">
+                        <a class="nav-link active" href="./AD_Dashboard.html">
+                            <span class="material-icons-sharp">dashboard</span>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="./AD_Customers.html">
+                            <span class="material-icons-sharp">person_outline</span>
+                            Customers
+                        </a>
+                        <a class="nav-link" href="./AD_Vendors.html">
+                            <span class="material-icons-sharp">receipt_long</span>
+                            Vendors
+                        </a>
+                        <a class="nav-link" href="./AD_Complaints.html">
+                            <span class="material-icons-sharp">report_problem</span>
+                            Complaints
+                            <span class="badge bg-danger ms-2">3</span> <!-- Change "3" to dynamic number -->
+                        </a>
+                        <a class="nav-link" href="#">
+                            <span class="material-icons-sharp">logout</span>
+                            Logout
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- End of Sidebar Section -->
+
+            <!-- Main Content -->
+            <main class="col-md-7 p-4">
+                <h1 class="mb-4">Customer List</h1>
+
+                <!-- Customer List Table -->
+                <div class="table-responsive bg-white p-4 rounded shadow-sm">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">C-ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Join Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Customer rows go here -->
+                            <% for( let i=0; i < customersdata.length; i++ ) { %>
+                                <tr>
+                                    <td>
+                                        <%= customersdata[i].C_ID %>
+                                    </td>
+                                    <td>
+                                        <%= customersdata[i].FIRST_NAME %>
+                                    </td>
+                                    <td>
+                                        <%= customersdata[i].EMAIL %>
+                                    </td>
+                                    <td>
+                                        <%= customersdata[i].PHONE %>
+                                    </td>
+                                    <td>
+                                        <%= customersdata[i].JOIN_DATE %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                    </ul>
+                </nav>
+            </main>
+            <!-- End of Main Content -->
+
+            <!-- Right Section -->
+            <div class="col-md-3 bg-light p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+
+                    <div class="dark-mode">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+                            <label class="form-check-label" for="darkModeSwitch">Dark Mode</label>
+                        </div>
+                    </div>
+                    <div class="profile d-flex align-items-center">
+                        <div class="info">
+                            <p class="mb-0">Hey, <b>Tushar</b></p>
+                            <small class="text-muted">Admin</small>
+                        </div>
+                        <img class="rounded-circle ms-2" src="images/profile-1.jpg" alt="Profile Photo" width="40">
+                    </div>
+                </div>
+
+
+
+                <div class="reminders">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>Complain</h2>
+                        <span class="material-icons-sharp">notifications_none</span>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="#" class="img-fluid rounded-start" alt="Customer Pic">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Customer ID</h5>
+                                    <p class="card-text">Complaint: Lorem ipsum dolor sit amet, consectetur adipiscing
+                                        elit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 deactive">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="#" class="img-fluid rounded-start" alt="Customer Pic">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Customer ID</h5>
+                                    <p class="card-text">Complaint: Sed do eiusmod tempor incididunt ut labore et dolore
+                                        magna aliqua.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="#" class="img-fluid rounded-start" alt="Customer Pic">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Customer ID</h5>
+                                    <p class="card-text">Complaint: Lorem ipsum dolor sit amet, consectetur adipiscing
+                                        elit.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100">Show More</button>
+                </div>
+            </div>
+            <!-- End of Right Section -->
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script src="orders.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head data-mdb-theme="dark">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        body.dark-mode {
+            background-color: #343a40;
+            color: #e9ecef;
+        }
+
+        body.dark-mode .card {
+            background-color: #495057;
+            color: #e9ecef;
+        }
+
+        body.dark-mode .sidebar,
+        body.dark-mode .table,
+        body.dark-mode th,
+        body.dark-mode td,
+        body.dark-mode .pagination .page-item .page-link {
+            background-color: #495057;
+        }
+
+        body.dark-mode .bg-light {
+            background-color: #6c757d;
+        }
+
+        body.dark-mode .nav-link {
+            color: #e9ecef;
+        }
+
+        body.dark-mode .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        body.dark-mode .text-muted {
+            color: #adb5bd;
+        }
+
+        body.dark-mode .form-check-input {
+            background-color: #6c757d;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+        <div class="container-fluid my-4">
+            <div class="row">
+                <!-- Sidebar -->
+                <%- include('side_navbar') %>
+
+                    <!-- Main Content -->
+                    <div class="col-md-8 col-lg-8">
+                        <!-- Filter and Search Controls -->
+                        <div class="mb-4">
+                            <div class="filter-controls d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="searchInput"
+                                    placeholder="Search Complaints">
+                                <select class="form-select w-auto ms-2" id="statusFilter">
+                                    <option value="">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="resolved">Resolved</option>
+                                    <option value="dismissed">Dismissed</option>
+                                </select>
+                                <input type="date" class="form-control ms-2" id="startDate">
+                                <input type="date" class="form-control ms-2" id="endDate">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Complaints Overview Card -->
+                            <div class="col-md-12 col-lg-12 mb-4">
+                                <div class="card dashboard-card">
+                                    <div class="card-header">
+                                        <h5>Complaints Overview</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <table class="table table-striped w-100" id="complaintsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Complaint ID</th>
+                                                    <th>Customer</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Example Rows -->
+                                                <% complaintsdata.forEach(data=> { %>
+                                                    <tr>
+
+
+
+                                                        <td>
+                                                            <%= data.COMPLAINT_ID %>
+                                                        </td>
+                                                        <td>
+                                                            <%= data.C_NAME %>
+                                                        </td>
+                                                        <td>
+                                                            <%= data.C_COMPLAINT_DATE %>
+                                                        </td>
+                                                        <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                                        <td><a href="http://localhost:3000/admin/<%= id %>/complain_details?V_ID=<%= data.V_ID %>&C_ID=<%= data.C_ID %>"
+                                                                class="btn btn-info btn-sm">View</a></td>
+                                                    </tr>
+                                                    <% }) %>
+                                                        <!-- Repeat rows as necessary -->
+                                            </tbody>
+                                        </table>
+                                        <!-- Pagination Controls -->
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination">
+                                                <li class="page-item disabled"><a class="page-link"
+                                                        href="#">Previous</a></li>
+                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top Vendor Card and Complaints by Status Chart -->
+                            <div class="col-md-12 mb-4">
+                                <div class="row">
+                                    <!-- Top Vendor Card -->
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card vendor-card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Top Vendor with Most Complaints</h5>
+                                                <p class="card-text">Vendor Name: <strong>Vendor A</strong></p>
+                                                <p class="card-text">Total Complaints: <strong>25</strong></p>
+                                                <div class="chart-container">
+                                                    <!-- Example Chart Placeholder -->
+                                                    <canvas id="vendorChart" class="chart-size"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Complaints by Status Chart -->
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card dashboard-card">
+                                            <div class="card-header">
+                                                <h5>Complaints by Status</h5>
+                                            </div>
+                                            <div class="card-body chart-container">
+                                                <canvas id="statusChart" class="chart-size"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side Section -->
+
+
+
+            </div>
+        </div>
+
+        <!-- Include Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Example Chart.js script for the vendor chart
+            const ctxVendor = document.getElementById('vendorChart').getContext('2d');
+            new Chart(ctxVendor, {
+                type: 'bar',
+                data: {
+                    labels: ['Vendor A', 'Vendor B', 'Vendor C'],
+                    datasets: [{
+                        label: 'Complaints',
+                        data: [25, 15, 10],
+                        backgroundColor: '#007bff',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Example Chart.js script for the status chart
+            const ctxStatus = document.getElementById('statusChart').getContext('2d');
+            new Chart(ctxStatus, {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'Resolved', 'Dismissed'],
+                    datasets: [{
+                        label: 'Complaints Status',
+                        data: [40, 25, 15],
+                        backgroundColor: ['#ffc107', '#28a745', '#dc3545'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+
+            // JavaScript for filtering and searching complaints
+
+            document.getElementById('searchInput').addEventListener('input', function () {
+                // Add your search logic here
+            });
+
+            document.getElementById('statusFilter').addEventListener('change', function () {
+                // Add your filter logic here
+            });
+
+            // Dark/Light Mode Toggle
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

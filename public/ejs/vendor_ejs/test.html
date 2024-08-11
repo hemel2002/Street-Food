@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Reviews</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css" rel="stylesheet">
+    <style>
+        .rating {
+            color: #ffc107;
+            font-size: 1.2em;
+        }
+
+        .review-card {
+            border-left: 5px solid #4caf50;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .review-card:hover {
+            transform: scale(1.02);
+        }
+
+        .blockquote-footer {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+        }
+
+        .reply-section {
+            margin-top: 10px;
+        }
+
+        .reply-card {
+            border-left: 5px solid #03a9f4;
+            margin-left: 20px;
+        }
+
+        .reply-card:hover {
+            transform: scale(1.01);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>
+                    <%= stall_name %>
+                </h2>
+                <p class="lead">Overall Rating: <span class="rating">
+                        <%= avg_rating %> ⭐
+                    </span></p>
+            </div>
+            <div class="card-body">
+                <h4 class="mb-4">Reviews:</h4>
+                <% if (revieweddata.length> 0) { %>
+                    <% revieweddata.forEach(review=> { %>
+                        <div class="card review-card mb-3">
+                            <div class="card-body">
+                                <h6 class="card-subtitle mb-2 text-muted">Rating: <span class="rating">
+                                        <%= review.RATING %> ⭐
+                                    </span></h6>
+                                <p class="card-text">
+                                    <%= review.MESSAGE %>
+                                </p>
+                                <footer class="blockquote-footer">By <cite title="Source Title">
+                                        <%= review.NAME %>
+                                    </cite> on <%= review.C_DATE %>
+                                </footer>
+
+                                <!-- Reply Section -->
+                                <div class="reply-section">
+                                    <button class="btn btn-link p-0" type="button" data-mdb-toggle="collapse"
+                                        data-mdb-target="#replyForm<%= review.REVIEW_ID %>" aria-expanded="false"
+                                        aria-controls="replyForm<%= review.REVIEW_ID %>">
+                                        Reply
+                                    </button>
+                                    <div class="collapse" id="replyForm<%= review.REVIEW_ID %>">
+                                        <div class="card card-body mt-2">
+                                            <form>
+                                                <div class="mb-3">
+                                                    <label for="replyMessage<%= review.REVIEW_ID %>"
+                                                        class="form-label">Your Reply</label>
+                                                    <textarea class="form-control"
+                                                        id="replyMessage<%= review.REVIEW_ID %>" rows="2"></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Display Replies -->
+                                    <% if (review.replies && review.replies.length> 0) { %>
+                                        <% review.replies.forEach(reply=> { %>
+                                            <div class="card reply-card mb-2 mt-2">
+                                                <div class="card-body">
+                                                    <p class="card-text">
+                                                        <%= reply.MESSAGE %>
+                                                    </p>
+                                                    <footer class="blockquote-footer">By <cite title="Source Title">
+                                                            <%= reply.NAME %>
+                                                        </cite> on <%= reply.C_DATE %>
+                                                    </footer>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <p>No reviews available for this vendor.</p>
+                                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- MDB JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"></script>
+</body>
+
+</html>
