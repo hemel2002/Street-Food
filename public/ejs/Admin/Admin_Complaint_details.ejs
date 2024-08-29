@@ -67,114 +67,138 @@
 
         <div class="container-fluid">
             <div class="row">
-                <aside class="col-md-2 sidebar p-3">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="logo my-4 text-center">
-                            <img src="#" alt="Logo" class="img-fluid mb-2">
-                            <h2>Street<span class="text-danger">Food</span></h2>
-                        </div>
-                        <nav class="nav flex-column w-100">
-                            <a class="nav-link active" href="http://localhost:3000/admin/<%= id %>/admin">
-                                <span class="material-icons-sharp">dashboard</span>
-                                Dashboard
-                            </a>
-                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_customers">
-                                <span class="material-icons-sharp">person_outline</span>
-                                Customers
-                            </a>
-                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_vendors">
-                                <span class="material-icons-sharp">receipt_long</span>
-                                Vendors
-                            </a>
-                            <a class="nav-link" href="http://localhost:3000/admin/<%= id %>/admin_complaints_dashboard">
-                                <span class="material-icons-sharp">report_problem</span>
-                                Complaints
-                                <span class="badge bg-danger ms-2">3</span> <!-- Change "3" to dynamic number -->
-                            </a>
-                            <a class="nav-link" href="#">
-                                <span class="material-icons-sharp">logout</span>
-                                Logout
-                            </a>
-                        </nav>
-                    </div>
-                </aside>
-                <div class="col-md-10">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="mb-0">Complaint Details</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h5>Complaint ID:</h5>
-                                    <p>
-                                        <%= complaintsdata.COMPLAINT_ID %>
-                                    </p>
-                                    <h5>Customer Name:</h5>
-                                    <p>
-                                        <%= complaintsdata.C_NAME %>
-                                    </p>
-                                    <h5>Email:</h5>
-                                    <p>
-                                        <%= complaintsdata.C_EMAIL %>
-                                    </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h5>Complaint Date:</h5>
-                                    <p>
-                                        <%= complaintsdata.C_COMPLAINT_DATE %>
-                                    </p>
-                                    <h5>Subject:</h5>
-                                    <p>
-                                        <%= complaintsdata.SUBJECT %>
-                                    </p>
-                                    <h5>Status:</h5>
-                                    <% if (complaintsdata.STATUS==='Pending' ) { %>
-                                        <p class="badge bg-warning text-dark">
-                                            <%= complaintsdata.STATUS %>
+                <%- include('side_navbar') %>
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="mb-0">Complaint Details</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Complaint ID:</h5>
+                                        <p>
+                                            <%= complaintsdata.COMPLAINT_ID %>
                                         </p>
-                                        <% } else { %>
-                                            <p class="badge bg-success">
+                                        <h5>Customer Name:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_NAME %>
+                                        </p>
+                                        <h5>Email:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_EMAIL %>
+                                        </p>
+                                        <h5 class="text-danger">Previously Banded:</h5>
+                                        <h5 class="text-secondary">Total complaints:
+                                            <%= prev_complaint.length +1%>
+                                                times
+                                        </h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Complaint Date:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_COMPLAINT_DATE %>
+                                        </p>
+                                        <h5>Subject:</h5>
+                                        <p>
+                                            <%= complaintsdata.SUBJECT %>
+                                        </p>
+                                        <h5>Status:</h5>
+                                        <% if (complaintsdata.STATUS==='Pending' ) { %>
+                                            <p class="badge bg-warning text-dark">
                                                 <%= complaintsdata.STATUS %>
                                             </p>
-                                            <% } %>
+                                            <% } else { %>
+                                                <p class="badge bg-success">
+                                                    <%= complaintsdata.STATUS %>
+                                                </p>
+                                                <% } %>
+                                                    <h5 class="text-warning">Previously warned:
+                                                        times
+                                                    </h5>
 
+
+                                    </div>
                                 </div>
-                            </div>
-                            <hr>
-                            <h5>Description:</h5>
-                            <p>
-                                <%= complaintsdata.COMPLAINT %>
-                            </p>
-                            <hr>
-                            <h5>Actions:</h5>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#resolveModal">Resolve</button>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                data-bs-target="#dismissModal">Dismiss</button>
-                            <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                data-bs-target="#warningModal">Warning</button>
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                data-bs-target="#banModal">Ban</button>
-                            <hr>
-                            <a href="#replyCollapse" class="link-info" data-bs-toggle="collapse" aria-expanded="false"
-                                aria-controls="replyCollapse">
-                                Reply to Customer
-                            </a>
-                            <div class="collapse mt-3" id="replyCollapse">
-                                <div class="card card-body">
-                                    <form id="replyForm">
-                                        <div class="mb-3">
-                                            <textarea class="form-control" id="replyMessage" rows="4"
-                                                placeholder="Write your reply here..."></textarea>
+                                <hr>
+                                <h5>Description:</h5>
+                                <p>
+                                    <%= complaintsdata.COMPLAINT %>
+                                </p>
+
+                                <hr>
+                                <h5>Actions:</h5>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#resolveModal">Resolve</button>
+                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#dismissModal">Dismiss</button>
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#warningModal">Warning</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#banModal">Ban</button>
+                                <hr>
+                                <a href="#replyCollapse" class="link-info" data-bs-toggle="collapse"
+                                    aria-expanded="false" aria-controls="replyCollapse">
+                                    Reply to Customer
+                                </a>
+                                <div class="collapse mt-3" id="replyCollapse">
+                                    <div class="card card-body">
+                                        <form id="replyForm">
+                                            <div class="mb-3">
+                                                <textarea class="form-control" id="replyMessage" rows="4"
+                                                    placeholder="Write your reply here..."></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Send Reply</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <h5>Previous Reports</h5>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card-deck">
+                                            <% if (prev_complaint && prev_complaint.length> 0) { %>
+                                                <% prev_complaint.forEach(element=> { %>
+                                                    <div class="card mb-4 shadow-2-strong">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                Report ID: <%= element.COMPLAINT_ID %>
+                                                            </h5>
+                                                            <p class="card-text">
+                                                                <strong>Subject:</strong>
+                                                                <%= element.SUBJECT %><br>
+                                                                    <strong>Date:</strong>
+                                                                    <%= element.C_COMPLAINT_DATE %><br>
+                                                                        <strong>Status:</strong>
+                                                                        <span
+                                                                            class="badge <%= element.STATUS === 'Pending' ? 'bg-warning' : 'bg-success' %>">
+                                                                            <%= element.STATUS %>
+                                                                        </span>
+                                                            </p>
+                                                            <a href="/admin/<%= id %>/complain_details?V_ID=<%= element.V_ID  %>&C_ID=<%= element.C_ID  %>"
+                                                                class="btn btn-outline-primary">View Details</a>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
+                                                        <% } else { %>
+                                                            <div class="card mb-4 shadow-2-strong">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title text-success">
+                                                                        No Previous Complaints Found
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                            <% } %>
                                         </div>
-                                        <button type="submit" class="btn btn-primary">Send Reply</button>
-                                    </form>
+                                    </div>
                                 </div>
+
+                                <hr>
+
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
 

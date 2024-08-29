@@ -5,8 +5,7 @@
             <span class="material-icons-sharp">notifications_none</span>
         </div>
         <% customers_complaint_data.forEach(data=> { %>
-            <a
-                href="http://localhost:3000/admin/<%= id %>/complain_details?V_ID=<%= data.V_ID %>&C_ID=<%= data.C_ID %>">
+            <a href="/admin/<%= id %>/complain_details?V_ID=<%= data.V_ID %>&C_ID=<%= data.C_ID %>">
                 <div class="card mb-3">
                     <div class="row g-0">
                         <div class="col-md-4">

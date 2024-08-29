@@ -239,7 +239,7 @@
                 fetchSuggestions(input);
             }
             document.addEventListener('DOMContentLoaded', () => {
-                fetch('http://localhost:3000/home/shopLocation')
+                fetch('/home/shopLocation')
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
@@ -400,7 +400,7 @@
                                     document.getElementById('establishedDate').innerText = location.establishedDate;
                                     document.getElementById('shopRating').innerText = location.rating;
                                     document.getElementById('shopImage').src = location.imageUrl;
-                                    document.getElementById('detailsLink').href = `http://localhost:3000/home/viewShop?id=${location.V_ID}`;
+                                    document.getElementById('detailsLink').href = `/home/viewShop?id=${location.V_ID}`;
                                     document.getElementById('totalDistance').innerText = 'Calculating...';
 
                                     // Show the modal

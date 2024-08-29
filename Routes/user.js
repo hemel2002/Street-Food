@@ -25,6 +25,85 @@ router.get('/data', (req, res) => {
   const shopdata = shoplocation;
   res.json(shopdata);
 });
+////////////////////////////DETAILS////////////////////////
+router.get('/details_food', async (req, res) => {
+  const FOOD_ID = req.query.FOOD_ID;
+
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const review_reply = await connection.execute(
+      `SELECT 
+        CUSTOMER_REVIEWS_FOOD.C_ID AS REVIEW_C_ID,
+        CUSTOMER_REVIEWS_FOOD.FOOD_ID,
+        CUSTOMER_REVIEWS_FOOD.C_DATE,
+        CUSTOMER_REVIEWS_FOOD.V_REPLY,
+        CUSTOMER_REVIEWS_FOOD.V_REPLY_DATE,
+        CUSTOMER_REVIEWS_FOOD.FOOD_REVIEW,
+        CUSTOMER_REVIEWS_FOOD.FOOD_RATING,
+        CUSTOMERS.EMAIL 
+      FROM 
+        CUSTOMER_REVIEWS_FOOD, CUSTOMERS 
+      WHERE 
+        CUSTOMER_REVIEWS_FOOD.FOOD_ID = :FOOD_ID 
+        AND CUSTOMER_REVIEWS_FOOD.C_ID = CUSTOMERS.C_ID`,
+      { FOOD_ID }
+    );
+    const userHasReviewed = review_reply.rows.some(
+      (row) => row.REVIEW_C_ID == req.session.user_id
+    );
+    let review_reply_data;
+    if (review_reply.rows.length === 0) {
+      review_reply_data = 'No reviews found for this food item';
+    } else {
+      review_reply_data = review_reply.rows;
+
+      console.log('Review reply data:', review_reply_data);
+    }
+
+    const result = await connection.execute(
+      'SELECT * FROM FOOD WHERE FOOD_ID = :FOOD_ID',
+      { FOOD_ID }
+    );
+    const FOOD_DATA = result.rows[0];
+    let INGREDIENT = [];
+    let string = '';
+    for (let i = 0; i < FOOD_DATA.INGREDIENT.length; i++) {
+      string += FOOD_DATA.INGREDIENT[i];
+
+      if (
+        FOOD_DATA.INGREDIENT[i + 1] === ',' ||
+        i === FOOD_DATA.INGREDIENT.length - 1
+      ) {
+        INGREDIENT.push(string.trim());
+        string = '';
+        i++;
+      }
+    }
+    console.log('userHasReviewed: ', userHasReviewed);
+    console.log(INGREDIENT);
+    console.log(FOOD_DATA);
+    const c_id = req.session.user_id;
+    res.render('blogger/details_food', {
+      FOOD_DATA,
+      INGREDIENT,
+      EMAIL: req.session.email,
+      review_reply_data,
+      userHasReviewed,
+      c_id,
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
 ///////////////////////////////upload video///////////////////////////
 router.get('/:id/upload_video', requireloginuser, async (req, res) => {
   const response = req.query.response;
@@ -287,10 +366,10 @@ router.get('/:id/review', async (req, res) => {
     }
   }
 });
-
+///////////////////////////post shop review////////////////////////
 router.post('/:id/review', async (req, res) => {
   const { rating, message, V_ID } = req.body;
-  const C_ID = req.params.id;
+  const C_ID = req.session.id;
   const FIRST_NAME = req.session.FIRST_NAME;
   const V_NAME = req.session.V_NAME;
   const C_EMAIL = req.session.email;
@@ -418,35 +497,35 @@ router.get('/:id/complaint', async (req, res) => {
 
 ///////////////////complaint post////////////////////////
 router.post('/:id/complaint', async (req, res) => {
-  const { complaint, V_ID, subject, message } = req.body;
-  const C_ID = req.params.id;
+  const { complaint, V_ID, subject } = req.body;
+  const C_ID = req.params.id; // Use req.params.id instead of req.query.id
   const FIRST_NAME = req.session.FIRST_NAME;
   const V_NAME = req.session.V_NAME;
   const C_EMAIL = req.session.email;
   console.log(req.body);
+
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result2 = await connection.execute(
-      `SELECT * FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :V_ID AND C_ID = :C_ID`,
+      'SELECT * FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :V_ID AND C_ID = :C_ID',
       { V_ID, C_ID }
     );
+    console.log('Result:', result2.rows);
+
     if (result2.rows.length > 0) {
       const result = await connection.execute(
-        `UPDATE CUSTOMERREVIEWSVENDOR
-           SET COMPLAINT_DETAILS = COMPLAINTS(SYSTIMESTAMP, :complaint, :message, :subject, NULL,'pending')
-          WHERE V_ID = :V_ID AND C_ID = :C_ID `,
-        { complaint, message, subject, V_ID, C_ID },
+        `UPDATE CUSTOMERREVIEWSVENDOR SET COMPLAINT_DETAILS = COMPLAINTS(SYSTIMESTAMP, :complaint, NULL, :subject, NULL, 'Pending') WHERE V_ID = :V_ID AND C_ID = :C_ID`,
+        { complaint, subject, V_ID, C_ID },
         { autoCommit: true }
       );
     } else {
       const result = await connection.execute(
-        `INSERT INTO CUSTOMERREVIEWSVENDOR (C_ID, V_ID, COMPLAINT_DETAILS, C_NAME, V_NAME, C_EMAIL) VALUES (:C_ID, :V_ID, COMPLAINTS(SYSTIMESTAMP, :complaint, :message, :subject, NULL), :FIRST_NAME, :V_NAME, :C_EMAIL)`,
+        `INSERT INTO CUSTOMERREVIEWSVENDOR (C_ID, V_ID, COMPLAINT_DETAILS, C_NAME, V_NAME, C_EMAIL) VALUES (:C_ID, :V_ID, COMPLAINTS(SYSTIMESTAMP, :complaint, NULL, :subject, NULL, 'Pending'), :FIRST_NAME, :V_NAME, :C_EMAIL)`,
         {
           C_ID,
           V_ID,
           complaint,
-          message,
           subject,
           FIRST_NAME,
           V_NAME,
@@ -457,11 +536,11 @@ router.post('/:id/complaint', async (req, res) => {
     }
 
     req.flash('success_comment', 'Complaint submitted successfully!');
-    return res.redirect(`/user/${req.params.id}`);
+    return res.redirect(`/user/${C_ID}`);
   } catch (err) {
     console.error('Error updating complaint:', err);
     req.flash('comment_error', 'An error occurred during complaint submission');
-    return res.redirect(`/user/${req.params.id}`);
+    return res.redirect(`/user/${C_ID}`);
   } finally {
     if (connection) {
       try {
@@ -472,98 +551,16 @@ router.post('/:id/complaint', async (req, res) => {
           'comment_error',
           'An error occurred during complaint submission'
         );
-        return res.redirect(`/user/${req.params.id}`);
+        return res.redirect(`/user/${C_ID}`);
       }
     }
   }
 });
-////////////////////////////DETAILS////////////////////////
-router.get('/:id/details_food', requireloginuser, async (req, res) => {
-  const FOOD_ID = req.query.FOOD_ID;
 
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const review_reply = await connection.execute(
-      `SELECT 
-        CUSTOMER_REVIEWS_FOOD.C_ID AS REVIEW_C_ID,
-        CUSTOMER_REVIEWS_FOOD.FOOD_ID,
-        CUSTOMER_REVIEWS_FOOD.C_DATE,
-        CUSTOMER_REVIEWS_FOOD.V_REPLY,
-        CUSTOMER_REVIEWS_FOOD.V_REPLY_DATE,
-        CUSTOMER_REVIEWS_FOOD.FOOD_REVIEW,
-        CUSTOMER_REVIEWS_FOOD.FOOD_RATING,
-        CUSTOMERS.EMAIL 
-      FROM 
-        CUSTOMER_REVIEWS_FOOD, CUSTOMERS 
-      WHERE 
-        CUSTOMER_REVIEWS_FOOD.FOOD_ID = :FOOD_ID 
-        AND CUSTOMER_REVIEWS_FOOD.C_ID = CUSTOMERS.C_ID`,
-      { FOOD_ID }
-    );
-    const userHasReviewed = review_reply.rows.some(
-      (row) => row.REVIEW_C_ID == req.params.id
-    );
-    let review_reply_data;
-    if (review_reply.rows.length === 0) {
-      review_reply_data = 'No reviews found for this food item';
-    } else {
-      review_reply_data = review_reply.rows;
-
-      console.log('Review reply data:', review_reply_data);
-    }
-
-    const result = await connection.execute(
-      'SELECT * FROM FOOD WHERE FOOD_ID = :FOOD_ID',
-      { FOOD_ID }
-    );
-    const FOOD_DATA = result.rows[0];
-    let INGREDIENT = [];
-    let string = '';
-    for (let i = 0; i < FOOD_DATA.INGREDIENT.length; i++) {
-      string += FOOD_DATA.INGREDIENT[i];
-
-      if (
-        FOOD_DATA.INGREDIENT[i + 1] === ',' ||
-        i === FOOD_DATA.INGREDIENT.length - 1
-      ) {
-        INGREDIENT.push(string.trim());
-        string = '';
-        i++;
-      }
-    }
-    console.log('userHasReviewed: ', userHasReviewed);
-    console.log(INGREDIENT);
-    console.log(FOOD_DATA);
-    const c_id = req.params.id;
-    res.render('blogger/details_food', {
-      FOOD_DATA,
-      INGREDIENT,
-      EMAIL: req.session.email,
-      review_reply_data,
-      userHasReviewed,
-      c_id,
-    });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-});
-router.get('/details_food', (req, res) => {
-  req.flash('requireLOGIN', 'Please login to view this page');
-  res.redirect(`/home/login`);
-});
 /////////////////////////////food review post////////////////////////
-router.post('/:id/food_review', async (req, res) => {
+router.post('/food_review', requireloginuser, async (req, res) => {
   const { FOOD_RATING, FOOD_REVIEW, FOOD_ID } = req.body;
-  const C_ID = req.params.id;
+  const C_ID = req.session.user_id;
 
   console.log(req.body);
   let connection;
@@ -578,6 +575,10 @@ router.post('/:id/food_review', async (req, res) => {
         FOOD_REVIEW,
       },
       { autoCommit: true }
+    );
+    await connection.execute(
+      'update food set rating = (select avg(food_rating) from customer_reviews_food where food_id = :FOOD_ID) where food_id = :FOOD_ID',
+      { FOOD_ID }
     );
     await connection.execute(
       'INSERT INTO FOODCONSUMED (C_ID, FOOD_ID) VALUES (:C_ID, :FOOD_ID)',
@@ -603,5 +604,41 @@ router.post('/:id/food_review', async (req, res) => {
     }
   }
 });
+//////////////////////////////update food review////////////////////////
+router.post('/:id/edit_review', async (req, res) => {
+  const { FOOD_RATING, FOOD_REVIEW } = req.body;
+  console.log('review body', req.body);
+  const FOOD_ID = req.query.FOOD_ID;
+  const C_ID = req.session.user_id;
 
+  console.log(req.body);
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    await connection.execute(
+      `UPDATE CUSTOMER_REVIEWS_FOOD
+       SET FOOD_RATING = :FOOD_RATING, FOOD_REVIEW = :FOOD_REVIEW
+       WHERE C_ID = :C_ID AND FOOD_ID = :FOOD_ID`,
+      { C_ID, FOOD_ID, FOOD_RATING, FOOD_REVIEW },
+      { autoCommit: true }
+    );
+
+    req.flash('review', 'Review updated successfully!');
+    return res.redirect(`/user/${req.params.id}`);
+  } catch (err) {
+    console.error(err);
+    req.flash('error_review', 'An error occurred during review update');
+    return res.redirect(`/user/${req.params.id}`);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+        req.flash('error_review', 'An error occurred during review update');
+        return res.redirect(`/user/${req.params.id}`);
+      }
+    }
+  }
+});
 module.exports = router;

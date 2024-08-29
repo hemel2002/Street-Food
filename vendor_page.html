@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Document</title>
+
+    <style>
+        /* From Uiverse.io by Dailleer */
+        .cardS {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            background: linear-gradient(-45deg, #f89b29 0%, #ff0f7b 100%);
+            background-image: url('https://res.cloudinary.com/da7hqzvvf/image/upload/v1718991078/food/hmwomqdouvt3uhjooe0p.jpg');
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .cardS svg {
+            width: 48px;
+            fill: #333;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .cardS:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cardS__content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .cardS:hover .cardS__content {
+            transform: translate(-50%, -50%) rotate(0deg);
+            opacity: 1;
+        }
+
+        .cardS__title {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .cardS__description {
+            margin: 10px 0 0;
+            font-size: 14px;
+            color: #777;
+            line-height: 1.4;
+        }
+
+        .cardS:hover svg {
+            scale: 0;
+            transform: rotate(-45deg);
+        }
+    </style>
+</head>
+
+<body>
+    /* From Uiverse.io by Dailleer */
+    <div class="cardS">
+
+        <div class="cardS__content">
+            <p class="cardS__title">CardS Title</p>
+            <p class="cardS__description">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+                veniam, quis nostrud exercitation ullamco.
+            </p>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+
+
+
+<div class="cardS" style="background-image: url('${item.FOOD_PIC}');">
+    <div class="cardS__content">
+        <p class="cardS__title">${item.FOOD_NAME}</p>
+        <div class="ingredient-container">
+            <p class="card-text ingredient-text">${item.INGREDIENT}</p>
+
+        </div>
+        <p class="card-text">Price: ${item.PRICE} Tk</p>
+        <div class="rating">
+            ${generateStars(item.RATING)}
+        </div>
+        <button class="btn btn-success btn-md ingredient-button"
+            onclick="window.location.href='http://localhost:3000/user${userId ? '/' + userId : ''}/details_food?FOOD_ID=${item.FOOD_ID}'">
+            Details
+        </button>
+    </div>
+</div>

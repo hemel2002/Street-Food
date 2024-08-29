@@ -1,6 +1,9 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config();
 
-const sendOtpEmail = async (email, firstName, message) => {
+const sendOtpEmail = async (email, subject, message, otp) => {
+  console.log('Sending email to:', email); // Log the email address for debugging
+  console.log('Message email: %s', process.env.Email_username);
   const transporter = nodemailer.createTransport({
     host: process.env.Email_host,
     port: parseInt(process.env.Email_port, 10),
@@ -18,9 +21,10 @@ const sendOtpEmail = async (email, firstName, message) => {
     const info = await transporter.sendMail({
       from: process.env.Email_username,
       to: email,
-      subject: 'Forgot Password',
-      text: message,
+      subject: subject,
+      html: message,
     });
+    console.log('Message email: %s', process.env.Email_username);
 
     console.log('Message sent: %s', info.messageId);
     return { success: true, messageId: info.messageId };

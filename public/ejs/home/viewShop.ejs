@@ -15,12 +15,15 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     <style>
+        /* Setting the size and position of the background image */
         .bg-image {
             background-size: cover;
             background-position: 50% 50%;
             height: 500px;
+            max-height: 300px;
         }
 
+        /* Adjusting the background attachment based on screen size */
         .mask {
             position: absolute;
             top: 0;
@@ -38,14 +41,15 @@
             }
         }
 
+        /* Setting image styles within the cards */
         .card img {
             width: 100%;
             height: auto;
             max-height: 300px;
-            /* Adjust this value as needed */
             object-fit: cover;
         }
 
+        /* Styling for custom card layout */
         .card-custom {
             display: flex;
             flex-direction: column;
@@ -53,6 +57,7 @@
             height: 100%;
         }
 
+        /* Card body styling */
         .card-body {
             flex: 1;
             display: flex;
@@ -61,24 +66,110 @@
             padding: 1.5rem;
         }
 
+        /* Card title styling */
         .card-title {
             margin-top: 1rem;
             font-size: 1.25rem;
         }
 
+        /* Card text styling */
         .card-text {
             margin-top: 1rem;
             margin-bottom: 1rem;
             flex-grow: 1;
         }
 
+        /* Primary button styling */
         .btn-primary {
             align-self: center;
             margin-top: auto;
         }
 
-        .bg-image {
-            max-height: 300px;
+        /* Styling for the custom card with hover effect */
+        .cardS {
+            position: relative;
+            width: 400px;
+            height: 350px;
+            background: linear-gradient(-45deg, #f89b29 0%, #ff0f7b 100%);
+            background-image: url('https://res.cloudinary.com/da7hqzvvf/image/upload/v1718991078/food/hmwomqdouvt3uhjooe0p.jpg');
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            padding-top: 8px;
+            margin-top: 20px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Adjusting SVG size and fill within the card */
+        .cardS svg {
+            width: 48px;
+            fill: #333;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Hover effect for the card */
+        .cardS:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Content styling within the card */
+        .cardS__content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #fff;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Hover effect to reveal card content */
+        .cardS:hover .cardS__content {
+            transform: translate(-50%, -50%) rotate(0deg);
+            opacity: 1;
+        }
+
+        /* Styling for the card title */
+        .cardS__title {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+            font-weight: 700;
+        }
+
+        /* Description styling within the card */
+        .cardS__description {
+            margin: 10px 0 0;
+            font-size: 14px;
+            color: #777;
+            line-height: 1.4;
+        }
+
+        /* Scale and rotation effect on hover for SVG */
+        .cardS:hover svg {
+            scale: 0;
+            transform: rotate(-45deg);
+        }
+
+        /* Styling for card footer buttons */
+        .card-footer button {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dark-theme-text {
+            color: #000000;
+            /* Change this to the desired text color for dark theme */
         }
     </style>
 </head>
@@ -89,20 +180,18 @@
             <div class="p-5 text-center bg-image" style="background-image: url('<%= viewshop[0].STALL_PIC %>')"
                 aria-controls="#picker-editor" alt="Background Image"></div>
             <div class="container">
-                <div class="card mx-4 mx-md-5 text-center shadow-5-strong" style="
-              margin-top: -170px;
-              background: hsla(0, 0%, 100%, 0.7);
-              backdrop-filter: blur(30px);
-            ">
+                <div class="card mx-4 mx-md-5 text-center shadow-5-strong"
+                    style="margin-top: -170px; background: hsla(0, 0%, 100%, 0.7); backdrop-filter: blur(30px);">
                     <div class="card-body px-4 py-5 px-md-5">
-                        <h1 class="display-3 fw-bold ls-tight mb-4">
+                        <h1 class="display-3 fw-bold ls-tight mb-4 text-danger">
                             <span>The best offer on the market</span>
                             <br />
                             <span class="text-primary">for your business</span>
                         </h1>
-                        <a class="btn btn-primary btn-lg py-3 px-5 mb-2 mb-md-0 me-md-2" href="#" role="button"
-                            aria-controls="#picker-editor" draggable="false" style="min-width: auto">Shop details <i
-                                class="fas fa-cart-arrow-down p-1 ps-2"></i></a>
+                        <a id="shop-details-btn" class="btn btn-primary btn-lg py-3 px-5 mb-2 mb-md-0 me-md-2"
+                            role="button" aria-controls="#picker-editor" draggable="false" style="min-width: auto">
+                            Shop details <i class="fas fa-cart-arrow-down p-1 ps-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -156,7 +245,6 @@
         </section>
     </section>
 
-
     <script>
         let foodData = [];
         let videoData = [];
@@ -165,10 +253,10 @@
         const getdata = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sellerId = urlParams.get('id');
-
+            document.getElementById('shop-details-btn').href = `/home/shopDetails?id=${sellerId}`;
             try {
                 const res = await axios.get(
-                    `http://localhost:3000/home/ViewShop?id=${sellerId}&responseType=json`
+                    `/home/ViewShop?id=${sellerId}&responseType=json`
                 );
                 foodData = res.data.viewshop;
                 videoData = res.data.video;
@@ -191,7 +279,7 @@
         });
 
         function initializeFoodPagination() {
-            const itemsPerPage = 3;
+            const itemsPerPage = 6;
             let currentPage = 1;
             const totalPages = Math.ceil(foodData.length / itemsPerPage);
 
@@ -206,29 +294,36 @@
                 const end = start + itemsPerPage;
                 const itemsToRender = foodData.slice(start, end);
 
+                const renderedImages = new Set();
+
                 itemsToRender.forEach((item) => {
-                    const foodCard = document.createElement('div');
-                    foodCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
-                    foodCard.innerHTML = `
-                        <div class="card card-custom">
-                            <div class="bg-image hover-overlay ripple ripple-surface-light" data-ripple-color="light">
-                                <img src="${item.FOOD_PIC}" class="img-fluid" alt="" loading="lazy">
-                                <svg class="position-absolute" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="left: 0; bottom: 0">
-                                    <path fill="#fff" d="M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-                                </svg>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title">${item.FOOD_NAME}</h5>
-                                <p class="card-text">${item.INGREDIENT}</p>
-                                <p class="card-text">Price: ${item.PRICE} Tk</p>
-                                <div class="rating">
-                                    ${generateStars(item.RATING)}
-                                </div>
-                                <button class="btn btn-success btn-md" onclick="window.location.href='http://localhost:3000/user${userId ? '/' + userId : ''}/details_food?FOOD_ID=${item.FOOD_ID}'">Details</button>
-                            </div>
-                        </div>
-                    `;
-                    foodCardsContainer.appendChild(foodCard);
+                    if (!renderedImages.has(item.FOOD_PIC)) {
+                        const foodCard = document.createElement('div');
+                        foodCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
+                        foodCard.innerHTML = `
+<div class="cardS" style="background-image: url('${item.FOOD_PIC}');">
+    <div class="cardS__content card">
+        <p class="cardS__title">${item.FOOD_NAME}</p>
+        <div class="ingredient-container text-danger">
+            <p class="card-text ingredient-text">${item.INGREDIENT}</p>
+        </div>
+        <p class="card-text text-danger">Price: ${item.PRICE} Tk</p>
+        <div class="rating text-danger">
+            ${generateStars(item.RATING)}
+        </div>
+        <button class="btn btn-success btn-md ingredient-button"
+            style="float: right;"
+            onclick="window.location.href='/user/details_food?FOOD_ID=${item.FOOD_ID}'">
+            Details
+        </button>
+    </div>
+</div>
+
+
+                        `;
+                        foodCardsContainer.appendChild(foodCard);
+                        renderedImages.add(item.FOOD_PIC);
+                    }
                 });
             }
 
@@ -277,7 +372,7 @@
         }
 
         function initializeVideoPagination() {
-            const itemsPerPage = 3;
+            const itemsPerPage = 6;
             let currentPage = 1;
             const totalPages = Math.ceil(videoData.length / itemsPerPage);
 

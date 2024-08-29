@@ -1,12 +1,93 @@
 <!-- ............header............. -->
 <%- include('header') %>
+
   <%- include('../MDB/allCdn.ejs') %>
+
+    <style>
+      .card-img-top {
+        height: 300px;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .carousel-image {
+        height: 400px;
+        /* Set your desired height */
+        object-fit: cover;
+        /* Ensure the image covers the area without distortion */
+      }
+    </style>
 
     <link rel="stylesheet" href="../css/v_Food_info.css">
     <%- include('../flash-alert/flash') %>
 
       <!-- ...............navbar............... -->
       <%- include('navbar') %>
+        <!-- .....................carusal............. -->
+        <div class="container">
+          <!-- Carousel wrapper -->
+          <center>
+            <h1 class="text-danger mt-5">Top Rated Items</h1>
+          </center>
+
+          <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark mt-3" data-mdb-ride="carousel"
+            data-mdb-carousel-init>
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+              <% top_food_data.forEach((data, index)=> { %>
+                <button data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="<%= index %>"
+                  class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"
+                  aria-label="Slide <%= index + 1 %>"></button>
+                <% }) %>
+            </div>
+
+            <!-- Inner -->
+            <div class="carousel-inner">
+              <!-- Single item -->
+              <% top_food_data.forEach((data, index)=> { %>
+                <div id="foodCarousel" class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <a data-mdb-ripple-init href="/user/details_food?FOOD_ID=<%= data.FOOD_ID %>">
+                    <img src="<%= data.FOOD_PIC %>" class="d-block w-100 img-fluid rounded carousel-image"
+                      alt="Food Image" />
+                    <div class="carousel-caption d-none d-md-block text-danger">
+                      <h3>
+                        Food Name : <%= data.FOOD_NAME %>
+                      </h3>
+                      <h4>
+                        Rating :<%= data.RATING %> <i class="fas fa-star"></i>
+                      </h4>
+                    </div>
+                  </a>
+                </div>
+                <% }) %>
+            </div>
+            <!-- Inner -->
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-mdb-target="#carouselDarkVariant"
+              data-mdb-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-mdb-target="#carouselDarkVariant"
+              data-mdb-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <!-- Carousel wrapper -->
+        </div>
+
 
         <!--Food item -->
         <main>
@@ -22,47 +103,52 @@
               <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="food-list">
                 <!-- Food cards will be dynamically added here -->
                 <% for (let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
-                  <div class="col">
+                  <div class="col pt-5 pb-4">
                     <div class="card h-100">
                       <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
                         <img src="<%= foodData[i].FOOD_PIC %>" class="card-img-top" alt="<%= foodData[i].FOOD_NAME %>"
                           data-mdb-ripple-init data-mdb-ripple-color="light" />
-                        <a href="#!">
+                        <a data-mdb-toggle="modal" data-mdb-target="#productModal<%= i %>">
                           <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
                         </a>
                       </div>
-                      <div class="card-body">
+                      <div class="card-body d-inline-block ">
                         <h5 class="card-title">
                           <%= foodData[i].FOOD_NAME %>
                         </h5>
-                        <p class="card-text">$<%= foodData[i].PRICE %>
+                        <p class="card-text"><b>Food price:</b>
+                          <%= foodData[i].PRICE %> tk
                         </p>
-                        <p>
-                          <%= foodData[i].FOOD_ID %>
+                        <p class="text-truncate"><b>Ingredient: </b>
+                          <%= foodData[i].INGREDIENT %>
                         </p>
-
-                        <div class="row">
-                          <!-- Button to trigger modal -->
-                          <button type="button" class="btn btn-primary btn-block" data-mdb-toggle="modal"
-                            data-mdb-target="#productModal<%= i %>">
-                            Details
-                          </button>
-                        </div>
-
-                        <div class="row mt-3" style="text-align: left;">
-                          <div class="col-6 mb-3">
-                            <a href="/vendor/<%= id %>/update/<%= foodData[i].FOOD_ID %>">
-                              <button type="button" class="btn btn-success btn-lg btn-block">Edit Items</button>
-                            </a>
-                          </div>
-                          <div class="col-6 mb-3">
-                            <!-- Button to trigger delete confirmation modal -->
-                            <button type="button" class="btn btn-danger btn-lg btn-block" data-mdb-toggle="modal"
-                              data-mdb-target="#modal-type2-<%= i %>">
-                              Delete Item
+                        <div class="card-footer">
+                          <div class="row">
+                            <!-- Button to trigger modal -->
+                            <button type="button" class="btn btn-secondary btn-block" data-mdb-toggle="modal"
+                              data-mdb-target="#productModal<%= i %>">
+                              Details
                             </button>
+
                           </div>
+
+                          <div class="row mt-3" style="text-align: left;">
+                            <div class="col-6 mb-3">
+                              <a href="/vendor/<%= id %>/update/<%= foodData[i].FOOD_ID %>">
+                                <button type="button" class="btn btn-success btn-lg btn-block">Edit Items</button>
+                              </a>
+                            </div>
+                            <div class="col-6 mb-3">
+                              <!-- Button to trigger delete confirmation modal -->
+                              <button type="button" class="btn btn-danger btn-lg btn-block" data-mdb-toggle="modal"
+                                data-mdb-target="#modal-type2-<%= i %>">
+                                Delete Item
+                              </button>
+                            </div>
+                          </div>
+                          <%= foodData[i].CREATE_DATE %>
                         </div>
+
 
                       </div>
                     </div>
@@ -113,67 +199,9 @@
         </main>
 
         <!--review history  -->
-        <main>
-          <div class="text-center">
-            <h1>Review History</h1>
-          </div>
-          <div class="album py-5 bg-body-tertiary">
-            <div class="container">
-              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3" id="review-history">
-                <!-- Review cards will be dynamically added here -->
-              </div>
-              <!-- Pagination -->
-              <div class="bd-example-snippet bd-code-snippet">
-                <div class="bd-example m-0 border-0">
-                  <nav aria-label="Pagination example">
-                    <ul class="pagination pagination-lg flex-wrap justify-content-center" id="pagination">
-                      <!-- Pagination items will be dynamically added here -->
-                    </ul>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
 
-        <main>
-          <div class="text-center mt-5">
-            <h1>Food Blogger List</h1>
-          </div>
-          <div class="album py-5 bg-body-tertiary">
-            <div class="container">
-              <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                  <thead class="table-dark">
-                    <tr>
-                      <th>Serial No</th>
-                      <th>Customer ID</th>
-                      <th>Customer Name</th>
 
-                      <th>Video Title</th>
-                      <th>Video Description</th>
-                      <th>Reply</th>
 
-                    </tr>
-                  </thead>
-                  <tbody id="blogger-list">
-                    <!-- Blogger rows will be dynamically added here -->
-                  </tbody>
-                </table>
-              </div>
-              <!-- Pagination for Food Blogger List -->
-              <div class="bd-example-snippet bd-code-snippet mt-4">
-                <div class="bd-example m-0 border-0">
-                  <nav aria-label="Pagination example">
-                    <ul class="pagination pagination-lg flex-wrap justify-content-center" id="blogger-pagination">
-                      <!-- Pagination items will be dynamically added here -->
-                    </ul>
-                  </nav>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
 
         <!-- Modal for deleting an item -->
         <% for (let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, foodData.length); i++) { %>
@@ -192,7 +220,7 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Cancel</button>
                   <button type="button" class="btn btn-danger"
-                    onclick="window.location.href='http://localhost:3000/vendor/<%= id %>/delete/<%= foodData[i].FOOD_ID %>'">Delete</button>
+                    onclick="window.location.href='/vendor/<%= id %>/delete/<%= foodData[i].FOOD_ID %>'">Delete</button>
                 </div>
               </div>
             </div>
@@ -235,14 +263,14 @@
                         </span>
                       </div>
                       <div class="mt-3">
-                        <h5>Overall Rating of this Food</h5>
+                        <h5>Overall Rating </h5>
                         <div class="rating">
-                          <% for(let star=1; star <=10; star++) { %>
+                          <% for(let star=1; star <=5; star++) { %>
                             <i
                               class="fas fa-star <%= star <= foodData[i].RATING ? 'text-warning' : 'text-muted' %>"></i>
                             <% } %>
                               <span>
-                                <%= foodData[i].RATING %> out of 10
+                                <%= foodData[i].RATING %> out of 5
                               </span>
                         </div>
                       </div>
@@ -258,27 +286,40 @@
                             </tr>
                           </thead>
                           <tbody id="ratingTableBody<%= i %>">
-                            <% for(let j=0; j < reviews.length; j++) { %>
-                              <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
-                                <td>
-                                  <%= reviews[j].NAME %>
-                                </td>
-                                <td>
-                                  <div class="rating">
-                                    <% for(let star=1; star <=10; star++) { %>
-                                      <i
-                                        class="fas fa-star <%= star <= reviews[j].RATING ? 'text-warning' : 'text-muted' %>"></i>
+                            <% let bount=0; %>
+                              <% for(let j=0; j < reviews.length; j++) { %>
+                                <% if (foodData[i].FOOD_ID===reviews[j].FOOD_ID && bount < 3) { %>
+                                  <% bount++; %>
+                                    <tr>
+                                      <td>
+                                        <%= reviews[j].NAME %>
+                                      </td>
+                                      <td>
+                                        <div class="rating">
+                                          <% for(let star=1; star <=5; star++) { %>
+                                            <i
+                                              class="fas fa-star <%= star <= reviews[j].FOOD_RATING ? 'text-warning' : 'text-muted' %>"></i>
+                                            <% } %>
+                                              <span>
+                                                <%= reviews[j].FOOD_RATING %> out of 5
+                                              </span>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                    <% } %>
+
+
                                       <% } %>
-                                        <span>
-                                          <%= reviews[j].RATING %> out of 10
-                                        </span>
-                                  </div>
-                                </td>
-                              </tr>
-                              <% } %>
+                                        <% if (bount===0) { %>
+                                          <tr>
+                                            <td colspan="3" class="text-danger">No Rating found</td>
+                                          </tr>
+                                          <% } %>
                           </tbody>
                         </table>
-                        <button class="btn btn-primary" id="showMoreRatingsBtn<%= i %>">Show More Ratings</button>
+                        <% if (bount!==0) { %>
+                          <button class="btn btn-secondary" id="showMoreRatingsBtn<%= i %>">Show More Ratings</button>
+                          <% } %>
                       </div>
 
                       <!-- Reviews -->
@@ -287,39 +328,51 @@
                         <table class="table table-striped review-table">
                           <thead>
                             <tr>
-                              <th scope="col">Customer</th>
+                              <th scope="col">Customer Email</th>
                               <th scope="col">Review</th>
-                              <th scope="col">Reply</th>
+
+                              <th scope="col">Date</th>
+
                             </tr>
                           </thead>
                           <tbody id="reviewTableBody<%= i %>">
-                            <% for(let j=0; j < reviews.length; j++) { %>
-                              <tr class="<%= j > 3 ? 'hidden-row' : '' %>">
-                                <td>
-                                  <%= reviews[j].NAME %>
-                                </td>
-                                <td>
-                                  <%= reviews[j].REVIEW_MESSAGE %>
-                                </td>
-                                <td>
-                                  <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Write a reply...">
-                                    <div class="input-group-append">
-                                      <button class="btn btn-primary" type="button">Reply</button>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                              <% } %>
+                            <% let count=0; %>
+                              <% for(let j=0; j < reviews.length; j++) { %>
+                                <% if (foodData[i].FOOD_ID===reviews[j].FOOD_ID && count < 3) { %>
+                                  <% count++; %>
+                                    <tr>
+                                      <td>
+                                        <%= reviews[j].EMAIL %>
+                                      </td>
+                                      <td>
+                                        <%= reviews[j].FOOD_REVIEW %>
+                                      </td>
+                                      <td>
+                                        <%= reviews[j].C_DATE %>
+                                      </td>
+                                    </tr>
+                                    <% } %>
+                                      <% } %>
+                                        <% if (count===0) { %>
+                                          <tr>
+                                            <td colspan="3" class="text-danger">No reviews found</td>
+                                          </tr>
+                                          <% } %>
                           </tbody>
+
                         </table>
-                        <button class="btn btn-primary" id="showMoreReviewsBtn<%= i %>">Show More Reviews</button>
+                        <% if (count!==0) { %>
+                          <button class="btn btn-success" id="showMoreReviewsBtn<%= i %>">Show More Reviews</button>
+                          <% } %>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
               <% } %>
+
+
 
 
                 <!-- Button to Open Modal -->
@@ -358,18 +411,19 @@
                   });
                 </script>
                 <!-- jQuery -->
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-                  integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6"
-                  crossorigin="anonymous"></script>
-                <!-- Popper.js -->
-                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-                  integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03"
-                  crossorigin="anonymous"></script>
-                <!-- Bootstrap JS -->
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-                  integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1"
-                  crossorigin="anonymous"></script>
-                <!-- Custom JS -->
-                <script src="http://localhost:3000/js/vendor.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+                  rel="stylesheet" />
+                <!-- Google Fonts -->
+                <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+                  rel="stylesheet" />
+                <!-- MDB -->
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+                <script type="text/javascript"
+                  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+                <script type="text/javascript"
+                  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
                 <!--Last --><!-- Footer -->
                 <%- include('footer') %>

@@ -101,7 +101,7 @@
                                                     <div class="collapse"
                                                         id="replyForm<%= review.C_ID %><%= review.V_ID %>">
                                                         <div class="card card-body mt-2">
-                                                            <form class="needs-validation" novalidate action="http://localhost:3000/vendor/<%= id %>/review/<%= review.REPLY==='No replay yet' ? ''
+                                                            <form class="needs-validation" novalidate action="/vendor/<%= id %>/review/<%= review.REPLY==='No replay yet' ? ''
                                                                         : '?_method=PATCH' %> " method=post>
                                                                 <div class="mb-4">
                                                                     <label

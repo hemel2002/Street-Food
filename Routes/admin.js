@@ -15,19 +15,19 @@ router.get('/:id', requireloginadmin, async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      `SELECT * FROM customers order by join_date desc`
+      `SELECT * FROM customers ORDER BY join_date DESC`
     );
     const result2 = await connection.execute(
-      `SELECT * FROM vendors order by join_date desc`
+      `SELECT * FROM vendors ORDER BY join_date DESC`
     );
     const result3 = await connection.execute(
-      `SELECT count(c_id) AS total_customers FROM customers order by join_date desc`
+      `SELECT count(c_id) AS total_customers FROM customers`
     );
     const result4 = await connection.execute(
       `SELECT count(v_id) AS total_vendors FROM vendors`
     );
     const result5 = await connection.execute(
-      `SELECT count(v_id) As active_vendors from vendors WHERE active='yes'`
+      `SELECT count(v_id) AS active_vendors FROM vendors WHERE active='yes'`
     );
     const result6 = await connection.execute(
       `
@@ -84,7 +84,7 @@ router.get('/:id', requireloginadmin, async (req, res) => {
       `SELECT COUNT(*) AS pending_complaints FROM CUSTOMERREVIEWSVENDOR C WHERE C.COMPLAINT_DETAILS.STATUS = 'Pending'`
     );
     const pending_complaints = result10.rows[0].PENDING_COMPLAINTS;
-    console.log(pending_complaints);
+    console.log('pending_complaints: ', pending_complaints);
     req.session.pending_complaints = pending_complaints;
 
     res.render('Admin/Admin_Dashboard', {
@@ -208,12 +208,29 @@ router.get(
     try {
       connection = await OracleDB.getConnection(dbConfig);
       const result = await connection.execute(
-        `SELECT C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME,C_ID,V_ID,C_ID||V_ID AS COMPLAINT_ID FROM customerreviewsvendor C WHERE C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL order by C.COMPLAINT_DETAILS.C_COMPLAINT_DATE desc`
+        `SELECT C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME, C_ID, V_ID, C_ID||V_ID AS COMPLAINT_ID 
+         FROM customerreviewsvendor C 
+         WHERE C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL 
+         ORDER BY C.COMPLAINT_DETAILS.C_COMPLAINT_DATE DESC`
       );
 
       const complaintsdata = result.rows;
       console.log(complaintsdata);
-      res.render('Admin/Admin_Complaints_Dashboard', { complaintsdata });
+
+      const currentPage = parseInt(req.query.page) || 1;
+      const itemsPerPage = 6;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const displayedItems = complaintsdata.slice(startIndex, endIndex);
+      const totalPages = Math.ceil(complaintsdata.length / itemsPerPage);
+
+      res.render('Admin/Admin_Complaints_Dashboard', {
+        complaintsdata,
+        currentPage,
+        totalPages,
+        displayedItems,
+        itemsPerPage,
+      });
     } catch (err) {
       console.error(err);
     } finally {
@@ -227,6 +244,7 @@ router.get(
     }
   }
 );
+
 //////////////////////////////////////////////ADMIN COMPLAINT DETAILS//////////////////////////////////////////////
 router.get('/:id/complain_details', requireloginadmin, async (req, res) => {
   const { C_ID, V_ID } = req.query;
@@ -241,14 +259,26 @@ router.get('/:id/complain_details', requireloginadmin, async (req, res) => {
       WHERE C_ID=:C_ID AND V_ID=:V_ID AND C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL`,
       [C_ID, V_ID]
     );
+    const result2 = await connection.execute(
+      `SELECT C_ID||V_ID AS COMPLAINT_ID,C_ID,V_ID, C_EMAIL, C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME, 
+      C.COMPLAINT_DETAILS.COMPLAINT AS COMPLAINT, C.COMPLAINT_DETAILS.SUBJECT AS SUBJECT, 
+      C.COMPLAINT_DETAILS.STATUS AS STATUS 
+      FROM customerreviewsvendor C 
+      WHERE C_ID !=:C_ID AND V_ID=:V_ID AND C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL`,
+      [C_ID, V_ID]
+    );
 
     const complaintsdata = result.rows[0]; // Fetch the first row of the result
+    const prev_complaint = result2.rows;
     console.log(complaintsdata); // Log the data to verify its structure
     if (!complaintsdata) {
       // Handle case where no data is returned
       return res.status(404).send('No complaint found for the given ID.');
     }
-    res.render('Admin/Admin_Complaint_details', { complaintsdata });
+    res.render('Admin/Admin_Complaint_details', {
+      complaintsdata,
+      prev_complaint,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');

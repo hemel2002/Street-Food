@@ -41,7 +41,7 @@
 
         const getComplaints = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/user/<%= id %>/complaint?request=json&V_ID=${V_ID}`);
+                const res = await axios.get(`/user/<%= id %>/complaint?request=json&V_ID=${V_ID}`);
                 complaints = res.data;
                 console.log(complaints);
             } catch (error) {

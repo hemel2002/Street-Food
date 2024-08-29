@@ -36,7 +36,7 @@
 
         const getdata = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/home?request=json');
+                const res = await axios.get('/home?request=json');
                 vendors = res.data;
                 console.log(vendors);
             } catch (error) {
@@ -71,15 +71,15 @@
                                 <p class="card-text">${vendor.STALL_TITLE}</p>
                                 <div class="row">
                                     <div class="col-6">
-                                        <a href="http://localhost:3000/home/viewShop?id=${vendor.V_ID}" class="btn btn-primary btn-block">Detail</a>
+                                        <a href="/home/viewShop?id=${vendor.V_ID}" class="btn btn-primary btn-block">Detail</a>
                                     </div>
                                     <div class="col-6">
-                                        <a href="http://localhost:3000/user/<%= id %>/review?vendor=${vendor.V_ID}" class="btn btn-secondary btn-block">Review</a>
+                                        <a href="/user/<%= id %>/review?vendor=${vendor.V_ID}" class="btn btn-secondary btn-block">Review</a>
                                     </div>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-12">
-                                        <a href="http://localhost:3000/user/<%= id %>/complaint?V_ID=${vendor.V_ID}" class="btn btn-danger btn-block">Complaint</a>
+                                        <a href="/user/<%= id %>/complaint?V_ID=${vendor.V_ID}" class="btn btn-danger btn-block">Complaint</a>
                                     </div>
                                 </div>
                             </div>

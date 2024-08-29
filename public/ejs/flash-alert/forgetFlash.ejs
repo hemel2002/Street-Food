@@ -1,50 +1,49 @@
 <!-- Note: class .show is used for demo purposes. Remove it when using it in the real project. -->
-<%- include('../MDB/allCdn.ejs') %>
-    <% if(forget_error && forget_error.length>0){ %>
-        <div class="alert alert-danger mb-0 alert-dismissible alert-absolute fade show " id="alertExample" role="alert"
-            data-mdb-color="secondary">
 
-            <i class="fas fa-triangle-exclamation me-2"></i>
-            <%= forget_error %>
+<% if(forget_error && forget_error.length>0){ %>
+    <div class="alert alert-danger mb-0 alert-dismissible alert-absolute fade show " id="alertExample" role="alert"
+        data-mdb-color="secondary">
 
-                <button type="button" class="btn-close ms-2" data-mdb-dismiss="alert" aria-label="Close"></button>
-                <script>
-                    mdb.Alert.getInstance(document.getElementById("alertExample")).update({
-                        position: "top-right",
-                        delay: 2000,
-                        autohide: true,
-                        width: "600px",
-                        offset: 20,
-                        stacking: false,
-                        appendToBody: false,
-                    });
-                </script>
+        <i class="fas fa-triangle-exclamation me-2"></i>
+        <%= forget_error %>
 
-        </div>
+            <button type="button" class="btn-close ms-2" data-mdb-dismiss="alert" aria-label="Close"></button>
+            <script>
+                mdb.Alert.getInstance(document.getElementById("alertExample")).update({
+                    position: "top-right",
+                    delay: 2000,
+                    autohide: true,
+                    width: "600px",
+                    offset: 20,
+                    stacking: false,
+                    appendToBody: false,
+                });
+            </script>
 
-
-        <% } %>
-            <% if(forget_success && forget_success.length>0){ %>
-                <div class="alert alert-success mb-0 alert-dismissible alert-absolute fade show " id="alertExample"
-                    role="alert" data-mdb-color="secondary">
-                    <i class="fas fa-check me-2"></i>
-                    <%= forget_success %>
-
-                        <button type="button" class="btn-close ms-2" data-mdb-dismiss="alert"
-                            aria-label="Close"></button>
-                        <script>
-                            mdb.Alert.getInstance(document.getElementById("alertExample")).update({
-                                position: "top-right",
-                                delay: 2000,
-                                autohide: true,
-                                width: "600px",
-                                offset: 20,
-                                stacking: false,
-                                appendToBody: false,
-                            });
-                        </script>
-                </div>
+    </div>
 
 
+    <% } %>
+        <% if(forget_success && forget_success.length>0){ %>
+            <div class="alert alert-success mb-0 alert-dismissible alert-absolute fade show " id="alertExample"
+                role="alert" data-mdb-color="secondary">
+                <i class="fas fa-check me-2"></i>
+                <%= forget_success %>
 
-                <% } %>
+                    <button type="button" class="btn-close ms-2" data-mdb-dismiss="alert" aria-label="Close"></button>
+                    <script>
+                        mdb.Alert.getInstance(document.getElementById("alertExample")).update({
+                            position: "top-right",
+                            delay: 2000,
+                            autohide: true,
+                            width: "600px",
+                            offset: 20,
+                            stacking: false,
+                            appendToBody: false,
+                        });
+                    </script>
+            </div>
+
+
+
+            <% } %>

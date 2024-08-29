@@ -12,7 +12,18 @@
 </head>
 
 <body><!-- Start: Navbar Centered Links -->
-  <%- include('home_navbar') %><!-- End: Navbar Centered Links -->
+  <%- include('home_navbar') %>
+
+
+
+
+
+
+
+
+
+
+    <!-- End: Navbar Centered Links -->
     <section class="py-5"><!-- Start: Features Cards -->
       <div class="container py-5">
         <div class="row mb-4 mb-lg-5">
@@ -36,8 +47,8 @@
                   </h5>
                   <p class="text-muted mb-4">
                     <%= shop[i].STALL_TITLE %>.
-                  </p><a href="http://localhost:3000/home/viewShop?id=<%= shop[i].V_ID %>"><button
-                      class="btn btn-primary shadow" type="button">Details</button>
+                  </p><a href="/home/viewShop?id=<%= shop[i].V_ID %>"><button class="btn btn-primary shadow"
+                      type="button">Details</button>
                 </div></a>
               </div>
             </div>
@@ -63,8 +74,7 @@
                     </h5>
                     <p class="text-muted mb-4">Erat netus est hendrerit, nullam et quis ad cras porttitor iaculis.
                       Bibendum
-                      vulputate cras aenean.</p><a
-                      href="http://localhost:3000/home/viewShop?id=<%= shop[i].V_ID %>"><button
+                      vulputate cras aenean.</p><a href="/home/viewShop?id=<%= shop[i].V_ID %>"><button
                         class="btn btn-primary shadow" type="button">Details</button></a>
                   </div>
                 </div>

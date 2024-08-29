@@ -27,7 +27,7 @@
     data-mdb-backdrop="true" data-mdb-keyboard="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form action="http://localhost:3000/vendor/<%= id %>/qr" method="POST">
+        <form action="/vendor/<%= id %>/qr" method="POST">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
             <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
@@ -53,7 +53,7 @@
   <script>
     const getdata = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/home?request=json');
+        const res = await axios.get('/home?request=json');
         console.log(res.data);
       } catch (error) {
         console.log('error', error);

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogging Videos</title>
+    <!-- MDB 5/6 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container my-5">
+        <h1 class="text-center mb-5">Blogging Videos</h1>
+        <div class="row">
+            <!-- Video Card 1 -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <img src="thumbnail1.jpg" class="img-fluid" alt="Video Thumbnail">
+                        <a data-mdb-toggle="modal" data-mdb-target="#videoModal1">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 1</h5>
+                        <p class="card-text">Brief description of the video content goes here.</p>
+                        <a class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#videoModal1">Play Video</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Repeat for more videos... -->
+            <!-- Video Card 2 -->
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
+                        <img src="thumbnail2.jpg" class="img-fluid" alt="Video Thumbnail">
+                        <a data-mdb-toggle="modal" data-mdb-target="#videoModal2">
+                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Video Title 2</h5>
+                        <p class="card-text">Another brief description goes here.</p>
+                        <a class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#videoModal2">Play Video</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more video cards as needed -->
+        </div>
+    </div>
+
+    <!-- Modal 1 -->
+    <div class="modal fade" id="videoModal1" tabindex="-1" aria-labelledby="videoModalLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalLabel1">Video Title 1</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/videoid1" title="YouTube video"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2 -->
+    <div class="modal fade" id="videoModal2" tabindex="-1" aria-labelledby="videoModalLabel2" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalLabel2">Video Title 2</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/videoid2" title="YouTube video"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MDB JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+</body>
+
+</html>

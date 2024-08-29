@@ -1,5 +1,3 @@
-
-
 <%- include('header') %>
 
 
@@ -8,79 +6,79 @@
   <%- include('navbar') %>
 
 
- 
-  <!-- .............email conatiner............... -->
- 
 
-  <div class="container" style="padding-bottom: 20px;">
-    <form action="http://localhost:3000/vendor/<%= id %>/email" class="needs-validation" method="post" novalidate>
-    <div class="mb-3">
-      <label for="email_id" class="form-label">Email address</label>
-      <input class="form-control" type="email" name="email_id" id="email_id" value="hemalhemal787@gmail.com" aria-label="readonly input example" readonly>
+    <!-- .............email conatiner............... -->
 
- 
-    </div>
-    <div class="mb-3">
-      <label for="email_text" class="form-label">Example textarea</label>
-      <textarea class="form-control" name="email_text" id="email_text" rows="8" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary" id="liveToastBtn">Send Us</button>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-          <img src="..." class="rounded me-2" alt="...">
-          <strong class="me-auto">Bootstrap</strong>
-          <small>1 sec ago</small>
-          <button type="submit" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div class="container" style="padding-bottom: 20px;">
+      <form action="/vendor/<%= id %>/email" class="needs-validation" method="post" novalidate>
+        <div class="mb-3">
+          <label for="email_id" class="form-label">Email address</label>
+          <input class="form-control" type="email" name="email_id" id="email_id" value="hemalhemal787@gmail.com"
+            aria-label="readonly input example" readonly>
+
+
         </div>
-        <div class="toast-body">
-      Thank you for your email
+        <div class="mb-3">
+          <label for="email_text" class="form-label">Example textarea</label>
+          <textarea class="form-control" name="email_text" id="email_text" rows="8" required></textarea>
         </div>
-      </div>
+        <button type="submit" class="btn btn-primary" id="liveToastBtn">Send Us</button>
+
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+          <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <img src="..." class="rounded me-2" alt="...">
+              <strong class="me-auto">Bootstrap</strong>
+              <small>1 sec ago</small>
+              <button type="submit" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              Thank you for your email
+            </div>
+          </div>
+        </div>
+
+
+
+
     </div>
+    </form>
 
-
-
-
-  </div>
-</form>
-
-</div>
-<!-- ...................internal js.............. -->
-<script>
-  // Bootstrap form validation script
-  (function () {
-'use strict';
-window.addEventListener('load', function () {
-    var forms = document.getElementsByClassName('needs-validation');
-    var validation = Array.prototype.filter.call(forms, function (form) {
-        form.addEventListener('submit', function (event) {
-            if (form.checkValidity() === false) {
+    </div>
+    <!-- ...................internal js.............. -->
+    <script>
+      // Bootstrap form validation script
+      (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+          var forms = document.getElementsByClassName('needs-validation');
+          var validation = Array.prototype.filter.call(forms, function (form) {
+            form.addEventListener('submit', function (event) {
+              if (form.checkValidity() === false) {
                 event.preventDefault();
                 event.stopPropagation();
-            }
-            form.classList.add('was-validated');
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
         }, false);
-    });
-}, false);
-})();
+      })();
 
 
 
-</script> 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384```html
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1" crossorigin="anonymous"></script>
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7g/M4Q6c/Bq7yhszN0Dki6zgCjO92fPh3E6"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+      integrity="sha384-Q1iGkPf7mleVfnWaJ8/Yeh1Hmb88u+qerR9GJPPFL7Hg9bfF5VaqLv2ytL3hcX03"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384```html
+  <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Q1Hg/R1ZK6t8c/X7Fz+ORi+Z3N+qGVoHc3Q9NZMfyU8GaaFsiDHBX3FMSX2gBFV1"
+      crossorigin="anonymous"></script>
 
 
-<!-- ..............footer........ -->
-<%- include('footer') %>
-
-
- 
-
-
-
-
+    <!-- ..............footer........ -->
+    <%- include('footer') %>

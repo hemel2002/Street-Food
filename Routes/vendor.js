@@ -34,10 +34,43 @@ router.get('/:id', requirelogin, async (req, res) => {
     );
     console.log(foodResult.rows);
     const reviewResult = await connection.execute(
-      'SELECT CUSTOMER_ID, NAME, REVIEW_MESSAGE, RATING FROM customer_reviews'
+      `SELECT customer_reviews_food.c_id,
+      FOOD_ID,
+              food_review,
+              food_rating,
+              c_date,
+              email,
+              first_name || ' ' || last_name AS name
+         FROM customer_reviews_food
+         JOIN customers ON customer_reviews_food.c_id = customers.c_id
+        WHERE food_id IN (SELECT food_id FROM vendor_sells_food WHERE v_id = :id)
+     ORDER BY c_date DESC`,
+      { id: id }
     );
+    const topfood_result = await connection.execute(
+      `SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc FETCH FIRST 5 ROWS ONLY`,
+      { id }
+    );
+    const top_food_data = topfood_result.rows;
+
     foodData = foodResult.rows;
     reviews = reviewResult.rows;
+    const currentPage = parseInt(req.query.page) || 1;
+    const itemsPerPage = 6;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const displayedItems = foodData.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(foodData.length / itemsPerPage);
+
+    res.render('vendor_ejs/vendor', {
+      foodData,
+      displayedItems,
+      totalPages,
+      currentPage,
+      reviews,
+      id,
+      top_food_data,
+    });
     console.log(reviews);
   } catch (err) {
     console.error(err);
@@ -50,22 +83,6 @@ router.get('/:id', requirelogin, async (req, res) => {
       }
     }
   }
-
-  const currentPage = parseInt(req.query.page) || 1;
-  const itemsPerPage = 6;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedItems = foodData.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(foodData.length / itemsPerPage);
-
-  res.render('vendor_ejs/vendor', {
-    foodData,
-    displayedItems,
-    totalPages,
-    currentPage,
-    reviews,
-    id,
-  });
 });
 
 /////////////////////for vendor add food //////////////////////////
@@ -80,7 +97,15 @@ router.post(
   requirelogin,
   upload.single('image'),
   async (req, res) => {
-    const { name, price, rating = 0, ingredient, availability } = req.body;
+    console.log(req.body);
+    const {
+      name,
+      price,
+      rating = 0,
+      ingredient,
+      availability,
+      category,
+    } = req.body;
     const { path, originalname } = req.file;
     const { id } = req.params;
     let connection;
@@ -98,18 +123,29 @@ router.post(
 
       const currentNumber = parseInt(currentFoodId.split('_')[1]);
       const nextFoodId = `F_${currentNumber + 1}`;
+      console.log('next', nextFoodId);
 
-      // Insert new food item into Food table
       await connection.execute(
-        'INSERT INTO Food (food_name, price, rating, ingredient, availability, Food_pic, ORIGINAL_PATH) VALUES (:name, :price, :rating, :ingredient, :availability, :path, :originalname)',
-        { name, price, rating, ingredient, availability, path, originalname },
+        `INSERT INTO Food (food_name, price, rating, ingredient, availability, Food_pic, ORIGINAL_PATH, category)
+       VALUES (:name, :price, :rating, :ingredient, :availability, :path, :originalname, :category)`,
+        {
+          name,
+          price,
+          rating,
+          ingredient,
+          availability,
+          path,
+          originalname,
+          category,
+        },
         { autoCommit: true }
       );
 
       // Link the new food item with the vendor in VENDOR_SELLS_FOOD table
       await connection.execute(
-        'INSERT INTO VENDOR_SELLS_FOOD (V_ID, FOOD_ID) VALUES (:id, :nextFoodId)',
-        { id, nextFoodId },
+        `INSERT INTO VENDOR_SELLS_FOOD (V_ID, FOOD_ID)
+       VALUES (:id, :nextFoodId)`,
+        { id, nextFoodId: nextFoodId.toString() }, // Ensure it's treated as a string
         { autoCommit: true }
       );
     } catch (err) {
@@ -267,11 +303,6 @@ router.post('/:id/email', async (req, res) => {
   }
 });
 
-//////////////////////////////////vendor profile////////////////////////////
-router.get('/:id/profile', requirelogin, (req, res) => {
-  res.render('vendor_ejs/vendor_profile');
-});
-
 //////////////////////////////////vendor logout/////////////////////////////
 router.post('/:id/logout', requirelogin, (req, res) => {
   req.session.user_id = null;
@@ -279,36 +310,65 @@ router.post('/:id/logout', requirelogin, (req, res) => {
   res.redirect('/home');
 });
 ////////////////////////////////////////////////vendor qr-code///////////////////////
-router.get('/:id/qr', requirelogin, (req, res) => {
-  res.render('vendor_ejs/qr');
-});
+router.post('/:id/qr', requirelogin, async (req, res) => {
+  try {
+    if (!req.body.url) {
+      return res.status(400).send('URL is required');
+    }
 
-router.post('/:id/qr', requirelogin, (req, res) => {
-  console.log(req.body);
-  const qr_svg = qr.image(req.body.url);
-  const outputPath = path.join(__dirname, 'qr.png');
+    const qr_svg = qr.image(req.body.url);
+    const outputPath = path.join(__dirname, 'qr.png');
+    const writeStream = fs.createWriteStream(outputPath);
 
-  const writeStream = fs.createWriteStream(outputPath);
-  qr_svg.pipe(writeStream);
+    qr_svg.pipe(writeStream);
 
-  writeStream.on('finish', () => {
-    cloudinary.uploader
-      .upload(outputPath, { folder: 'qr-image' })
-      .then((result) => {
+    writeStream.on('finish', async () => {
+      try {
+        const result = await cloudinary.uploader.upload(outputPath, {
+          folder: 'qr-image',
+        });
         fs.unlinkSync(outputPath);
-        console.log(result);
+
+        let connection;
+        try {
+          connection = await OracleDB.getConnection(dbConfig);
+          await connection.execute(
+            'UPDATE VENDORS v SET v.shop_data.LOCATION_URL = :url WHERE V_ID = :id',
+            { url: result.secure_url, id: req.params.id },
+            { autoCommit: true }
+          );
+          console.log('Database updated successfully');
+        } catch (err) {
+          console.error('Database error:', err);
+          return res.status(500).send('Database error');
+        } finally {
+          if (connection) {
+            try {
+              await connection.close();
+            } catch (err) {
+              console.error('Error closing connection:', err);
+            }
+          }
+        }
+
         res.redirect(`/vendor/${req.params.id}`);
-      })
-      .catch((error) => {
+      } catch (error) {
         fs.unlinkSync(outputPath);
-        res.status(500).send(error.message);
-      });
-  });
+        console.error('Cloudinary upload error:', error);
+        res.status(500).send('Cloudinary upload error');
+      }
+    });
 
-  writeStream.on('error', (err) => {
-    res.status(500).send(err.message);
-  });
+    writeStream.on('error', (err) => {
+      console.error('Write stream error:', err);
+      res.status(500).send('Error creating QR code');
+    });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    res.status(500).send('Unexpected server error');
+  }
 });
+
 //////////////////////////////////////vendor review and reply/////////////////////////////
 router.get('/:id/review', requirelogin, async (req, res) => {
   const { id } = req.params;
@@ -403,6 +463,92 @@ router.patch('/:id/review', requirelogin, async (req, res) => {
   }
   req.flash('review', 'Review updated successfully!');
   res.redirect(`/vendor/${V_ID}`);
+});
+/////////////////////////////vendor prfile/////////////////////////////
+router.get('/:id/profile', requirelogin, async (req, res) => {
+  const { id } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM VENDORS WHERE V_ID = :id',
+      { id }
+    );
+    const result2 = await connection.execute(
+      'SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc FETCH FIRST 3 ROWS ONLY',
+      { id }
+    );
+    const vendordata = result.rows[0];
+    console.log(result2.rows);
+    console.log(vendordata);
+    res.render('vendor_ejs/vendor_profile', {
+      vendordata,
+      foodData: result2.rows,
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+///////////////////////////////vendor edit profile/////////////////////////////
+router.get('/:id/edit_profile', requirelogin, async (req, res) => {
+  const { id } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM VENDORS WHERE V_ID = :id',
+      { id }
+    );
+    const vendordata = result.rows[0];
+    console.log(vendordata);
+    res.render('vendor_ejs/edit_profile', { vendordata });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+///////////////////////////////Video_list/////////////////////////////
+router.get('/:id/Video_list', requirelogin, async (req, res) => {
+  const { id } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT DISTINCT * FROM uploaded_videos p,user_promotes_vendor v,customers c WHERE p.video_id = v.video_id AND v.v_id = :id AND  p.c_id = c.c_id',
+      { id }
+    );
+    const result2 = await connection.execute('SELECT * FROM customers ');
+    const customerData = result2.rows;
+
+    const videoData = result.rows;
+    console.log('customer id', videoData);
+    res.render('vendor_ejs/video_list', { videoData, id, customerData });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 });
 
 /////////////////////////////////export Router/////////////////////////////

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Vendor Profile</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <style>
+        .img {
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <div class="bg-image" style="background-image: url('<%= vendordata.SHOP_DATA.STALL_PIC %>'); height: 400px;">
+        <div class="mask d-flex align-items-center justify-content-center"
+            style="background-color: rgba(0, 0, 0, 0.5); height: 100%;">
+            <div class="text-center">
+                <img src="<%= vendordata.PROFILE_PIC %>" class="rounded-circle img-fluid shadow-2-strong"
+                    alt="Vendor Image" style="width: 150px;">
+                <h1 class="text-white mt-3">Edit Profile</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div class="container my-5">
+        <h3>Edit Your Profile</h3>
+        <form id="editProfileForm">
+
+            <div class="mb-4">
+                <label for="vendorName" class="form-label">Vendor Name</label>
+                <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
+                    value="<%= vendordata.SHOP_DATA.V_FIRST_NAME %>" required
+                    data-mdb-validation="Vendor name is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="shopName" class="form-label">Shop Name</label>
+                <input type="text" id="shopName" class="form-control validate" placeholder="Enter your shop name"
+                    value="<%= vendordata.SHOP_DATA.STALL_NAME %>" required
+                    data-mdb-validation="Shop name is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" class="form-control validate" rows="4"
+                    placeholder="Describe your shop and services" required
+                    data-mdb-validation="Description is required."><%= vendordata.SHOP_DATA.SHOP_DESCRIPTION %></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address"
+                    value="<%= vendordata.SHOP_DATA.AREA %>" required data-mdb-validation="Address is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" id="phone" class="form-control validate" placeholder="Enter your contact number"
+                    value="<%= vendordata.PHONE %>" required data-mdb-validation="Phone number is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control validate" placeholder="Enter your email address"
+                    value="<%= vendordata.EMAIL %>" required data-mdb-validation="Valid email is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="profileImage" class="form-label">Profile Image</label>
+                <input type="file" id="profileImage" class="form-control validate"
+                    data-mdb-validation="Profile image is required.">
+            </div>
+
+            <div class="mb-4">
+                <label for="backgroundImage" class="form-label">Background Image</label>
+                <input type="file" id="backgroundImage" class="form-control validate"
+                    data-mdb-validation="Background image is required.">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+
+    <!-- MDB JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <script>
+        // Initialize MDB validation and custom validation for images
+        (function () {
+            'use strict';
+            // Fetch the form and all the required elements
+            const form = document.getElementById('editProfileForm');
+            const profileImageInput = document.getElementById('profileImage');
+            const backgroundImageInput = document.getElementById('backgroundImage');
+
+            // Add event listener for form submission
+            form.addEventListener('submit', function (event) {
+                let isValid = true;
+
+                // Check if profile image is selected
+                if (!profileImageInput.value) {
+                    profileImageInput.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    profileImageInput.classList.remove('is-invalid');
+                    profileImageInput.classList.add('is-valid');
+                }
+
+                // Check if background image is selected
+                if (!backgroundImageInput.value) {
+                    backgroundImageInput.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    backgroundImageInput.classList.remove('is-invalid');
+                    backgroundImageInput.classList.add('is-valid');
+                }
+
+                // If the form is not valid, prevent submission
+                if (!isValid) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
+
+            // Validation for other fields
+            const inputs = document.querySelectorAll('.validate');
+            inputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    if (!input.checkValidity()) {
+                        input.classList.add('is-invalid');
+                    } else {
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+
+</html>

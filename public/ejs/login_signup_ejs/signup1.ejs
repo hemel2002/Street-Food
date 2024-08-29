@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="<%= mode %>">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../bootstrap-5.3.3-dist/css/bootstrap.min.css" />
+  <script src="../js/signup.js"></script>
+
+  <link rel="stylesheet" href="../css/signup.css">
+  <style>
+    #autocomplete {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .suggestions {
+      border: 1px solid #514f51;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .suggestion {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .suggestion:hover {
+      background-color: #1f1f1f;
+    }
+  </style>
+  <script src="../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
+  <title>Registration Form</title>
+</head>
+
+<body>
+  <%- include('../flash-alert/signupFlash') %>
+
+    <%- include('../home/home_nav') %>
+
+      <div class="container signupcon">
+        <div class="row justify-content-center">
+          <div class="title">Registration Form</div>
+          <form class="needs-validation signup" novalidate action="/home/signup" method="post"
+            enctype="multipart/form-data">
+            <div class="row">
+              <div class="col">
+                <label for="accountType" class="form-label">Account Type</label>
+                <select class="form-select form-select-lg mb-3 acctype" aria-label="Large select example" required
+                  id="accountType" name="accountType">
+                  <option selected disabled>Select Account Type</option>
+                  <option value="User">User</option>
+                  <option value="Seller">Seller</option>
+                </select>
+                <div class="invalid-feedback">Please select an account type.</div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="inputEmail4" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="inputEmail4" name="firstName" required>
+                <div class="invalid-feedback">Please fill the entity</div>
+              </div>
+              <div class="col-md-6">
+                <label for="lastname" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastname" name="lastName" required>
+                <div class="invalid-feedback">Please fill the entity</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <div class="form-floating mb-3">
+                  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                    name="email" required>
+                  <label for="floatingInput">Email address</label>
+                  <div class="invalid-feedback">Please fill the entity</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Fields -->
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" placeholder="01XX-XXX-XXXX" name="phone" required>
+                <div class="invalid-feedback">Please enter a valid phone number.</div>
+              </div>
+              <div class="col-12">
+                <label for="district" class="form-label">District</label>
+                <input type="text" class="form-control" id="district" name="district" placeholder="" required>
+                <div class="invalid-feedback">Please enter your district.</div>
+              </div>
+              <div class="col-12">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="" required>
+                <div class="invalid-feedback">Please enter your city.</div>
+              </div>
+              <div class="col-12">
+                <label for="locationInput" class="form-label">Location</label>
+                <input type="text" class="form-control" id="locationInput" placeholder="Enter location" name="location"
+                  required>
+                <div class="invalid-feedback">Please enter a location.</div>
+                <div class="suggestions" id="suggestions"></div>
+              </div>
+
+              <div class="col-12 vendor-field" style="display: none;">
+                <label for="stallName" class="form-label">Stall Name</label>
+                <input type="text" class="form-control" id="stallName" name="stallName" placeholder="">
+                <div class="invalid-feedback">Please enter your stall name.</div>
+              </div>
+              <div class="col-12 vendor-field" style="display: none;">
+                <label for="stallPic" class="form-label">Stall Picture</label>
+                <input type="file" class="form-control" id="stallPic" name="stallPic" accept="image/*">
+                <div class="invalid-feedback">Please upload a picture of your stall.</div>
+              </div>
+              <div class="col-12 vendor-field" style="display: none;">
+                <label for="basic-url" class="form-label">Shop Location URL</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon3">https://google.com/map/</span>
+                  <input type="text" class="form-control" id="basic-url" name="shopLocationUrl"
+                    aria-describedby="basic-addon3 basic-addon4">
+                </div>
+                <div class="form-text" id="basic-addon4">Location for finding you.</div>
+              </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row">
+              <div class="col">
+                <div class="form-floating mb-3">
+                  <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                    name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}">
+                  <label for="floatingPassword">Password</label>
+                  <div class="invalid-feedback">Password must be at least 8 characters long, include an uppercase
+                    letter, a lowercase letter, a number, and a special character.</div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-floating mb-3">
+                  <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password"
+                    name="confirmPassword" required>
+                  <label for="confirmPassword">Confirm Password</label>
+                  <div class="invalid-feedback">Passwords must match.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="exampleCheck1" name="terms" required />
+                <label class="form-check-label" for="exampleCheck1">I agree to the <a href="#">terms &
+                    Conditions</a></label>
+              </div>
+            </div>
+
+            <button class="w-100 btn btn-primary btn-lg" type="submit">Sign Up</button>
+          </form>
+        </div>
+      </div>
+
+      <script>
+        (() => {
+          'use strict';
+
+          const forms = document.querySelectorAll('.needs-validation');
+          const vendorFields = document.querySelectorAll('.vendor-field');
+          const accountType = document.getElementById('accountType');
+          const password = document.getElementById('floatingPassword');
+          const confirmPassword = document.getElementById('confirmPassword');
+
+          Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+              if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+
+              form.classList.add('was-validated');
+            }, false);
+          });
+
+          accountType.addEventListener('change', () => {
+            if (accountType.value === 'Seller') {
+              vendorFields.forEach(field => {
+                field.style.display = 'block';
+              });
+            } else {
+              vendorFields.forEach(field => {
+                field.style.display = 'none';
+              });
+            }
+          });
+
+          confirmPassword.addEventListener('input', () => {
+            if (confirmPassword.value !== password.value) {
+              confirmPassword.setCustomValidity('Passwords do not match.');
+            } else {
+              confirmPassword.setCustomValidity('');
+            }
+          });
+        })();
+      </script>
+
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+      <script src="../js/location_autocomplete.js"></script>
+</body>
+
+</html>

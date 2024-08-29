@@ -54,8 +54,7 @@
                         <input type="text" id="form12" class="form-control" />
                         <label class="form-label" for="form12">Enter OTP</label>
                     </div>
-                    <form id="otpForm" action="http://localhost:3000/emailVerification/otp?<%= queryParams %>"
-                        method="POST">
+                    <form id="otpForm" action="/emailVerification/otp?<%= queryParams %>" method="POST">
                         <input type="hidden" id="otpHidden" name="otpHidden" value="" />
                         <button type="submit" class="btn btn-success btn-lg py-3 px-5 mb-2 me-2" id="verify">
                             VERIFY
@@ -147,7 +146,7 @@
                 resendButton.classList.add('disabled');
                 startTimer(timerDuration, timerDisplay);
 
-                fetch(`http://localhost:3000/otp_val_verify?${queryParams}`)
+                fetch(`/otp_val_verify?${queryParams}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log('Fetched OTP:', data);  // Log fetched OTP

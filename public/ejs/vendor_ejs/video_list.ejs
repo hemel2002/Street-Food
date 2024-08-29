@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogger Video Dashboard</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.1/mdb.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Blogger Dashboard</a>
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Upload Video</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Blogger List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <h2 class="mb-4">Blogger Video Details</h2>
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Customer Email</th>
+                    <th scope="col">Video ID</th>
+                    <th scope="col">Video Title</th>
+                    <th scope="col">Video Link</th>
+                    <th scope="col">Date Published</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% videoData.forEach(data=> { %>
+                    <tr>
+                        <td>
+                            <%= data.FIRST_NAME %>
+                                <%= data.LAST_NAME %>
+                        </td>
+                        <td>
+                            <%= data.EMAIL %>
+                        </td>
+                        <td>
+                            <%= data.VIDEO_ID %>
+                        </td>
+                        <td>
+                            <%= data.VIDEO_TITLE %>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-link" data-mdb-toggle="modal"
+                                data-mdb-target="#videoModal<%= data.VIDEO_ID %>">
+                                Watch Video
+                            </button>
+                        </td>
+                        <td>
+                            <%= data.UPLOAD_DATE %>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <% videoData.forEach(data=> { %>
+        <div class="modal fade" id="videoModal<%= data.VIDEO_ID %>" tabindex="-1"
+            aria-labelledby="videoModalLabel<%= data.VIDEO_ID %>" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="videoModalLabel<%= data.VIDEO_ID %>">
+                            <%= data.VIDEO_TITLE %>
+                        </h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="ratio ratio-16x9">
+                            <% if (data.VIDEO_LINKS.includes('youtube.com') || data.VIDEO_LINKS.includes('vimeo.com')) {
+                                %>
+                                <iframe id="videoFrame<%= data.VIDEO_ID %>" src="<%= data.VIDEO_LINKS %>"
+                                    title="<%= data.VIDEO_TITLE %>" allowfullscreen></iframe>
+                                <% } else { %>
+                                    <video id="videoPlayer<%= data.VIDEO_ID %>" controls>
+                                        <source src="<%= data.VIDEO_LINKS %>" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% }) %>
+
+            <!-- MDB JS -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.1/mdb.min.js"></script>
+
+            <!-- Custom Script to Stop Video on Modal Close -->
+            <script>
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('hidden.bs.modal', function () {
+                        const videoPlayer = modal.querySelector('video');
+                        const iframePlayer = modal.querySelector('iframe');
+
+                        if (videoPlayer) {
+                            videoPlayer.pause();
+                            videoPlayer.currentTime = 0; // Reset video to start
+                        }
+
+                        if (iframePlayer) {
+                            iframePlayer.src = iframePlayer.src; // Reset iframe source to stop the video
+                        }
+                    });
+                });
+            </script>
+</body>
+
+</html>

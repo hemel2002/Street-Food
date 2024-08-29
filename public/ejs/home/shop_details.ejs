@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Profile</title>
+
+    <style>
+        .card-img-top {
+            height: 300px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+
+
+        .mask-custom {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <div class="bg-image" style="background-image: url('  <%= vendordata.SHOP_DATA.STALL_PIC %>'); height: 300px;">
+        <div class="mask d-flex align-items-center justify-content-center"
+            style="background-color: rgba(0, 0, 0, 0.5); height: 100%;">
+            <div class="text-center">
+                <img src="<%= vendordata.PROFILE_PIC %>" class="rounded-circle img-fluid shadow-2-strong"
+                    alt="Vendor Image" style="width: 150px;">
+                <h1 class="text-white mt-3">
+                    <%= vendordata.SHOP_DATA.V_FIRST_NAME %>
+                        <%= vendordata.SHOP_DATA.V_LAST_NAME %>
+                </h1>
+                <p class="text-white">
+                    <%= vendordata.SHOP_DATA.STALL_TITLE %>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Vendor Profile</a>
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Products/Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Overview Section -->
+        <div class="container my-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>About Us</h3>
+                    <p>
+                        <%= vendordata.SHOP_DATA.SHOP_DESCRIPTION %>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <div class="ratio ratio-16x9">
+                        <iframe src="https://www.youtube.com/embed/example" title="Vendor Video"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Information -->
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-map-marker-alt"></i> Address</h5>
+                            <p class="card-text">
+                                <%= vendordata.SHOP_DATA.AREA %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-phone"></i> Phone</h5>
+                            <p class="card-text">
+                                <%= vendordata.PHONE %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-envelope"></i> Email</h5>
+                            <p class="card-text">
+                                <%= vendordata.EMAIL %>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products/Services Section -->
+        <div class="container my-5">
+            <h3>Products/Services</h3>
+            <div id="productCarousel" class="carousel slide" data-mdb-ride="carousel">
+                <div class="carousel-indicators">
+                    <% allFoodData.forEach((data, index)=> { %>
+                        <button data-mdb-target="#productCarousel" data-mdb-slide-to="<%= index %>"
+                            class="<%= index === 0 ? 'active' : '' %>"
+                            aria-current="<%= index === 0 ? 'true' : 'false' %>"
+                            aria-label="Slide <%= index + 1 %>"></button>
+                        <% }) %>
+                </div>
+
+                <!-- Inner -->
+                <div class="carousel-inner">
+                    <% allFoodData.forEach((data, index)=> { %>
+                        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                            <a data-mdb-ripple-init href="/user/details_food?FOOD_ID=<%= data.FOOD_ID %>">
+                                <img src="<%= data.FOOD_PIC %>" class="d-block w-100 img-fluid rounded carousel-image"
+                                    alt="Food Image" />
+                                <div class="carousel-caption d-flex flex-column justify-content-end align-items-start"
+                                    style="position: absolute; bottom: 0; left: 0; width: 100%; background-color: rgba(0, 0, 0, 0.6);">
+                                    <div class="w-100 p-2 text-left text-danger">
+                                        <h3>Food Name: <%= data.FOOD_NAME %>
+                                        </h3>
+                                        <h4>Rating: <%= data.RATING %> <i class="fas fa-star"></i></h4>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <% }) %>
+                </div>
+
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-mdb-target="#productCarousel"
+                    data-mdb-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-mdb-target="#productCarousel"
+                    data-mdb-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Product Grid -->
+        <div class="row mt-4">
+            <% foodData.forEach(data=> { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <a data-mdb-ripple-init href="/user/details_food?FOOD_ID=<%= data.FOOD_ID %>"><img
+                                src="<%= data.FOOD_PIC %>" class="card-img-top" alt="Product <%= data.FOOD_NAME %>"></a>
+
+                        <div class="card-body">
+                            <h5 class="card-title"><b>
+                                    <%= data.FOOD_NAME %>
+                                </b></h5>
+                            <p class="card-text">
+                                <b>Price :</b>
+                                <%= data.PRICE %> tk
+                            </p>
+                            <p>
+                                <b>Rating :</b>
+                                <%= data.RATING %> <i class="fas fa-star"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+
+
+        <a href=" /home/viewShop?id=<%= vendordata.V_ID %>"> <button type="button" class="btn btn-link"
+                style="float: right;"><b>more</b></button></a>
+
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="container my-5">
+        <h3>Reviews</h3>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">John Doe <span class="float-end"><i class="fas fa-star"></i> 4.5</span>
+                        </h5>
+                        <p class="card-text">Great service, highly recommend!</p>
+                        <button type="button" class="btn btn-link">More Review</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+
+        <!-- QR Code Section -->
+        <div class="container my-5">
+            <h3 class="text-center">Locate Our Shop</h3>
+            <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card text-center shadow-0">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Scan the QR Code</h5>
+                            <% if (vendordata.SHOP_DATA.LOCATION_URL) { %>
+                                <center> <img src="<%= vendordata.SHOP_DATA.LOCATION_URL %>" alt="QR Code"
+                                        class="img-fluid mb-3" style="max-width: 300px;"></center>
+
+                                <p class="card-text">Easily find our shop on Google Maps by scanning this code.</p>
+                                <% } else { %>
+                                    <p class="card-text text-warning">QR Code not available.</p>
+
+                                    <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Axios Script -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+
+    <!-- Include Axios Script -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="../../js/validator.js"></script>
+    <script>
+        const getdata = async () => {
+            try {
+                const res = await axios.get('/home?request=json');
+                console.log(res.data);
+            } catch (error) {
+                console.log('error', error);
+            }
+        }
+        getdata();
+
+
+    </script>
+
+
+
+</body>
+
+</html>

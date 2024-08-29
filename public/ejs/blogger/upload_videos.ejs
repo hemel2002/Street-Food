@@ -200,7 +200,7 @@
       <div class="card upload-card shadow-lg">
         <div class="card-body">
           <h4 class="card-title text-center mb-4">Upload Your Video</h4>
-          <form action="http://localhost:3000/user/<%= id %>/upload_video" class="needs-validation" method="post"
+          <form action="/user/<%= id %>/upload_video" class="needs-validation" method="post"
             enctype="multipart/form-data" novalidate>
             <div class="form-outline mb-4" data-mdb-input-init>
               <input type="text" class="form-control form-control" id="vendorSearch" placeholder="Search vendor"
@@ -364,7 +364,7 @@
 
       try {
         const res = await axios.get(
-          `http://localhost:3000/user/<%= id %>/upload_video?response=json`
+          `/user/<%= id %>/upload_video?response=json`
         );
         recentVideos = res.data;
 

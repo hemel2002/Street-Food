@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
-
+const os = require('os');
 const OracleDB = require('oracledb');
 const express = require('express');
 const path = require('path');
@@ -22,6 +22,8 @@ const upload = multer({ storage });
 const require_email = require('./Routes/require_email.js');
 const sendOtpEmail = require('./Routes/email.js');
 const admin = require('./Routes/admin');
+const { PASSWORD_RESET_REQUEST_TEMPLATE } = require('./Routes/EmailTemp.js');
+const { VERIFICATION_EMAIL_TEMPLATE } = require('./Routes/EmailTemp.js');
 const app = express();
 const port = 3000;
 
@@ -150,21 +152,14 @@ app.get('/home/signup', (req, res) => {
 app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
   const {
     accountType,
-    firstName,
-    lastName,
+
     email,
     phone,
-    district,
-    city,
-    location,
-    stallName,
-    shopLocationUrl,
+
     password,
     confirmPassword,
     terms,
   } = req.body;
-  const stallPic = req.file ? req.file.path : '';
-  console.log(req.body);
 
   if (password !== confirmPassword) {
     req.flash('dontMatch', 'Passwords do not match.');
@@ -213,16 +208,10 @@ app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
 
   const queryParams = new URLSearchParams({
     accountType,
-    firstName,
-    lastName,
+
     email,
     phone,
-    district,
-    city,
-    location,
-    stallName,
-    stallPic,
-    shopLocationUrl,
+
     password,
     terms,
   }).toString();
@@ -246,11 +235,7 @@ app.post('/home/login', async (req, res) => {
   let FIRST_NAME;
 
   try {
-    connection = await OracleDB.getConnection({
-      user: 'system',
-      password: '12688',
-      connectString: 'localhost:1521/orcl',
-    });
+    connection = await OracleDB.getConnection(dbConfig);
 
     const { email, password } = req.body;
     console.log(req.body);
@@ -305,16 +290,21 @@ app.post('/home/login', async (req, res) => {
 
           console.log(`Logged in as: ${EMAIL}, ID: ${USER_ID}`);
 
-          if (USER_ID[0] === 'A') {
-            req.flash('success', "Welcome back, Admin! We're glad to see you.");
-            return res.redirect(`/admin/${USER_ID}`);
-          } else if (USER_ID[0] === 'U') {
-            req.flash('success', "Welcome back! We're glad to see you.");
-            return res.redirect(`/user/${USER_ID}`);
-          } else {
-            req.flash('success', "Welcome back! We're glad to see you.");
-            return res.redirect(`/vendor/${USER_ID}`);
-          }
+          // Retrieve the original URL from the session if available
+          const redirectUrl =
+            req.session.returnTo ||
+            (USER_ID[0] === 'A'
+              ? `/admin/${USER_ID}`
+              : USER_ID[0] === 'U'
+              ? `/user/${USER_ID}`
+              : `/vendor/${USER_ID}`);
+          delete req.session.returnTo; // Clean up the session
+
+          req.flash(
+            'success',
+            `Welcome back! We're glad to see you, ${FIRST_NAME}`
+          );
+          return res.redirect(redirectUrl);
         } else {
           req.flash('error', 'Invalid email or password');
           return res.redirect('/home/login');
@@ -343,48 +333,6 @@ app.post('/home/login', async (req, res) => {
   }
 });
 
-// app.get('/email', requirelogin, async (req, res) => {
-//   const nodemailer = require('nodemailer');
-
-//   const transporter = nodemailer.createTransport({
-//     host: process.env.Email_host,
-//     port: process.env.Email_host,
-//     secure: false, // Use `true` for port 465, `false` for all other ports
-//     auth: {
-//       user: process.env.Email_username,
-//       pass: process.env.Email_password,
-//     },
-//   });
-
-//   // async..await is not allowed in global scope, must use a wrapper
-//   async function main() {
-//     // send mail with defined transport object
-//     const info = await transporter.sendMail({
-//       from: 'street_food.io', // sender address
-//       to: 'hemalhemal787@gmail.com', // list of receivers
-//       subject: 'forgret password', // Subject line
-//       title: 'the forget pass of' + uuid(),
-//       text: 'your foget code is :' + uuid(), // plain text body
-//       html: false, // html body
-//     });
-
-//     console.log('Message sent: %s', info.messageId);
-//     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
-//   }
-
-//   main().catch(console.error);
-// });
-
-//////////////////////for any invalid route////////////////////////
-// app.get('*', (req, res) => {
-//   req.flash('error', 'The route is not valid');
-//   res.redirect('/home');
-// });
-
-////////////////////export required login middleware////////////////////////////////////
-
-// module.exports = { app, mode };
-
 /////////////////////////////forget password///////////////////////////////
 app.get('/forget', (req, res) => {
   res.render('login_signup_ejs/forget');
@@ -396,14 +344,16 @@ app.post('/forget', async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      `SELECT EMAIL, FIRST_NAME FROM USERS WHERE EMAIL = :email`,
+      `SELECT EMAIL, FIRST_NAME FROM Customers WHERE EMAIL = :email`,
+      [email]
+    );
+    const result2 = await connection.execute(
+      `SELECT EMAIL,v.shop_data.V_FIRST_NAME as FIRST_NAME FROM Vendors v WHERE EMAIL = :email`,
       [email]
     );
 
-    const { EMAIL, FIRST_NAME } = result.rows[0] || {};
-    console.log(result.rows);
-
-    if (!result.rows.length) {
+    const { EMAIL, FIRST_NAME } = result.rows[0] || result2.rows[0];
+    if (!EMAIL) {
       req.flash(
         'forget_error',
         'An error occurred during password reset, please try again later'
@@ -437,25 +387,69 @@ app.post('/forget', async (req, res) => {
   }
 });
 let otp;
-app.get('/forget/otp', require_email, async (req, res) => {
-  res.render('login_signup_ejs/forget_otp', { email, firstName });
+app.get('/forget/reset', require_email, async (req, res) => {
+  const { email } = req.query;
+  res.render('login_signup_ejs/ResetPassword', { email });
 });
+////////////////////////////////function grab ip address////////////////////////
+function getWirelessIPAddress() {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    // Targeting wireless interfaces (e.g., wlan0, Wi-Fi, etc.)
+    if (
+      name.toLowerCase().includes('wlan') ||
+      name.toLowerCase().includes('wi-fi')
+    ) {
+      for (const iface of interfaces[name]) {
+        if (iface.family === 'IPv4' && !iface.internal) {
+          return iface.address;
+        }
+      }
+    }
+  }
+  return 'localhost'; // Fallback to localhost if no wireless IP is found
+}
+/////////////////////////////////////reset password//////////////////////////
+app.get('/forget/otp', (req, res) => {
+  // Function to get the local IP address
 
-app.get('/otp_val', (req, res) => {
+  // Use the IP address in your URL
+
+  const ip = getWirelessIPAddress();
+
   otp = uuid();
-  const { email, firstName } = req.query;
+  const email = req.session.user_email;
+  const url = `http://${ip}:3000/forget_otp_verify?otp=${otp}&email=${email}`;
+  const subject = 'Forget Password';
+  const PASSWORD_RESET_REQUEST = PASSWORD_RESET_REQUEST_TEMPLATE.replace(
+    '{resetURL}',
+    `${url}`
+  );
 
-  const message = `Hello, ${firstName}. Your reset code is: ${otp}`;
-  sendOtpEmail(email, firstName, message);
-  res.json(otp);
+  sendOtpEmail(email, subject, PASSWORD_RESET_REQUEST);
 });
 
+app.get('/forget_otp_verify', (req, res) => {
+  const { otp, email } = req.query;
+
+  const seerver_otp = otp;
+  if (otp === seerver_otp) {
+    res.redirect(`/forget/reset?email=${email}`);
+  } else {
+    res.redirect('/forget');
+  }
+});
+///////////////////verfication otp////////////////////////
 app.get('/otp_val_verify', (req, res) => {
   otp = uuid();
-  const { email, firstName } = req.query;
+  const { email } = req.query;
+  const subject = 'Email Verification';
+  const VERIFICATION_EMAIL = VERIFICATION_EMAIL_TEMPLATE.replace(
+    '{verificationCode}',
+    otp
+  );
 
-  const message = `Hello, ${firstName}. Your verification otp is: ${otp}`;
-  sendOtpEmail(email, firstName, message);
+  sendOtpEmail(email, subject, VERIFICATION_EMAIL, otp);
   console.log(otp);
   res.json(otp);
 });
@@ -463,32 +457,20 @@ app.get('/otp_val_verify', (req, res) => {
 app.get('/emailVerification/otp', async (req, res) => {
   const {
     accountType,
-    firstName,
-    lastName,
+
     email,
     phone,
-    district,
-    city,
-    location,
-    stallName,
-    stallPic,
-    shopLocationUrl,
+
     password,
     terms,
   } = req.query;
 
   const queryParams = new URLSearchParams({
     accountType,
-    firstName,
-    lastName,
+
     email,
     phone,
-    district,
-    city,
-    location,
-    stallName,
-    stallPic,
-    shopLocationUrl,
+
     password,
     terms,
   }).toString();
@@ -501,16 +483,10 @@ app.get('/emailVerification/otp', async (req, res) => {
 app.post('/emailVerification/otp', async (req, res) => {
   const {
     accountType,
-    firstName,
-    lastName,
+
     email,
     phone,
-    district,
-    city,
-    location,
-    stallName,
-    stallPic,
-    shopLocationUrl,
+
     password,
     terms,
   } = req.query;
@@ -538,18 +514,15 @@ app.post('/emailVerification/otp', async (req, res) => {
     } else {
       await connection.execute(
         `INSERT INTO customers 
-        (ACCOUNT_TYPE, FIRST_NAME, LAST_NAME, EMAIL, PHONE, DISTRICT, CITY, AREA, PASSWORD, TERM) 
+        (ACCOUNT_TYPE, EMAIL, PHONE, PASSWORD, TERM) 
         VALUES 
-        (:accountType, :firstName, :lastName, :email, :phone, :district, :city, :location,:password, :terms)`,
+        (:accountType,  :email, :phone, :password, :terms)`,
         {
           accountType,
-          firstName,
-          lastName,
+
           email,
           phone,
-          district,
-          city,
-          location,
+
           password,
           terms,
         },
@@ -558,11 +531,11 @@ app.post('/emailVerification/otp', async (req, res) => {
     }
 
     req.flash('userCreated', 'Signup completed, please login.');
-    return res.redirect('http://localhost:3000/home');
+    return res.redirect('/landing');
   } catch (err) {
     console.error(err);
     req.flash('error', 'An error occurred during signup.');
-    return res.redirect('http://localhost:3000/home/signup');
+    return res.redirect('/home/signup');
   } finally {
     if (connection) {
       try {
@@ -659,34 +632,45 @@ app.get('/home/shopLocation', async (req, res) => {
 });
 /////////////////////////////////////food////////////////////////
 app.get('/home/food', async (req, res) => {
-  // const seller_id = req.query.id;
-  // console.log(seller_id);
-  // let connection;
-  // let food = [];
-  // try {
-  //   connection = await OracleDB.getConnection(dbConfig);
-  //   const result = await connection.execute(
-  //     `SELECT f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC ,f.FOOD_ID
-  //      FROM food f
-  //      WHERE f.FOOD_ID IN (SELECT vsf.FOOD_ID FROM VENDOR_SELLS_FOOD vsf WHERE vsf.V_ID = :seller_id)`,
-  //     [seller_id]
-  //   );
-  //   food = result.rows;
-  //   console.log(food);
-  // } catch (err) {
-  //   console.error(err);
-  // } finally {
-  //   try {
-  //     if (connection) {
-  //       await connection.close();
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
+  const currentPage = parseInt(req.query.page) || 1;
+  const itemsPerPage = 6;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
-  // res.render('home/food', { food });
-  res.render('home/foods');
+  const seller_id = req.query.id;
+  console.log(seller_id);
+  let connection;
+
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      `SELECT *
+       FROM food ORDER BY CREATE_date DESC  `
+    );
+    // FETCH FIRST 14 ROWS ONLY
+    const food = result.rows;
+    console.log(food);
+    const displayedItems = food.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(food.length / itemsPerPage);
+    res.render('home/foods', {
+      food,
+      currentPage,
+      itemsPerPage,
+      startIndex,
+      endIndex,
+      totalPages,
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    try {
+      if (connection) {
+        await connection.close();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
 });
 /////////////////////////////////////contact us////////////////////////
 app.get('/home/contacts', async (req, res) => {
@@ -695,6 +679,45 @@ app.get('/home/contacts', async (req, res) => {
 /////////////////////////////////////team////////////////////////
 app.get('/home/team', async (req, res) => {
   res.render('home/team');
+});
+/////////////////////////////////////shop details////////////////////////
+app.get('/home/shopDetails', async (req, res) => {
+  const { id } = req.query;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM VENDORS WHERE V_ID = :id',
+      { id }
+    );
+    const result2 = await connection.execute(
+      'SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc FETCH FIRST 3 ROWS ONLY',
+      { id }
+    );
+    const result3 = await connection.execute(
+      'SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc ',
+      { id }
+    );
+
+    const vendordata = result.rows[0];
+    console.log(result2.rows);
+    console.log(vendordata);
+    res.render('home/shop_details', {
+      vendordata,
+      foodData: result2.rows,
+      allFoodData: result3.rows,
+    });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 });
 
 app.listen(port, () => {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-bs-theme="dark" lang="en">
+<html food[i]-bs-theme="dark" lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -18,51 +18,60 @@
       <div class="container py-5">
         <div class="row mb-5">
           <div class="col-md-8 col-xl-6 text-center mx-auto">
-            <h2 class="fw-bold">Heading</h2>
-            <p class="text-muted">Curae hendrerit donec commodo hendrerit egestas tempus, turpis facilisis nostra nunc.
-              Vestibulum dui eget ultrices.</p>
+            <h2 class="fw-bold">Today's Special</h2>
+            <p class="text-muted">Discover the Latest Culinary Creations: A Feast for Your Senses Awaits</p>
           </div>
         </div>
         <div class="row row-cols-1 row-cols-md-2 mx-auto" style="max-width: 900px;">
-          <div class="col mb-4">
-            <div><a href="#"><img class="rounded img-fluid shadow w-100 fit-cover"
-                  src="/assets/img/products/1.jpg?h=fc1e51d44f18accfa3a90f81c9cfffe4" style="height: 250px;"></a>
-              <div class="py-4"><span class="badge bg-primary mb-2">Website</span>
-                <h4 class="fw-bold">Lorem libero donec</h4>
-                <p class="text-muted">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac
-                  facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+          <% for (let i=(currentPage - 1) * 6; i < Math.min(currentPage * 6, food.length); i++) { %>
+            <div class="col mb-4">
+              <div><a href="/user/details_food?FOOD_ID=<%= food[i].FOOD_ID %>"><img
+                    class="rounded img-fluid shadow w-100 fit-cover" src="<%= food[i].FOOD_PIC %>"
+                    style="height: 250px;"></a>
+                <div class="py-4"><span class="badge bg-danger mb-2">new</span>
+                  <h4 class="fw-bold">
+                    <%= food[i].FOOD_NAME %>
+                  </h4>
+                  <p class="text-muted">
+                    <%= food[i].INGREDIENT %>
+                  </p>
+                  <p class="text-muted">
+                    <%= food[i].CREATE_DATE %>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col mb-4">
-            <div><a href="#"><img class="rounded img-fluid shadow w-100 fit-cover"
-                  src="/assets/img/products/2.jpg?h=104fcc18ad179e4b0b9e0ee12b849bed" style="height: 250px;"></a>
-              <div class="py-4"><span class="badge bg-primary mb-2">Website</span>
-                <h4 class="fw-bold">Lorem libero donec</h4>
-                <p class="text-muted">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac
-                  facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col mb-4">
-            <div><a href="#"><img class="rounded img-fluid shadow w-100 fit-cover"
-                  src="/assets/img/products/3.jpg?h=fce4fd8e26138d1b5fd8c63ef4f2e64c" style="height: 250px;"></a>
-              <div class="py-4"><span class="badge bg-primary mb-2">Website</span>
-                <h4 class="fw-bold">Lorem libero donec</h4>
-                <p class="text-muted">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac
-                  facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-              </div>
-            </div>
-          </div>
-          <div class="col mb-4">
-            <div><a href="#"><img class="rounded img-fluid shadow w-100 fit-cover"
-                  src="/assets/img/products/1.jpg?h=fc1e51d44f18accfa3a90f81c9cfffe4" style="height: 250px;"></a>
-              <div class="py-4"><span class="badge bg-primary mb-2">Website</span>
-                <h4 class="fw-bold">Lorem libero donec</h4>
-                <p class="text-muted">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac
-                  facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-              </div>
-            </div>
+            <% } %>
+
+
+        </div>
+        <!-- Pagination for Food List -->
+        <div class="bd-example-snippet bd-code-snippet mt-4">
+          <div class="bd-example m-0 border-0">
+            <nav aria-label="Pagination example">
+              <ul class="pagination pagination-lg flex-wrap justify-content-center" id="food-pagination">
+                <!-- Previous Button -->
+                <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                  <a class="page-link" href="?page=<%= Math.max(currentPage - 1, 1) %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                  </a>
+                </li>
+                <!-- Page Numbers -->
+                <% for (let i=1; i <=totalPages; i++) { %>
+                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>">
+                      <%= i %>
+                    </a>
+                  </li>
+                  <% } %>
+                    <!-- Next Button -->
+                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                      <a class="page-link" href="?page=<%= Math.min(currentPage + 1, totalPages) %>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div><!-- End: Projects Grid -->

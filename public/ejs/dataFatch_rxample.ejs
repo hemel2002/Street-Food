@@ -8,7 +8,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('http://localhost:3000/user/data')
+      fetch('/user/data')
         .then(response => response.json())
         .then(data => {
           console.log(data);

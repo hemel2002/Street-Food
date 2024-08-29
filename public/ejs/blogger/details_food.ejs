@@ -262,8 +262,9 @@
                                             <button type="button" class="btn-close" data-mdb-dismiss="modal"
                                                 aria-label="Close"></button>
                                         </div>
-                                        <form action="http://localhost:3000/user/<%- id %>/edit_review/<%= c_id %>"
-                                            method="post">
+                                        <form
+                                            action="/user/<%= id %>/edit_review?FOOD_ID=<%= data.FOOD_ID %>&C_ID=<%= data.C_ID %>"
+                                            method="post" class="needs-validation">
                                             <div class="modal-body">
                                                 <div class="form-outline mb-4">
                                                     <textarea class="form-control" id="editReview" rows="4"
@@ -274,14 +275,16 @@
 
                                                 <div class="form-outline mb-4">
                                                     <label>Rating</label>
-                                                    <div class="star-rating" data-rating="<%= data.RATING %>">
-                                                        <% for (let i=1; i <=5; i++) { %>
-                                                            <i class="star <%= i <= data.RATING ? 'fas filled' : 'far empty' %> fa-star"
-                                                                data-value="<%= i %>"></i>
-                                                            <% } %>
+                                                    <div class="star-rating" data-rating="0">
+                                                        <i class="far fa-star star" data-value="1"></i>
+                                                        <i class="far fa-star star" data-value="2"></i>
+                                                        <i class="far fa-star star" data-value="3"></i>
+                                                        <i class="far fa-star star" data-value="4"></i>
+                                                        <i class="far fa-star star" data-value="5"></i>
                                                     </div>
-                                                    <input type="hidden" name="RATING" id="ratingInput_<%= data._id %>"
-                                                        value="<%= data.RATING %>" required />
+                                                    <input type="hidden" name="FOOD_RATING" id="rating" required />
+                                                    <div class="invalid-feedback">Rating
+                                                        is required.</div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -328,65 +331,126 @@
                                                         </div>
                                                         <% } %>
                                                             <% }) %>
-                                                                <% } %>
+                                                                <% }else { %>
+                                                                    <p class="text-danger"><b>No reviews found yet.</b>
+                                                                    </p>
+                                                                    <% } %>
 
-                                                                    <!-- If the user hasn't reviewed yet, show an empty review form -->
-                                                                    <% if (!userHasReviewed) { %>
-                                                                        <div class="form-section">
-                                                                            <h2>Add a Review</h2>
-                                                                            <form class="needs-validation"
-                                                                                id="reviewForm"
-                                                                                action="http://localhost:3000/user/<%- id %>/food_review"
-                                                                                method="post" novalidate>
-                                                                                <div class="form-outline mb-4">
-                                                                                    <input type="text" id="name"
-                                                                                        class="form-control"
-                                                                                        value="<%= EMAIL %>" readonly
-                                                                                        required />
-                                                                                    <label class="form-label"
-                                                                                        for="name">Your email</label>
-                                                                                    <div class="invalid-feedback">Name
-                                                                                        is required.</div>
+                                                                        <!-- If the user hasn't reviewed yet, show an empty review form -->
+                                                                        <% if (!userHasReviewed) { %>
+                                                                            <div class="form-section">
+                                                                                <h2>Add a Review</h2>
+                                                                                <!-- Button to trigger collapse -->
+                                                                                <button class="btn btn-secondary"
+                                                                                    type="button"
+                                                                                    data-mdb-toggle="collapse"
+                                                                                    data-mdb-target="#collapseReviewForm"
+                                                                                    aria-expanded="false"
+                                                                                    aria-controls="collapseReviewForm">
+                                                                                    Review
+                                                                                </button>
+
+
+                                                                                <!-- Collapse section -->
+                                                                                <div class="collapse mt-3"
+                                                                                    id="collapseReviewForm">
+                                                                                    <% if (id ) { %>
+                                                                                        <% if (id[0]==='U' ) { %>
+                                                                                            <form
+                                                                                                class="needs-validation"
+                                                                                                id="reviewForm"
+                                                                                                action="/user/food_review"
+                                                                                                method="post"
+                                                                                                novalidate>
+                                                                                                <div
+                                                                                                    class="form-outline mb-4">
+                                                                                                    <input type="text"
+                                                                                                        id="name"
+                                                                                                        class="form-control"
+                                                                                                        value="<%= EMAIL %>"
+                                                                                                        readonly
+                                                                                                        required />
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="name">Your
+                                                                                                        email</label>
+                                                                                                    <div
+                                                                                                        class="invalid-feedback">
+                                                                                                        Name is
+                                                                                                        required.
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="form-outline mb-4">
+                                                                                                    <textarea
+                                                                                                        class="form-control"
+                                                                                                        id="review"
+                                                                                                        rows="4"
+                                                                                                        name="FOOD_REVIEW"
+                                                                                                        required></textarea>
+                                                                                                    <label
+                                                                                                        class="form-label"
+                                                                                                        for="review">Your
+                                                                                                        Review</label>
+                                                                                                    <div
+                                                                                                        class="invalid-feedback">
+                                                                                                        Review is
+                                                                                                        required.
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div
+                                                                                                    class="form-outline mb-4">
+                                                                                                    <label>Rating</label>
+                                                                                                    <div class="star-rating"
+                                                                                                        data-rating="0">
+                                                                                                        <i class="far fa-star star"
+                                                                                                            data-value="1"></i>
+                                                                                                        <i class="far fa-star star"
+                                                                                                            data-value="2"></i>
+                                                                                                        <i class="far fa-star star"
+                                                                                                            data-value="3"></i>
+                                                                                                        <i class="far fa-star star"
+                                                                                                            data-value="4"></i>
+                                                                                                        <i class="far fa-star star"
+                                                                                                            data-value="5"></i>
+                                                                                                    </div>
+                                                                                                    <input type="hidden"
+                                                                                                        name="FOOD_RATING"
+                                                                                                        id="rating"
+                                                                                                        required />
+                                                                                                    <div
+                                                                                                        class="invalid-feedback">
+                                                                                                        Rating is
+                                                                                                        required.
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <button type="submit"
+                                                                                                    class="btn btn-primary btn-block"
+                                                                                                    name="FOOD_ID"
+                                                                                                    value="<%= FOOD_DATA.FOOD_ID %>">
+                                                                                                    Submit Review
+                                                                                                </button>
+                                                                                            </form>
+                                                                                            <% } else {%>
+                                                                                                <p class="text-warning">
+
+                                                                                                    Vendors aren't allow
+                                                                                                    to submit review</p>
+                                                                                                <% } %>
+
+                                                                                                    <% } else { %>
+                                                                                                        <p
+                                                                                                            class="text-warning">
+                                                                                                            Please
+                                                                                                            log in to
+                                                                                                            leave a
+                                                                                                            review.</p>
+                                                                                                        <% } %>
+
                                                                                 </div>
-                                                                                <div class="form-outline mb-4">
-                                                                                    <textarea class="form-control"
-                                                                                        id="review" rows="4"
-                                                                                        name="FOOD_REVIEW"
-                                                                                        required></textarea>
-                                                                                    <label class="form-label"
-                                                                                        for="review">Your Review</label>
-                                                                                    <div class="invalid-feedback">Review
-                                                                                        is required.</div>
-                                                                                </div>
-                                                                                <div class="form-outline mb-4">
-                                                                                    <label>Rating</label>
-                                                                                    <div class="star-rating"
-                                                                                        data-rating="0">
-                                                                                        <i class="far fa-star star"
-                                                                                            data-value="1"></i>
-                                                                                        <i class="far fa-star star"
-                                                                                            data-value="2"></i>
-                                                                                        <i class="far fa-star star"
-                                                                                            data-value="3"></i>
-                                                                                        <i class="far fa-star star"
-                                                                                            data-value="4"></i>
-                                                                                        <i class="far fa-star star"
-                                                                                            data-value="5"></i>
-                                                                                    </div>
-                                                                                    <input type="hidden"
-                                                                                        name="FOOD_RATING" id="rating"
-                                                                                        required />
-                                                                                    <div class="invalid-feedback">Rating
-                                                                                        is required.</div>
-                                                                                </div>
-                                                                                <button type="submit"
-                                                                                    class="btn btn-primary btn-block"
-                                                                                    name="FOOD_ID"
-                                                                                    value="<%= FOOD_DATA.FOOD_ID %>">Submit
-                                                                                    Review</button>
-                                                                            </form>
-                                                                        </div>
-                                                                        <% } %>
+                                                                            </div>
+                                                                            <% } %>
+
         </div>
     </div>
 
