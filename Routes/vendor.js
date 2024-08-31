@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const { cloudinary } = require('./cloudinary');
 const { requirelogin } = require('./requirelogin_middleware');
+const require_complete_reg = require('./require_complete_reg');
 const OracleDB = require('oracledb');
 const multer = require('multer');
 const { storage } = require('./cloudinary');
@@ -86,7 +87,7 @@ router.get('/:id', requirelogin, async (req, res) => {
 });
 
 /////////////////////for vendor add food //////////////////////////
-router.get('/:id/add_food', requirelogin, (req, res) => {
+router.get('/:id/add_food', requirelogin, require_complete_reg,(req, res) => {
   const { id } = req.params;
   console.log('Add food page requested');
   res.render('vendor_ejs/add_food', { id });
@@ -94,7 +95,7 @@ router.get('/:id/add_food', requirelogin, (req, res) => {
 
 router.post(
   '/:id/add_food',
-  requirelogin,
+  requirelogin,require_complete_reg,
   upload.single('image'),
   async (req, res) => {
     console.log(req.body);
@@ -167,7 +168,7 @@ router.post(
 );
 
 /////////////////////for vendor update food //////////////////////////
-router.get('/:id/update/:food_id', requirelogin, async (req, res) => {
+router.get('/:id/update/:food_id', requirelogin,require_complete_reg, async (req, res) => {
   const { food_id } = req.params;
   let findfoodData = null;
   let connection;
@@ -197,7 +198,7 @@ router.get('/:id/update/:food_id', requirelogin, async (req, res) => {
 
 router.patch(
   '/:id/update/:food_id',
-  requirelogin,
+  requirelogin,require_complete_reg,
   upload.single('image'),
   async (req, res) => {
     const { id, food_id } = req.params;
@@ -237,7 +238,7 @@ router.patch(
 );
 ///////////////////////////////vendor delete food/////////////////////////////
 
-router.get('/:id/delete/:FOOD_ID', requirelogin, async (req, res) => {
+router.get('/:id/delete/:FOOD_ID', requirelogin,require_complete_reg, async (req, res) => {
   const { id, FOOD_ID } = req.params;
   let connection;
   try {
@@ -263,7 +264,7 @@ router.get('/:id/delete/:FOOD_ID', requirelogin, async (req, res) => {
 });
 
 /////////////////////for vendor email//////////////////////////
-router.get('/:id/email', requirelogin, (req, res) => {
+router.get('/:id/email', requirelogin,require_complete_reg, (req, res) => {
   res.render('vendor_ejs/email');
 });
 
@@ -310,7 +311,7 @@ router.post('/:id/logout', requirelogin, (req, res) => {
   res.redirect('/home');
 });
 ////////////////////////////////////////////////vendor qr-code///////////////////////
-router.post('/:id/qr', requirelogin, async (req, res) => {
+router.post('/:id/qr', requirelogin,require_complete_reg, async (req, res) => {
   try {
     if (!req.body.url) {
       return res.status(400).send('URL is required');
@@ -370,7 +371,7 @@ router.post('/:id/qr', requirelogin, async (req, res) => {
 });
 
 //////////////////////////////////////vendor review and reply/////////////////////////////
-router.get('/:id/review', requirelogin, async (req, res) => {
+router.get('/:id/review', requirelogin,require_complete_reg, async (req, res) => {
   const { id } = req.params;
   let connection;
   try {
@@ -438,7 +439,7 @@ router.post('/:id/review', requirelogin, async (req, res) => {
   req.flash('review', 'Review added successfully!');
   res.redirect(`/vendor/${V_ID}`);
 });
-router.patch('/:id/review', requirelogin, async (req, res) => {
+router.patch('/:id/review', requirelogin,require_complete_reg, async (req, res) => {
   const { reply_msg, C_ID } = req.body;
   const V_ID = req.session.user_id; // Correctly accessing V_ID
   console.log(V_ID);
@@ -523,7 +524,7 @@ router.get('/:id/edit_profile', requirelogin, async (req, res) => {
   }
 });
 ///////////////////////////////Video_list/////////////////////////////
-router.get('/:id/Video_list', requirelogin, async (req, res) => {
+router.get('/:id/Video_list', requirelogin,require_complete_reg, async (req, res) => {
   const { id } = req.params;
   let connection;
   try {
