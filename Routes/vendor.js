@@ -466,7 +466,7 @@ router.patch('/:id/review', requirelogin,require_complete_reg, async (req, res) 
   res.redirect(`/vendor/${V_ID}`);
 });
 /////////////////////////////vendor prfile/////////////////////////////
-router.get('/:id/profile', requirelogin, async (req, res) => {
+router.get('/:id/profile', requirelogin,require_complete_reg, async (req, res) => {
   const { id } = req.params;
   let connection;
   try {
