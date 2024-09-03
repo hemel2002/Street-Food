@@ -523,6 +523,62 @@ router.get('/:id/edit_profile', requirelogin, async (req, res) => {
     }
   }
 });
+router.post('/:id/edit_profile', upload.fields([
+  { name: 'PROFILE_PIC', maxCount: 1 },
+  { name: 'STALL_PIC', maxCount: 1 } // Remove [] from the name
+]), async (req, res) => {
+  try {
+    const profilePic = req.files['PROFILE_PIC'][0].path ;
+    const stallPic =  req.files['STALL_PIC'][0].path;
+    const vendordata = req.body;
+
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      await connection.execute(
+        `UPDATE VENDORS V 
+         SET V_FIRST_NAME = :V_FIRST_NAME, 
+             V_LAST_NAME = :V_LAST_NAME, 
+             EMAIL = :EMAIL, 
+             PHONE = :PHONE, 
+             v.SHOP_DATA.STALL_NAME = :STALL_NAME, 
+             v.SHOP_DATA.AREA = :AREA, 
+             v.SHOP_DATA.CITY = :CITY, 
+             v.SHOP_DATA.DISTRICT = :DISTRICT, 
+             v.SHOP_DATA.STALL_TITLE = :STALL_TITLE, 
+             v.SHOP_DATA.SHOP_DESCRIPTION = :SHOP_DESCRIPTION, 
+             v.shopdata.stall_pic = :stallPic, 
+             profile_pic = :profilePic 
+         WHERE V_ID = :id`,
+        { 
+          ...vendordata, 
+          stallPic, 
+          profilePic, 
+          id 
+        },
+        { autoCommit: true }
+      );
+
+      res.redirect(`/${req.params.id}/profile`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server Error');
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
 ///////////////////////////////Video_list/////////////////////////////
 router.get('/:id/Video_list', requirelogin,require_complete_reg, async (req, res) => {
   const { id } = req.params;
