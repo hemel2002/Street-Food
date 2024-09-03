@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +12,7 @@
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
     <style>
         .img {
             background-repeat: no-repeat;
@@ -23,15 +21,14 @@
         }
     </style>
 </head>
-
 <body>
 
     <!-- Header Section -->
-    <div class="bg-image" style="background-image: url('<%= vendordata.SHOP_DATA.STALL_PIC %>'); height: 400px;">
+    <div class="bg-image" style="background-image: url('<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_PIC ? vendordata.SHOP_DATA.STALL_PIC : 'default.jpg' %>'); height: 400px;">
         <div class="mask d-flex align-items-center justify-content-center"
             style="background-color: rgba(0, 0, 0, 0.5); height: 100%;">
             <div class="text-center">
-                <img src="<%= vendordata.PROFILE_PIC %>" class="rounded-circle img-fluid shadow-2-strong"
+                <img src="<%= vendordata && vendordata.PROFILE_PIC ? vendordata.PROFILE_PIC : 'default-profile.jpg' %>" class="rounded-circle img-fluid shadow-2-strong"
                     alt="Vendor Image" style="width: 150px;">
                 <h1 class="text-white mt-3">Edit Profile</h1>
             </div>
@@ -44,6 +41,7 @@
         <form id="editProfileForm" action="/<%= id %>/edit_profile" method="post" enctype="multipart/form-data">
 
             <div class="mb-4">
+<<<<<<< HEAD
                 <div class="row"> 
                     <div class="col-6"> <label for="vendorName" class="form-label">Vendor First Name</label>
                         <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
@@ -56,12 +54,23 @@
                    
                     </div>
                
+=======
+                <label for="vendorName" class="form-label">Vendor Name</label>
+                <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.V_FIRST_NAME ? vendordata.SHOP_DATA.V_FIRST_NAME : '' %>" required
+                    data-mdb-validation="Vendor name is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
 
             <div class="mb-4">
                 <label for="shopName" class="form-label">Shop Name</label>
+<<<<<<< HEAD
                 <input type="text" name="STALL_NAME" id="shopName" class="form-control validate" placeholder="Enter your shop name"
                     value="<%= vendordata.SHOP_DATA.STALL_NAME %>" required
+=======
+                <input type="text" id="shopName" class="form-control validate" placeholder="Enter your shop name"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_NAME ? vendordata.SHOP_DATA.STALL_NAME : '' %>" required
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
                     data-mdb-validation="Shop name is required.">
             </div>
             <div class="mb-4">
@@ -75,13 +84,18 @@
                 <label for="description" class="form-label">Description</label>
                 <textarea id="description" class="form-control validate" name="SHOP_DESCRIPTIONS" rows="4"
                     placeholder="Describe your shop and services" required
-                    data-mdb-validation="Description is required."><%= vendordata.SHOP_DATA.SHOP_DESCRIPTION %></textarea>
+                    data-mdb-validation="Description is required."><%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.SHOP_DESCRIPTION ? vendordata.SHOP_DATA.SHOP_DESCRIPTION : '' %></textarea>
             </div>
 
             <div class="mb-4">
                 <label for="address" class="form-label">Address</label>
+<<<<<<< HEAD
                 <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address" name="AREA"
                     value="<%= vendordata.SHOP_DATA.AREA %>" required data-mdb-validation="Address is required.">
+=======
+                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.AREA ? vendordata.SHOP_DATA.AREA : '' %>" required data-mdb-validation="Address is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
             <div class="mb-4">
                 <label for="address" class="form-label">City</label>
@@ -97,17 +111,26 @@
             <div class="mb-4">
                 <label for="phone" class="form-label">Phone</label>
                 <input type="tel" id="phone" class="form-control validate" placeholder="Enter your contact number"
+<<<<<<< HEAD
                     value="<%= vendordata.PHONE %>" required data-mdb-validation="Phone number is required." name="PHONE">
+=======
+                    value="<%= vendordata && vendordata.PHONE ? vendordata.PHONE : '' %>" required data-mdb-validation="Phone number is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
 
             <div class="mb-4">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" id="email" class="form-control validate" placeholder="Enter your email address"
+<<<<<<< HEAD
                     value="<%= vendordata.EMAIL %>" required data-mdb-validation="Valid email is required." name="EMAIL">
+=======
+                    value="<%= vendordata && vendordata.EMAIL ? vendordata.EMAIL : '' %>" required data-mdb-validation="Valid email is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
 
             <div class="mb-4">
                 <label for="profileImage" class="form-label">Profile Image</label>
+<<<<<<< HEAD
                 <input type="file" id="profileImage" class="form-control validate" multiple
                     data-mdb-validation="Profile image is required." name="PROFILE_PIC[]">
             </div>
@@ -115,15 +138,25 @@
                 <label for="locationurl" class="form-label">Google map Url</label>
                 <input type="file" id="locationurl" class="form-control validate" multiple
                     data-mdb-validation="Profile image is required." name="LOCATION_URL" value="<%= vendordata.SHOP_DATA.LOCATION_URL %>">
+=======
+                <input type="file" id="profileImage" class="form-control validate" accept="image/*" required
+                    data-mdb-validation="Profile image is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
 
             <div class="mb-4">
                 <label for="backgroundImage" class="form-label">Background Image</label>
+<<<<<<< HEAD
                 <input type="file" id="backgroundImage" class="form-control validate" multiple
                     data-mdb-validation="Background image is required." name="STALL_PIC" value="<%= vendordata.SHOP_DATA.STALL_PIC %>">
+=======
+                <input type="file" id="backgroundImage" class="form-control validate" accept="image/*" required
+                    data-mdb-validation="Background image is required.">
+>>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
+
         </form>
     </div>
 
@@ -182,5 +215,4 @@
         })();
     </script>
 </body>
-
 </html>
