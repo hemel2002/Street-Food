@@ -577,14 +577,18 @@ router.post('/food_review', requireloginuser, async (req, res) => {
       { autoCommit: true }
     );
     await connection.execute(
-      'update food set rating = (select avg(food_rating) from customer_reviews_food where food_id = :FOOD_ID) where food_id = :FOOD_ID',
-      { FOOD_ID }
-    );
-    await connection.execute(
-      'INSERT INTO FOODCONSUMED (C_ID, FOOD_ID) VALUES (:C_ID, :FOOD_ID)',
-      { FOOD_ID, C_ID },
+      `UPDATE food 
+       SET rating = (
+         SELECT AVG(food_rating) 
+         FROM customer_reviews_food 
+         WHERE food_id = :FOOD_ID
+       ) 
+       WHERE food_id = :FOOD_ID`,
+      { FOOD_ID,FOOD_ID },  // Assuming `food_id` is your variable
       { autoCommit: true }
     );
+    
+
 
     req.flash('review', 'Review submitted successfully!');
     return res.redirect(`/user/${req.params.id}`);
@@ -622,6 +626,18 @@ router.post('/:id/edit_review', async (req, res) => {
       { C_ID, FOOD_ID, FOOD_RATING, FOOD_REVIEW },
       { autoCommit: true }
     );
+    await connection.execute(
+      `UPDATE food 
+       SET rating = (
+         SELECT AVG(food_rating) 
+         FROM customer_reviews_food 
+         WHERE food_id = :FOOD_ID
+       ) 
+       WHERE food_id = :FOOD_ID`,
+      { FOOD_ID,FOOD_ID },  // Assuming `food_id` is your variable
+      { autoCommit: true }
+    );
+    
 
     req.flash('review', 'Review updated successfully!');
     return res.redirect(`/user/${req.params.id}`);

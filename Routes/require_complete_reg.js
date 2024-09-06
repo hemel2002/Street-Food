@@ -26,7 +26,7 @@ shop_data
         const vendordata = result.rows[0];
         console.log(vendordata);
         if (vendordata && vendordata.SHOP_DATA === null) {
-            req.flash('error_msg', 'Please complete your registration first');
+
             res.redirect(`/vendor/${id}/edit_profile`);
         } else {
             next();

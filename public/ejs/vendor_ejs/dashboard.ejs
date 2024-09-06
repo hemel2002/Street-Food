@@ -100,19 +100,20 @@
     <div class="col-md-3">
       <div class="stats-card text-center">
         <h5>Total Food</h5>
-        <h3>18</h3>
+        <h3><%= Foodcount %></h3>
       </div>
     </div>
     <div class="col-md-3">
       <div class="stats-card text-center">
         <h5>Average Rating</h5>
-        <h3>4.8 ⭐</h3>
+        <h3><%= avg_rating %> ⭐</h3>
+        <!-- Foodcount, totalReview, , , vendor_rating, food_rating -->
       </div>
     </div>
     <div class="col-md-3">
       <div class="stats-card text-center">
         <h5>Hygiene Rating</h5>
-        <h3>4.6 ⭐</h3>
+        <h3><%= Hyginene_rating %> ⭐</h3>
       </div>
     </div>
     <div class="col-md-3">
@@ -131,16 +132,16 @@
       <h4 class="mb-4">Vendor Profile</h4>
       <div class="card">
         <div class="card-body text-center">
-          <img src="vendor-profile.jpg" alt="Vendor" class="profile-img mb-3">
-          <h5 class="card-title">John's Street Tacos</h5>
-          <p class="card-text"><strong>Vendor Name:</strong> John Doe</p>
-          <p class="card-text"><strong>Location:</strong> Downtown Street, LA</p>
-          <p class="card-text"><strong>Description:</strong> Best tacos in town!</p>
-          <button class="btn btn-primary btn-sm">Edit Profile</button>
+          <img src="<%= vendordata.PROFILE_PIC %>" alt="Vendor" class="profile-img mb-3">
+          <h5 class="card-title"><%= vendordata.SHOP_DATA.STALL_NAME %></h5>
+          <p class="card-text"><strong>Vendor Name:</strong> <%= vendordata.SHOP_DATA.V_FIRST_NAME %>  <%= vendordata.SHOP_DATA.V_LAST_NAME %></p>
+          <p class="card-text"><strong>Location:</strong> <%= vendordata.SHOP_DATA.AREA %></p>
+          <p class="card-text"><strong>Shop Title:</strong> <%= vendordata.SHOP_DATA.STALL_TITLE %></p>
+          <a class="btn btn-success" href="/vendor/<%= id %>/profile">Edit Profile</a>
         </div>
       </div>
     </div>
-
+   
     <!-- Most Rated Food Section with Progress Bars -->
     <div class="col-md-4">
       <h4 class="mb-4">Most Rated Food</h4>

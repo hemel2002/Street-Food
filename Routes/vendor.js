@@ -678,6 +678,75 @@ router.get('/:id/Video_list', requirelogin,require_complete_reg, async (req, res
     }
   }
 });
+////////////////////////////////////vendor dashboard/////////////////////////////
+router.get('/:id/dashboard', requirelogin, require_complete_reg, async (req, res) => {
+  const { id } = req.params;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT count(Food_id) as Foodcount FROM vendor_sells_food WHERE V_ID = :id',
+      { id }
+    );
+    const result2 = await connection.execute(
+      'SELECT count(c_id) as vendorReviewcount FROM customerreviewsvendor WHERE V_ID = :id',
+      { id }
+    );
+    const result3 = await connection.execute(
+      'SELECT count(c_id) as FoodReviewcount FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
+      { id }
+    );
+    const result4 = await connection.execute(
+      'SELECT v.shop_data.Hygiene_rating as Hygiene_rating FROM vendors v WHERE V_ID = :id',
+      { id }
+    );
+    const result5 = await connection.execute(
+      'SELECT avg(rating) as rating FROM customerreviewsvendor WHERE V_ID = :id',
+      { id }
+    );
+    const result6 = await connection.execute(
+      'SELECT avg(food_rating) as food_rating FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
+      { id }
+    );
+    const result7 = await connection.execute(
+      'SELECT * FROM vendors WHERE V_ID = :id',
+      { id }
+    );
+    const vendordata = result7.rows[0];
 
+    const Hyginene_rating = result4.rows[0]?.HYGIENE_RATING ?? 0;
+    console.log(Hyginene_rating);
+    const vendor_rating = result5.rows[0]?.RATING ?? 0;
+    console.log(vendor_rating);
+    const food_rating = result6.rows[0]?.FOOD_RATING ?? 0;
+    console.log(food_rating);
+    const avg_rating = ((vendor_rating + food_rating + Hyginene_rating) / 3).toFixed(1);
+
+    const FoodReviewcount = result3.rows[0]?.FOODREVIEWCOUNT ?? 0;
+    console.log(FoodReviewcount);
+
+    const vendorReviewcount = result2.rows[0]?.VENDORREVIEWCOUNT ?? 0;
+    console.log(vendorReviewcount);
+
+    const Foodcount = result.rows[0]?.FOODCOUNT ?? 0;
+    console.log(Foodcount);
+
+    const totalReview = FoodReviewcount + vendorReviewcount;
+    console.log(totalReview);
+    
+
+    res.render('vendor_ejs/dashboard', { Foodcount, totalReview, avg_rating, Hyginene_rating, vendor_rating, food_rating, vendordata });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
 /////////////////////////////////export Router/////////////////////////////
 module.exports = router;

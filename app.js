@@ -572,6 +572,11 @@ app.get('/home/ViewShop', async (req, res) => {
     video = videoresult.rows;
 
     console.log(viewshop);
+    if (responseType === 'json') {
+      res.json({ viewshop, video });
+    } else {
+      res.render('home/viewShop', { viewshop, video });
+    }
   } catch (err) {
     console.error(err);
   } finally {
@@ -584,11 +589,7 @@ app.get('/home/ViewShop', async (req, res) => {
     }
   }
 
-  if (responseType === 'json') {
-    res.json({ viewshop, video });
-  } else {
-    res.render('home/viewShop', { viewshop });
-  }
+ 
 });
 ///////////////////////////shop location data////////////////////////
 app.get('/home/shopLocation', async (req, res) => {

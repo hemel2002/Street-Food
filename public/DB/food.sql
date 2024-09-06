@@ -31,6 +31,12 @@ BEGIN
 END;
 /
 
+
+ DROP SEQUENCE FOOD_SEQ;
+ DROP TRIGGER FOOD_ID_TRIGGER;
+ DROP TABLE FOOD;
+ 
+
 -- Inserting data into FOOD table without specifying FOOD_ID
 INSERT INTO FOOD (
     FOOD_NAME,

@@ -15,6 +15,7 @@ CREATE TABLE "SYSTEM"."CUSTOMERREVIEWSVENDOR" (
     CONSTRAINT "FK_CUSTOMERREVIEWSVENDOR_V_ID" FOREIGN KEY ("V_ID") REFERENCES "SYSTEM"."VENDORS" ("V_ID") ON DELETE CASCADE ENABLE
 );
 
+drop table CUSTOMERREVIEWSVENDOR;
 INSERT INTO CUSTOMERREVIEWSVENDOR (
     C_ID,
     V_ID,
@@ -171,7 +172,7 @@ INSERT INTO CUSTOMERREVIEWSVENDOR (
     'Had an amazing experience with Taco Fiesta. The burritos were hearty and delicious. The staff were welcoming and efficient. Highly recommend this place!'
 );
 
-INSERT INTO CUSTOMERREVIEWSVENDOR (
+
     C_ID,
     V_ID,
     RATING,
