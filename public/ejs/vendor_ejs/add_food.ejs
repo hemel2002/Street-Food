@@ -162,6 +162,13 @@
       border-radius: 9999px;
       box-shadow: inset 0 -2px 25px -4px var(--white);
     }
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 50%;
+    }
   </style>
 </head>
 
@@ -179,26 +186,36 @@
               <table class="table table-dark table-striped">
                 <thead>
                   <tr>
-                    <th scope="col">Food_ID</th>
-                    <th scope="col">Food_Item</th>
+                    <th scope="col">Food pic</th>
+                    <th scope="col">Food ID</th>
+                    
+                    <th scope="col">Food Item</th>
                     <th scope="col">Price</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Rating</th>
                     <th scope="col">Total Reviews</th>
+                    <th scope="col">Details</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Example Food 1</td>
-                    <td>$10.00</td>
-                    <td>Available</td>
-                    <td>4</td>
-                  </tr>
-                  <tr>
-                    <td>Example Food 2</td>
-                    <td>$15.00</td>
-                    <td>Unavailable</td>
-                    <td>2</td>
-                  </tr>
+                  <% FoodData.forEach(element => { %>
+                    <tr>
+                      <td><img src="<%= element.FOOD_PIC %>" alt="<%= element.FOOD_PIC %>"></td>
+                      <td><%= element.FOOD_ID_1 %></td>
+                   
+                      <td><%= element.FOOD_NAME %></td>
+                      <td><%= element.PRICE %></td>
+                      <td><%= element.AVAILABILITY %></td>
+                      <td><%= element.RATING %></td>
+                      
+                      <td>not counted yet</td>
+                      <td><a href=" http://localhost:3000/user/details_food?FOOD_ID=<%= element.FOOD_ID_1 %>">click</a></td>
+                    </tr>
+                  <% }) %>
+           
+               
+
+             
                   <!-- Add more rows as needed -->
                 </tbody>
               </table>

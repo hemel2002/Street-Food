@@ -69,6 +69,7 @@ app.use((req, res, next) => {
   res.locals.review_error = req.flash('review_error');
   res.locals.success_comment = req.flash('success_comment');
   res.locals.comment_error = req.flash('comment_error');
+  res.locals.error_msg = req.flash('error_msg');
   next();
 });
 //////////////////////////require login middleware/////////////////////////

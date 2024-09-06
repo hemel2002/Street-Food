@@ -35,18 +35,18 @@ END;
 ------------------------------------insert data------------------------------------
 INSERT INTO VENDORS (
     ACCOUNT_TYPE,
-    V_FIRST_NAME,
-    V_LAST_NAME,
+  
     EMAIL,
     PHONE,
-    DISTRICT,
-    CITY,
-    AREA,
+   
+   
+ 
     PASSWORD,
     TERMS,
-    STALL_PIC,
-    STALL_NAME,
-    LOCATION_URL
+   
+    
+    
+    PROFILE_PIC,
 ) VALUES (
     'Seller',
     'Carol',

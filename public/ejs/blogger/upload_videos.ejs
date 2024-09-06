@@ -210,7 +210,7 @@
               <datalist id="vendor-list">
                 <% for(let index=0; index < vendor.length; index++) { %>
                   <option value="<%= vendor[index].V_ID %>">
-                    <%= vendor[index].SHOP_DATA.V_ID %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%=
+                    <%= vendor[index].V_ID %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%=
                           vendor[index].SHOP_DATA.V_LAST_NAME %>)
                           FROM <%= vendor[index].SHOP_DATA.DISTRICT %>-<%= vendor[index].SHOP_DATA.CITY %>-<%=
                                 vendor[index].SHOP_DATA.AREA %>

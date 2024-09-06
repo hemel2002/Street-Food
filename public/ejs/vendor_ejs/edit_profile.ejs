@@ -6,6 +6,7 @@
     <title>Edit Vendor Profile</title>
     <!-- MDB CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
@@ -13,23 +14,44 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         .img {
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
         }
+        .suggestions-container {
+            border: 1px solid #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .suggestion:hover {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
 
+   <% if (!(vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_TITLE)) { %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong style="text-align: center;">
+                Please complete your profile to get the best experience.
+            </strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+   <% } %>
+    
     <!-- Header Section -->
     <div class="bg-image" style="background-image: url('<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_PIC ? vendordata.SHOP_DATA.STALL_PIC : 'default.jpg' %>'); height: 400px;">
-        <div class="mask d-flex align-items-center justify-content-center"
-            style="background-color: rgba(0, 0, 0, 0.5); height: 100%;">
+        <div class="mask d-flex align-items-center justify-content-center" style="background-color: rgba(0, 0, 0, 0.5); height: 100%;">
             <div class="text-center">
-                <img src="<%= vendordata && vendordata.PROFILE_PIC ? vendordata.PROFILE_PIC : 'default-profile.jpg' %>" class="rounded-circle img-fluid shadow-2-strong"
-                    alt="Vendor Image" style="width: 150px;">
+                <img src="<%= vendordata && vendordata.PROFILE_PIC ? vendordata.PROFILE_PIC : 'default-profile.jpg' %>" class="rounded-circle img-fluid shadow-2-strong" alt="Vendor Image" style="width: 150px;">
                 <h1 class="text-white mt-3">Edit Profile</h1>
             </div>
         </div>
@@ -38,181 +60,193 @@
     <!-- Profile Edit Form -->
     <div class="container my-5">
         <h3>Edit Your Profile</h3>
-        <form id="editProfileForm" action="/<%= id %>/edit_profile" method="post" enctype="multipart/form-data">
+        <form id="editProfileForm" action="/vendor/<%= id %>/edit_profile" method="post" enctype="multipart/form-data" novalidate>
 
             <div class="mb-4">
-<<<<<<< HEAD
                 <div class="row"> 
-                    <div class="col-6"> <label for="vendorName" class="form-label">Vendor First Name</label>
-                        <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
-                            value="<%= vendordata.SHOP_DATA.V_FIRST_NAME %>" required
-                            data-mdb-validation="Vendor name is required." name="V_FIRST_NAME"></div>
-                    <div class="col-6"> <label for="vendorName" class="form-label">Vendor Last Name</label>
-                        <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
-                            value="<%= vendordata.SHOP_DATA.V_LAST_NAME %>" required
-                            data-mdb-validation="Vendor name is required." name="V_LAST_NAME"></div>
-                   
+                    <div class="col-6"> 
+                        <label for="vendorFirstName" class="form-label">Vendor First Name</label>
+                        <input type="text" id="vendorFirstName" class="form-control validate" placeholder="Enter your first name"
+                            value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.V_FIRST_NAME || '' %>" required
+                            name="V_FIRST_NAME">
+                        <div class="invalid-feedback">Vendor first name is required.</div>
                     </div>
-               
-=======
-                <label for="vendorName" class="form-label">Vendor Name</label>
-                <input type="text" id="vendorName" class="form-control validate" placeholder="Enter your name"
-                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.V_FIRST_NAME ? vendordata.SHOP_DATA.V_FIRST_NAME : '' %>" required
-                    data-mdb-validation="Vendor name is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
+                    <div class="col-6"> 
+                        <label for="vendorLastName" class="form-label">Vendor Last Name</label>
+                        <input type="text" id="vendorLastName" class="form-control validate" placeholder="Enter your last name"
+                            value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.V_LAST_NAME || '' %>" required
+                            name="V_LAST_NAME">
+                        <div class="invalid-feedback">Vendor last name is required.</div>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-4">
                 <label for="shopName" class="form-label">Shop Name</label>
-<<<<<<< HEAD
                 <input type="text" name="STALL_NAME" id="shopName" class="form-control validate" placeholder="Enter your shop name"
-                    value="<%= vendordata.SHOP_DATA.STALL_NAME %>" required
-=======
-                <input type="text" id="shopName" class="form-control validate" placeholder="Enter your shop name"
-                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_NAME ? vendordata.SHOP_DATA.STALL_NAME : '' %>" required
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
-                    data-mdb-validation="Shop name is required.">
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_NAME || '' %>" required>
+                <div class="invalid-feedback">Shop name is required.</div>
             </div>
             <div class="mb-4">
-                <label for="stall_tilte" class="form-label">Shop Title</label>
-                <input type="text" name="STALL_TITLE" id="stall_tilte" class="form-control validate" placeholder="Enter your shop name"
-                    value="<%= vendordata.SHOP_DATA.STALL_TITLE %>" required
-                    data-mdb-validation="Shop name is required.">
+                <label for="stallTitle" class="form-label">Shop Title</label>
+                <input type="text" name="STALL_TITLE" id="stallTitle" class="form-control validate" placeholder="Enter your shop title"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.STALL_TITLE || '' %>" required>
+                <div class="invalid-feedback">Shop title is required.</div>
             </div>
 
             <div class="mb-4">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" class="form-control validate" name="SHOP_DESCRIPTIONS" rows="4"
-                    placeholder="Describe your shop and services" required
-                    data-mdb-validation="Description is required."><%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.SHOP_DESCRIPTION ? vendordata.SHOP_DATA.SHOP_DESCRIPTION : '' %></textarea>
+                <textarea id="description" class="form-control validate" name="SHOP_DESCRIPTION" rows="4" placeholder="Describe your shop and services" required><%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.SHOP_DESCRIPTION || '' %></textarea>
+                <div class="invalid-feedback">Description is required.</div>
             </div>
 
             <div class="mb-4">
-                <label for="address" class="form-label">Address</label>
-<<<<<<< HEAD
-                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address" name="AREA"
-                    value="<%= vendordata.SHOP_DATA.AREA %>" required data-mdb-validation="Address is required.">
-=======
-                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address"
-                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.AREA ? vendordata.SHOP_DATA.AREA : '' %>" required data-mdb-validation="Address is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
+                <label for="locationInput" class="form-label">Address</label>
+                <input type="text" id="locationInput" class="form-control validate" placeholder="Enter your shop address" name="AREA"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.AREA || '' %>" required>
+                <div class="invalid-feedback">Address is required.</div>
+                <div id="suggestions" class="suggestions-container"></div>
             </div>
             <div class="mb-4">
-                <label for="address" class="form-label">City</label>
-                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address"
-                    value="<%= vendordata.SHOP_DATA.CITY %>" name="CITY" required data-mdb-validation="Address is required.">
+                <label for="city" class="form-label">City</label>
+                <input type="text" id="city" class="form-control validate" placeholder="Enter your city"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.CITY || '' %>" name="CITY" required>
+                <div class="invalid-feedback">City is required.</div>
             </div>
             <div class="mb-4">
-                <label for="address" class="form-label">District</label>
-                <input type="text" id="address" class="form-control validate" placeholder="Enter your shop address"
-                    value="<%= vendordata.SHOP_DATA.DISTRICT %>" required data-mdb-validation="Address is required.">
+                <label for="district" class="form-label">District</label>
+                <input type="text" id="district" class="form-control validate" placeholder="Enter your district"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.DISTRICT || '' %>" required name="DISTRICT">
+                <div class="invalid-feedback">District is required.</div>
             </div>
 
             <div class="mb-4">
                 <label for="phone" class="form-label">Phone</label>
                 <input type="tel" id="phone" class="form-control validate" placeholder="Enter your contact number"
-<<<<<<< HEAD
-                    value="<%= vendordata.PHONE %>" required data-mdb-validation="Phone number is required." name="PHONE">
-=======
-                    value="<%= vendordata && vendordata.PHONE ? vendordata.PHONE : '' %>" required data-mdb-validation="Phone number is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
-            </div>
-
-            <div class="mb-4">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" class="form-control validate" placeholder="Enter your email address"
-<<<<<<< HEAD
-                    value="<%= vendordata.EMAIL %>" required data-mdb-validation="Valid email is required." name="EMAIL">
-=======
-                    value="<%= vendordata && vendordata.EMAIL ? vendordata.EMAIL : '' %>" required data-mdb-validation="Valid email is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
+                    value="<%= vendordata && vendordata.PHONE || '' %>" required name="PHONE">
+                <div class="invalid-feedback">Phone number is required.</div>
             </div>
 
             <div class="mb-4">
                 <label for="profileImage" class="form-label">Profile Image</label>
-<<<<<<< HEAD
-                <input type="file" id="profileImage" class="form-control validate" multiple
-                    data-mdb-validation="Profile image is required." name="PROFILE_PIC[]">
-            </div>
-            <div class="mb-4">
-                <label for="locationurl" class="form-label">Google map Url</label>
-                <input type="file" id="locationurl" class="form-control validate" multiple
-                    data-mdb-validation="Profile image is required." name="LOCATION_URL" value="<%= vendordata.SHOP_DATA.LOCATION_URL %>">
-=======
-                <input type="file" id="profileImage" class="form-control validate" accept="image/*" required
-                    data-mdb-validation="Profile image is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
+                <input type="file" id="profileImage" class="form-control validate" name="PROFILE_PIC" accept="image/*">
+                <div class="invalid-feedback">Profile image is required.</div>
             </div>
 
             <div class="mb-4">
                 <label for="backgroundImage" class="form-label">Background Image</label>
-<<<<<<< HEAD
-                <input type="file" id="backgroundImage" class="form-control validate" multiple
-                    data-mdb-validation="Background image is required." name="STALL_PIC" value="<%= vendordata.SHOP_DATA.STALL_PIC %>">
-=======
-                <input type="file" id="backgroundImage" class="form-control validate" accept="image/*" required
-                    data-mdb-validation="Background image is required.">
->>>>>>> 0c86adb5e414d56a42eed17cb57ea593f26c6b64
+                <input type="file" id="backgroundImage" class="form-control validate" name="STALL_PIC" accept="image/*">
+                <div class="invalid-feedback">Background image is required.</div>
+            </div>
+            <div class="mb-4">
+                <label for="locationUrl" class="form-label">Google map Url</label>
+                <input type="text" id="locationUrl" class="form-control validate" name="LOCATION_URL"
+                    value="<%= vendordata && vendordata.SHOP_DATA && vendordata.SHOP_DATA.LOCATION_URL || '' %>">
+                <div class="invalid-feedback">Google map URL is required.</div>
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
-
         </form>
     </div>
 
-    <!-- MDB JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+    <!-- MDB -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+
     <script>
-        // Initialize MDB validation and custom validation for images
-        (function () {
-            'use strict';
-            // Fetch the form and all the required elements
-            const form = document.getElementById('editProfileForm');
-            const profileImageInput = document.getElementById('profileImage');
-            const backgroundImageInput = document.getElementById('backgroundImage');
+        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = event.target;
 
-            // Add event listener for form submission
-            form.addEventListener('submit', function (event) {
-                let isValid = true;
+            // Validate form
+            const isValid = form.checkValidity();
 
-                // Check if profile image is selected
-                if (!profileImageInput.files.length) {
-                    profileImageInput.classList.add('is-invalid');
-                    isValid = false;
-                } else {
-                    profileImageInput.classList.remove('is-invalid');
-                    profileImageInput.classList.add('is-valid');
-                }
-
-                // Check if background image is selected
-                if (!backgroundImageInput.files.length) {
-                    backgroundImageInput.classList.add('is-invalid');
-                    isValid = false;
-                } else {
-                    backgroundImageInput.classList.remove('is-invalid');
-                    backgroundImageInput.classList.add('is-valid');
-                }
-
-                // If the form is not valid, prevent submission
-                if (!isValid) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-            });
-
-            // Validation for other fields
-            const inputs = document.querySelectorAll('.validate');
-            inputs.forEach(function (input) {
-                input.addEventListener('input', function () {
-                    if (!input.checkValidity()) {
-                        input.classList.add('is-invalid');
+            // Update classes based on validation
+            Array.from(form.elements).forEach((element) => {
+                if (element.classList.contains('validate')) {
+                    if (!element.checkValidity()) {
+                        element.classList.add('is-invalid');
+                        element.classList.remove('is-valid');
                     } else {
-                        input.classList.remove('is-invalid');
-                        input.classList.add('is-valid');
+                        element.classList.add('is-valid');
+                        element.classList.remove('is-invalid');
                     }
-                });
+                }
             });
-        })();
+
+            // If form is valid, submit it
+            if (isValid) {
+                form.submit();
+            }
+        });
+
+        document.getElementById('editProfileForm').addEventListener('input', function(event) {
+            const element = event.target;
+            if (element.classList.contains('validate')) {
+                if (!element.checkValidity()) {
+                    element.classList.add('is-invalid');
+                    element.classList.remove('is-valid');
+                } else {
+                    element.classList.add('is-valid');
+                    element.classList.remove('is-invalid');
+                }
+            }
+        });
+    </script>
+      <script>
+        var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+
+        var locationInput = document.getElementById('locationInput');
+        var suggestionsContainer = document.getElementById('suggestions');
+
+        locationInput.addEventListener('input', function () {
+            var input = this.value;
+            console.log('Input event fired:', input); // Debugging log
+            if (input.trim() === '') {
+                clearSuggestions();
+                return;
+            }
+            fetchSuggestions(input);
+        });
+
+        function fetchSuggestions(input) {
+            var url =
+                'https://api.geoapify.com/v1/geocode/autocomplete?text=' +
+                encodeURIComponent(input) +
+                '&apiKey=' +
+                apiKey;
+
+            console.log('Fetching suggestions for:', input); // Debugging log
+
+            axios
+                .get(url)
+                .then(function (response) {
+                    console.log('Suggestions fetched:', response.data.features); // Debugging log
+                    displaySuggestions(response.data.features);
+                })
+                .catch(function (error) {
+                    console.error('Error fetching suggestions:', error);
+                });
+        }
+
+        function displaySuggestions(suggestions) {
+            suggestionsContainer.innerHTML = '';
+
+            suggestions.forEach(function (suggestion) {
+                var suggestionText = suggestion.properties.formatted;
+                var suggestionItem = document.createElement('div');
+                suggestionItem.textContent = suggestionText;
+                suggestionItem.classList.add('suggestion');
+                suggestionItem.addEventListener('click', function () {
+                    locationInput.value = suggestionText;
+                    clearSuggestions();
+                });
+                suggestionsContainer.appendChild(suggestionItem);
+            });
+        }
+
+        function clearSuggestions() {
+            suggestionsContainer.innerHTML = '';
+        }
     </script>
 </body>
 </html>

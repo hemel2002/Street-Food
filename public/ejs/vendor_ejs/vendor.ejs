@@ -34,63 +34,80 @@
       <!-- ...............navbar............... -->
       <%- include('navbar') %>
         <!-- .....................carusal............. -->
-        <div class="container">
-          <!-- Carousel wrapper -->
-          <center>
-            <h1 class="text-danger mt-5">Top Rated Items</h1>
-          </center>
-
-          <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark mt-3" data-mdb-ride="carousel"
-            data-mdb-carousel-init>
-            <!-- Indicators -->
-            <div class="carousel-indicators">
-              <% top_food_data.forEach((data, index)=> { %>
-                <button data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="<%= index %>"
-                  class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"
-                  aria-label="Slide <%= index + 1 %>"></button>
-                <% }) %>
+         <% if (foodData.length>0) { %>
+          <div class="container">
+            <!-- Carousel wrapper -->
+            <center>
+              <h1 class="text-danger mt-5">Top Rated Items</h1>
+            </center>
+  
+            <div id="carouselDarkVariant" class="carousel slide carousel-fade carousel-dark mt-3" data-mdb-ride="carousel"
+              data-mdb-carousel-init>
+              <!-- Indicators -->
+              <div class="carousel-indicators">
+                <% top_food_data.forEach((data, index)=> { %>
+                  <button data-mdb-target="#carouselDarkVariant" data-mdb-slide-to="<%= index %>"
+                    class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"
+                    aria-label="Slide <%= index + 1 %>"></button>
+                  <% }) %>
+              </div>
+  
+              <!-- Inner -->
+              <div class="carousel-inner">
+                <!-- Single item -->
+                <% top_food_data.forEach((data, index)=> { %>
+                  <div id="foodCarousel" class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                    <a data-mdb-ripple-init href="/user/details_food?FOOD_ID=<%= data.FOOD_ID %>">
+                      <img src="<%= data.FOOD_PIC %>" class="d-block w-100 img-fluid rounded carousel-image"
+                        alt="Food Image" />
+                      <div class="carousel-caption d-none d-md-block text-danger">
+                        <h3>
+                          Food Name : <%= data.FOOD_NAME %>
+                        </h3>
+                        <h4>
+                          Rating :<%= data.RATING %> <i class="fas fa-star"></i>
+                        </h4>
+                      </div>
+                    </a>
+                  </div>
+                  <% }) %>
+              </div>
+              <!-- Inner -->
+  
+              <!-- Controls -->
+              <button class="carousel-control-prev" type="button" data-mdb-target="#carouselDarkVariant"
+                data-mdb-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-mdb-target="#carouselDarkVariant"
+                data-mdb-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
-
-            <!-- Inner -->
-            <div class="carousel-inner">
-              <!-- Single item -->
-              <% top_food_data.forEach((data, index)=> { %>
-                <div id="foodCarousel" class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                  <a data-mdb-ripple-init href="/user/details_food?FOOD_ID=<%= data.FOOD_ID %>">
-                    <img src="<%= data.FOOD_PIC %>" class="d-block w-100 img-fluid rounded carousel-image"
-                      alt="Food Image" />
-                    <div class="carousel-caption d-none d-md-block text-danger">
-                      <h3>
-                        Food Name : <%= data.FOOD_NAME %>
-                      </h3>
-                      <h4>
-                        Rating :<%= data.RATING %> <i class="fas fa-star"></i>
-                      </h4>
-                    </div>
-                  </a>
-                </div>
-                <% }) %>
-            </div>
-            <!-- Inner -->
-
-            <!-- Controls -->
-            <button class="carousel-control-prev" type="button" data-mdb-target="#carouselDarkVariant"
-              data-mdb-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-mdb-target="#carouselDarkVariant"
-              data-mdb-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
+            <!-- Carousel wrapper -->
           </div>
-          <!-- Carousel wrapper -->
-        </div>
+         <% } %>
+
 
 
         <!--Food item -->
         <main>
+          <% if (foodData.length===0) { %>
+            <center>
+              <dotlottie-player 
+              src="https://lottie.host/786ef55e-4e8c-4b09-bd63-8a8a21f76446/aQjovcn71Y.json" 
+              background="transparent" 
+              speed=".5" 
+              style="width: 300px; height: 300px;" 
+              loop="3" 
+              autoplay>
+          </dotlottie-player>
+            </center>
+
+
+                  <% } else { %>
           <div class="text-center mt-5">
             <h1>
               Items of Food Today: <span id="food-count">
@@ -188,10 +205,12 @@
               </div>
             </div>
           </div>
+
+          <% } %>
           <div class="container">
             <center>
               <a href="/vendor/<%= id %>/add_food">
-                <button type="button" class="btn btn-primary btn-lg">Add new!</button>
+                <button type="button" class="btn btn-primary btn-lg">Add Food Item!</button>
               </a>
               <br /><br />
             </center>

@@ -14,6 +14,7 @@ const upload = multer({ storage });
 const dbConfig = require('./dbConfig');
 const { v4: uuid } = require('uuid');
 const nodemailer = require('nodemailer');
+const { Console } = require('console');
 let foodData = [];
 let reviews = [];
 ///////////////////////////////dark_mode////////////////////////
@@ -87,12 +88,30 @@ router.get('/:id', requirelogin, async (req, res) => {
 });
 
 /////////////////////for vendor add food //////////////////////////
-router.get('/:id/add_food', requirelogin, require_complete_reg,(req, res) => {
+router.get('/:id/add_food', requirelogin, require_complete_reg, async (req, res) => {
   const { id } = req.params;
-  console.log('Add food page requested');
-  res.render('vendor_ejs/add_food', { id });
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM Food,vendor_sells_food WHERE food.food_id = vendor_sells_food.food_id AND vendor_sells_food.v_id = :id',
+      [id]
+    );
+    const FoodData = result.rows;
+    console.log(FoodData);
+    res.render('vendor_ejs/add_food', { id, FoodData });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 });
-
 router.post(
   '/:id/add_food',
   requirelogin,require_complete_reg,
@@ -109,6 +128,7 @@ router.post(
     } = req.body;
     const { path, originalname } = req.file;
     const { id } = req.params;
+    console.log(id);
     let connection;
     try {
       connection = await OracleDB.getConnection(dbConfig);
@@ -118,7 +138,7 @@ router.post(
         'SELECT MAX(FOOD_ID) AS FOOD_ID FROM vendor_sells_food'
       );
 
-      const currentFoodId = result.rows[0].FOOD_ID;
+      const currentFoodId = result.rows[0].FOOD_ID||'F_0';
       console.log(result.rows);
       console.log(currentFoodId);
 
@@ -500,81 +520,132 @@ router.get('/:id/profile', requirelogin,require_complete_reg, async (req, res) =
 });
 ///////////////////////////////vendor edit profile/////////////////////////////
 router.get('/:id/edit_profile', requirelogin, async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id;
   let connection;
   try {
+    console.log('Connecting to database...');
     connection = await OracleDB.getConnection(dbConfig);
+    console.log('Connected to database.');
+
+    console.log('Executing query...');
     const result = await connection.execute(
       'SELECT * FROM VENDORS WHERE V_ID = :id',
       { id }
     );
+    console.log('Query executed.');
+
+    if (result.rows.length === 0) {
+      console.log('No vendor found with the given ID.');
+      return res.status(404).send('Vendor not found');
+    }
+
     const vendordata = result.rows[0];
-    console.log(vendordata);
+    console.log('Vendor Data:', vendordata);
+
     res.render('vendor_ejs/edit_profile', { vendordata });
   } catch (err) {
-    console.error(err);
+    console.error('Error:', err);
+    res.status(500).send('Internal Server Error');
   } finally {
     if (connection) {
       try {
         await connection.close();
+        console.log('Database connection closed.');
       } catch (err) {
-        console.error(err);
+        console.error('Error closing connection:', err);
       }
     }
   }
 });
+
+
 router.post('/:id/edit_profile', upload.fields([
   { name: 'PROFILE_PIC', maxCount: 1 },
-  { name: 'STALL_PIC', maxCount: 1 } // Remove [] from the name
+  { name: 'STALL_PIC', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const profilePic = req.files['PROFILE_PIC'][0].path ;
-    const stallPic =  req.files['STALL_PIC'][0].path;
-    const vendordata = req.body;
+    // Validate required files
+    if (!req.files['PROFILE_PIC'] || !req.files['STALL_PIC']) {
+      return res.status(400).send('Profile picture and stall picture are required.');
+    }
 
+    const profilePic = req.files['PROFILE_PIC'][0].path;
+    const stallPic = req.files['STALL_PIC'][0].path;
+    const { V_FIRST_NAME, V_LAST_NAME, STALL_NAME,STALL_TITLE,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE } = req.body;
+    const status = 'open';
     const { id } = req.params;
+    console.log('id',id);
+    console.log('Request body:', req.body); 
+    console.log(profilePic,stallPic);
+    console.log(V_FIRST_NAME,V_LAST_NAME,STALL_NAME,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE);
+
     let connection;
+
     try {
       connection = await OracleDB.getConnection(dbConfig);
+      console.log('Database connection established.');
+
+      // Make sure AREA is not null
+      if (!AREA) {
+        return res.status(400).send('Area cannot be null.');
+      }
+
       await connection.execute(
         `UPDATE VENDORS V 
-         SET V_FIRST_NAME = :V_FIRST_NAME, 
-             V_LAST_NAME = :V_LAST_NAME, 
-             EMAIL = :EMAIL, 
-             PHONE = :PHONE, 
-             v.SHOP_DATA.STALL_NAME = :STALL_NAME, 
-             v.SHOP_DATA.AREA = :AREA, 
-             v.SHOP_DATA.CITY = :CITY, 
-             v.SHOP_DATA.DISTRICT = :DISTRICT, 
-             v.SHOP_DATA.STALL_TITLE = :STALL_TITLE, 
-             v.SHOP_DATA.SHOP_DESCRIPTION = :SHOP_DESCRIPTION, 
-             v.shopdata.stall_pic = :stallPic, 
-             profile_pic = :profilePic 
-         WHERE V_ID = :id`,
+      SET V.SHOP_DATA = SYSTEM.SHOP_INFO_TYPE(
+          :STALL_NAME, 
+          :V_FIRST_NAME, 
+          :V_LAST_NAME, 
+          :AREA,
+          :CITY, 
+          :DISTRICT, 
+          :STALL_TITLE, 
+          :stallPic, 
+          :LOCATION_URL, 
+          :status, 
+          :SHOP_DESCRIPTION
+          
+      ), 
+      V.PHONE = :PHONE, 
+      V.PROFILE_PIC = :profilePic 
+      WHERE V_ID = :id`,
         { 
-          ...vendordata, 
+          STALL_NAME, 
+          V_FIRST_NAME, 
+          V_LAST_NAME, 
+          AREA, 
+          CITY, 
+          DISTRICT, 
+          STALL_TITLE, 
           stallPic, 
+          LOCATION_URL,
+          status,  
+          SHOP_DESCRIPTION, 
+          
+          PHONE, 
           profilePic, 
           id 
         },
         { autoCommit: true }
       );
 
-      res.redirect(`/${req.params.id}/profile`);
+     
+      res.redirect(`/vendor/${id}/profile`);
     } catch (error) {
-      console.error(error);
+      console.error('Database error:', error);
       res.status(500).send('Server Error');
     } finally {
       if (connection) {
         try {
           await connection.close();
+          console.log('Database connection closed.');
         } catch (err) {
-          console.error(err);
+          console.error('Error closing connection:', err);
         }
       }
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error in POST /:id/edit_profile:', error);
     res.status(500).send('Server Error');
   }
 });
