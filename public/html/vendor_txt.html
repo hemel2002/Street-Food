@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Dashboard</title>
+  <!-- MDBootstrap CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css" rel="stylesheet">
+  <!-- Chart.js for graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <style>
+    body {
+      background-color: #f7f7f7;
+    }
+    .dashboard-container {
+      margin-top: 30px;
+    }
+    .fade-in {
+      opacity: 0;
+    }
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      transition: transform 0.3s;
+    }
+    .profile-img:hover {
+      transform: scale(1.1);
+    }
+    .stats-card {
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      transition: box-shadow 0.3s;
+    }
+    .stats-card:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .progress-bar {
+      height: 8px;
+      border-radius: 5px;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 1000;
+    }
+    .loading-text {
+      font-size: 24px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loader Animation -->
+<div class="loading" id="loading">
+  <div class="loading-text">Loading Dashboard...</div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fade-in">
+  <a class="navbar-brand" href="#">Vendor Dashboard</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Analytics</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Profile</a>
+      </li>
+    </ul>
+    <span class="navbar-text">
+      <a href="#" class="btn btn-danger btn-sm">Logout</a>
+    </span>
+  </div>
+</nav>
+<!-- Navbar End -->
+
+<div class="container dashboard-container fade-in">
+  <div class="row mb-4">
+    <!-- Stats Cards -->
+    <div class="col-md-3">
+      <div class="stats-card text-center">
+        <h5>Total Sales</h5>
+        <h3>$5,230</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stats-card text-center">
+        <h5>Average Rating</h5>
+        <h3>4.8 ⭐</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stats-card text-center">
+        <h5>Total Orders</h5>
+        <h3>312</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stats-card text-center">
+        <h5>New Reviews</h5>
+        <h3>15</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Profile Overview -->
+    <div class="col-md-4">
+      <h4 class="mb-4">Vendor Profile</h4>
+      <div class="card">
+        <div class="card-body text-center">
+          <img src="vendor-profile.jpg" alt="Vendor" class="profile-img mb-3">
+          <h5 class="card-title">John's Street Tacos</h5>
+          <p class="card-text"><strong>Vendor Name:</strong> John Doe</p>
+          <p class="card-text"><strong>Location:</strong> Downtown Street, LA</p>
+          <p class="card-text"><strong>Description:</strong> Best tacos in town!</p>
+          <button class="btn btn-primary btn-sm">Edit Profile</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Rated Food Section with Progress Bars -->
+    <div class="col-md-4">
+      <h4 class="mb-4">Most Rated Food</h4>
+      <ul class="list-group">
+        <li class="list-group-item">
+          Tacos Al Pastor
+          <div class="progress">
+            <div class="progress-bar bg-primary" style="width: 90%;" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">4.9 ⭐</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          Quesadillas
+          <div class="progress">
+            <div class="progress-bar bg-primary" style="width: 85%;" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">4.8 ⭐</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          Burritos
+          <div class="progress">
+            <div class="progress-bar bg-primary" style="width: 80%;" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">4.7 ⭐</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="col-md-4">
+      <h4 class="mb-4">Customer Reviews</h4>
+      <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Maria:</strong> "The tacos were amazing! Definitely coming back!"
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Alex:</strong> "Quick service and delicious food!"
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Jessie:</strong> "Loved the flavors. Best street food in LA!"
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Sections: Complaints and Recently Uploaded Videos -->
+  <div class="row mt-5">
+    <!-- Complaints Section -->
+    <div class="col-md-6 complaints-section fade-in">
+      <h4>Vendor Complaints</h4>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <strong>Complaint 1:</strong> Late delivery on July 3, 2024.
+        </li>
+        <li class="list-group-item">
+          <strong>Complaint 2:</strong> Food quality issues reported on August 14, 2024.
+        </li>
+        <li class="list-group-item">
+          <strong>Complaint 3:</strong> Unavailable items during peak hours.
+        </li>
+        <!-- Add more complaints as needed -->
+      </ul>
+    </div>
+
+    <!-- Recently Uploaded Videos Section -->
+    <div class="col-md-6 videos-section fade-in">
+      <h4>Recently Uploaded Videos</h4>
+      <div class="list-group">
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Video 1:</strong> How to make the best street tacos
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Video 2:</strong> Behind the scenes of John's Street Tacos
+        </a>
+        <a href="#" class="list-group-item list-group-item-action">
+          <strong>Video 3:</strong> Special offers for taco lovers!
+        </a>
+        <!-- Add more video links as needed -->
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="row mt-5">
+    <!-- Analytics Section -->
+    <div class="col-md-6">
+      <h4>Food Popularity Over Time</h4>
+      <canvas id="foodPopularityGraph"></canvas>
+    </div>
+
+    <!-- Business Insights Section -->
+    <div class="col-md-6">
+      <h4>Customer Engagement</h4>
+      <canvas id="customerEngagementGraph"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- MDBootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"></script>
+
+<!-- Chart.js for Graphs -->
+<script>
+  // Food Popularity Over Time Graph
+  const ctx = document.getElementById('foodPopularityGraph').getContext('2d');
+  const foodPopularityGraph = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+      datasets: [{
+        label: 'Tacos Al Pastor',
+        data: [30, 50,70, 100, 130, 160],
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }, {
+        label: 'Quesadillas',
+        data: [20, 40, 60, 80, 100, 120],
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }, {
+        label: 'Burritos',
+        data: [10, 30, 50, 70, 90, 110],
+        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#333'
+          }
+        },
+        x: {
+          ticks: {
+            color: '#333'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#333'
+          }
+        }
+      }
+    }
+  });
+
+  // Customer Engagement Graph
+  const ctx2 = document.getElementById('customerEngagementGraph').getContext('2d');
+  const customerEngagementGraph = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['New Customers', 'Returning Customers', 'Reviews'],
+      datasets: [{
+        label: 'Customer Engagement',
+        data: [120, 300, 45],
+        backgroundColor: [
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(153, 102, 255, 0.6)'
+        ],
+        borderColor: [
+          'rgba(255, 206, 86, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(153, 102, 255, 1)'
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: '#333'
+          }
+        },
+        x: {
+          ticks: {
+            color: '#333'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#333'
+          }
+        }
+      }
+    }
+  });
+
+  // Loader fade-out animation
+  
+</script>
+<script>
+    // Fade-in and slide-in animations using GSAP
+    window.addEventListener('load', function () {
+      const loader = document.getElementById('loading');
+      
+      // Fade out loader animation
+      gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: function () { loader.style.display = 'none'; } });
+      
+      // Fade in sections
+      gsap.fromTo('.fade-in', { opacity: 0 }, { opacity: 1, duration: 1.5, stagger: 0.3 });
+      
+      // Slide-in animation for complaints and videos sections
+      gsap.from('.complaints-section', { x: -100, opacity: 0, duration: 1.2, ease: "power2.out" });
+      gsap.from('.videos-section', { x: 100, opacity: 0, duration: 1.2, ease: "power2.out" });
+    });
+  </script>
+
+</body>
+</html>
