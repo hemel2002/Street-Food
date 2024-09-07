@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const { cloudinary } = require('./cloudinary');
 const { requirelogin } = require('./requirelogin_middleware');
-const {require_complete_reg} = require('./require_complete_reg');
+const { require_complete_reg } = require('./require_complete_reg');
 const OracleDB = require('oracledb');
 const multer = require('multer');
 const { storage } = require('./cloudinary');
@@ -88,33 +88,39 @@ router.get('/:id', requirelogin, async (req, res) => {
 });
 
 /////////////////////for vendor add food //////////////////////////
-router.get('/:id/add_food', requirelogin, require_complete_reg, async (req, res) => {
-  const { id } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'SELECT * FROM Food,vendor_sells_food WHERE food.food_id = vendor_sells_food.food_id AND vendor_sells_food.v_id = :id',
-      [id]
-    );
-    const FoodData = result.rows;
-    console.log(FoodData);
-    res.render('vendor_ejs/add_food', { id, FoodData });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+router.get(
+  '/:id/add_food',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT * FROM Food,vendor_sells_food WHERE food.food_id = vendor_sells_food.food_id AND vendor_sells_food.v_id = :id',
+        [id]
+      );
+      const FoodData = result.rows;
+      console.log(FoodData);
+      res.render('vendor_ejs/add_food', { id, FoodData });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
-});
+);
 router.post(
   '/:id/add_food',
-  requirelogin,require_complete_reg,
+  requirelogin,
+  require_complete_reg,
   upload.single('image'),
   async (req, res) => {
     console.log(req.body);
@@ -138,7 +144,7 @@ router.post(
         'SELECT MAX(FOOD_ID) AS FOOD_ID FROM vendor_sells_food'
       );
 
-      const currentFoodId = result.rows[0].FOOD_ID||'F_0';
+      const currentFoodId = result.rows[0].FOOD_ID || 'F_0';
       console.log(result.rows);
       console.log(currentFoodId);
 
@@ -188,37 +194,43 @@ router.post(
 );
 
 /////////////////////for vendor update food //////////////////////////
-router.get('/:id/update/:food_id', requirelogin,require_complete_reg, async (req, res) => {
-  const { food_id } = req.params;
-  let findfoodData = null;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'SELECT FOOD_ID, FOOD_NAME, PRICE, INGREDIENT, AVAILABILITY, ORIGINAL_PATH, FOOD_PIC FROM food WHERE FOOD_ID = :id',
-      [food_id]
-    );
-    if (result.rows.length > 0) {
-      findfoodData = result.rows[0];
-    }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+router.get(
+  '/:id/update/:food_id',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { food_id } = req.params;
+    let findfoodData = null;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT FOOD_ID, FOOD_NAME, PRICE, INGREDIENT, AVAILABILITY, ORIGINAL_PATH, FOOD_PIC FROM food WHERE FOOD_ID = :id',
+        [food_id]
+      );
+      if (result.rows.length > 0) {
+        findfoodData = result.rows[0];
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
-  }
 
-  res.render('vendor_ejs/update_food', { findfoodData });
-});
+    res.render('vendor_ejs/update_food', { findfoodData });
+  }
+);
 
 router.patch(
   '/:id/update/:food_id',
-  requirelogin,require_complete_reg,
+  requirelogin,
+  require_complete_reg,
   upload.single('image'),
   async (req, res) => {
     const { id, food_id } = req.params;
@@ -258,33 +270,38 @@ router.patch(
 );
 ///////////////////////////////vendor delete food/////////////////////////////
 
-router.get('/:id/delete/:FOOD_ID', requirelogin,require_complete_reg, async (req, res) => {
-  const { id, FOOD_ID } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    await connection.execute(
-      'DELETE FROM vendor_sells_food WHERE FOOD_ID=:FOOD_ID',
-      [FOOD_ID],
-      { autoCommit: true }
-    );
-    req.flash('delete_success', 'item successfully deleted');
-    return res.redirect(`/vendor/${id}`);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+router.get(
+  '/:id/delete/:FOOD_ID',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id, FOOD_ID } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      await connection.execute(
+        'DELETE FROM vendor_sells_food WHERE FOOD_ID=:FOOD_ID',
+        [FOOD_ID],
+        { autoCommit: true }
+      );
+      req.flash('delete_success', 'item successfully deleted');
+      return res.redirect(`/vendor/${id}`);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
-});
+);
 
 /////////////////////for vendor email//////////////////////////
-router.get('/:id/email', requirelogin,require_complete_reg, (req, res) => {
+router.get('/:id/email', requirelogin, require_complete_reg, (req, res) => {
   res.render('vendor_ejs/email');
 });
 
@@ -331,7 +348,7 @@ router.post('/:id/logout', requirelogin, (req, res) => {
   res.redirect('/home');
 });
 ////////////////////////////////////////////////vendor qr-code///////////////////////
-router.post('/:id/qr', requirelogin,require_complete_reg, async (req, res) => {
+router.post('/:id/qr', requirelogin, require_complete_reg, async (req, res) => {
   try {
     if (!req.body.url) {
       return res.status(400).send('URL is required');
@@ -391,47 +408,52 @@ router.post('/:id/qr', requirelogin,require_complete_reg, async (req, res) => {
 });
 
 //////////////////////////////////////vendor review and reply/////////////////////////////
-router.get('/:id/review', requirelogin,require_complete_reg, async (req, res) => {
-  const { id } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const reviewResult = await connection.execute(
-      'select * from CUSTOMERREVIEWSVENDOR where V_ID = :id',
-      { id: id }
-    );
-    const result = await connection.execute(
-      'SELECT AVG(RATING) FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :id',
-      { id: id }
-    );
-    const result2 = await connection.execute(
-      'SELECT V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,V.SHOP_DATA.STALL_NAME AS STALL_NAME FROM VENDORS V WHERE V_ID = :id',
-      { id: id }
-    );
+router.get(
+  '/:id/review',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const reviewResult = await connection.execute(
+        'select * from CUSTOMERREVIEWSVENDOR where V_ID = :id',
+        { id: id }
+      );
+      const result = await connection.execute(
+        'SELECT AVG(RATING) FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :id',
+        { id: id }
+      );
+      const result2 = await connection.execute(
+        'SELECT V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,V.SHOP_DATA.STALL_NAME AS STALL_NAME FROM VENDORS V WHERE V_ID = :id',
+        { id: id }
+      );
 
-    const reviews = reviewResult.rows;
-    const avg_rating = result.rows[0]['AVG(RATING)'];
-    const vendordata = result2.rows[0];
+      const reviews = reviewResult.rows;
+      const avg_rating = result.rows[0]['AVG(RATING)'];
+      const vendordata = result2.rows[0];
 
-    console.log(reviews);
-    res.render('vendor_ejs/vendor_reviews', {
-      reviews,
-      id,
-      avg_rating,
-      vendordata,
-    });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+      console.log(reviews);
+      res.render('vendor_ejs/vendor_reviews', {
+        reviews,
+        id,
+        avg_rating,
+        vendordata,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
-});
+);
 
 router.post('/:id/review', requirelogin, async (req, res) => {
   const { reply_msg, C_ID } = req.body;
@@ -459,65 +481,75 @@ router.post('/:id/review', requirelogin, async (req, res) => {
   req.flash('review', 'Review added successfully!');
   res.redirect(`/vendor/${V_ID}`);
 });
-router.patch('/:id/review', requirelogin,require_complete_reg, async (req, res) => {
-  const { reply_msg, C_ID } = req.body;
-  const V_ID = req.session.user_id; // Correctly accessing V_ID
-  console.log(V_ID);
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'UPDATE CUSTOMERREVIEWSVENDOR SET REPLY = :reply_msg, V_REPLY_DATE = SYSTIMESTAMP WHERE C_ID = :C_ID AND V_ID = :V_ID',
-      { reply_msg, C_ID, V_ID },
-      { autoCommit: true }
-    );
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+router.patch(
+  '/:id/review',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { reply_msg, C_ID } = req.body;
+    const V_ID = req.session.user_id; // Correctly accessing V_ID
+    console.log(V_ID);
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'UPDATE CUSTOMERREVIEWSVENDOR SET REPLY = :reply_msg, V_REPLY_DATE = SYSTIMESTAMP WHERE C_ID = :C_ID AND V_ID = :V_ID',
+        { reply_msg, C_ID, V_ID },
+        { autoCommit: true }
+      );
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
+    req.flash('review', 'Review updated successfully!');
+    res.redirect(`/vendor/${V_ID}`);
   }
-  req.flash('review', 'Review updated successfully!');
-  res.redirect(`/vendor/${V_ID}`);
-});
+);
 /////////////////////////////vendor prfile/////////////////////////////
-router.get('/:id/profile', requirelogin,require_complete_reg, async (req, res) => {
-  const { id } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'SELECT * FROM VENDORS WHERE V_ID = :id',
-      { id }
-    );
-    const result2 = await connection.execute(
-      'SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc FETCH FIRST 3 ROWS ONLY',
-      { id }
-    );
-    const vendordata = result.rows[0];
-    console.log(result2.rows);
-    console.log(vendordata);
-    res.render('vendor_ejs/vendor_profile', {
-      vendordata,
-      foodData: result2.rows,
-    });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+router.get(
+  '/:id/profile',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT * FROM VENDORS WHERE V_ID = :id',
+        { id }
+      );
+      const result2 = await connection.execute(
+        'SELECT * FROM food,vendor_sells_food  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc FETCH FIRST 3 ROWS ONLY',
+        { id }
+      );
+      const vendordata = result.rows[0];
+      console.log(result2.rows);
+      console.log(vendordata);
+      res.render('vendor_ejs/vendor_profile', {
+        vendordata,
+        foodData: result2.rows,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
-});
+);
 ///////////////////////////////vendor edit profile/////////////////////////////
 router.get('/:id/edit_profile', requirelogin, async (req, res) => {
   const id = req.params.id;
@@ -558,42 +590,69 @@ router.get('/:id/edit_profile', requirelogin, async (req, res) => {
   }
 });
 
-
-router.post('/:id/edit_profile', upload.fields([
-  { name: 'PROFILE_PIC', maxCount: 1 },
-  { name: 'STALL_PIC', maxCount: 1 }
-]), async (req, res) => {
-  try {
-    // Validate required files
-    if (!req.files['PROFILE_PIC'] || !req.files['STALL_PIC']) {
-      return res.status(400).send('Profile picture and stall picture are required.');
-    }
-
-    const profilePic = req.files['PROFILE_PIC'][0].path;
-    const stallPic = req.files['STALL_PIC'][0].path;
-    const { V_FIRST_NAME, V_LAST_NAME, STALL_NAME,STALL_TITLE,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE,openingTime,closingTime } = req.body;
-    const status = 'open';
-    const hygiene_rating = 5;
-const Working_Hours = openingTime + ' - ' + closingTime;
-    const { id } = req.params;
-    console.log('id',id);
-    console.log('Request body:', req.body); 
-    console.log(profilePic,stallPic);
-    console.log(V_FIRST_NAME,V_LAST_NAME,STALL_NAME,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE);
-
-    let connection;
-
+router.post(
+  '/:id/edit_profile',
+  upload.fields([
+    { name: 'PROFILE_PIC', maxCount: 1 },
+    { name: 'STALL_PIC', maxCount: 1 },
+  ]),
+  async (req, res) => {
     try {
-      connection = await OracleDB.getConnection(dbConfig);
-      console.log('Database connection established.');
-
-      // Make sure AREA is not null
-      if (!AREA) {
-        return res.status(400).send('Area cannot be null.');
+      // Validate required files
+      if (!req.files['PROFILE_PIC'] || !req.files['STALL_PIC']) {
+        return res
+          .status(400)
+          .send('Profile picture and stall picture are required.');
       }
 
-      await connection.execute(
-        `UPDATE VENDORS V 
+      const profilePic = req.files['PROFILE_PIC'][0].path;
+      const stallPic = req.files['STALL_PIC'][0].path;
+      const {
+        V_FIRST_NAME,
+        V_LAST_NAME,
+        STALL_NAME,
+        STALL_TITLE,
+        SHOP_DESCRIPTION,
+        AREA,
+        CITY,
+        DISTRICT,
+        LOCATION_URL,
+        PHONE,
+        openingTime,
+        closingTime,
+      } = req.body;
+      const status = 'open';
+      const hygiene_rating = 5;
+      const Working_Hours = openingTime + ' - ' + closingTime;
+      const { id } = req.params;
+      console.log('id', id);
+      console.log('Request body:', req.body);
+      console.log(profilePic, stallPic);
+      console.log(
+        V_FIRST_NAME,
+        V_LAST_NAME,
+        STALL_NAME,
+        SHOP_DESCRIPTION,
+        AREA,
+        CITY,
+        DISTRICT,
+        LOCATION_URL,
+        PHONE
+      );
+
+      let connection;
+
+      try {
+        connection = await OracleDB.getConnection(dbConfig);
+        console.log('Database connection established.');
+
+        // Make sure AREA is not null
+        if (!AREA) {
+          return res.status(400).send('Area cannot be null.');
+        }
+
+        await connection.execute(
+          `UPDATE VENDORS V 
       SET V.SHOP_DATA = SYSTEM.SHOP_INFO_TYPE(
           :STALL_NAME, 
           :V_FIRST_NAME, 
@@ -614,147 +673,168 @@ const Working_Hours = openingTime + ' - ' + closingTime;
       V.PHONE = :PHONE, 
       V.PROFILE_PIC = :profilePic 
       WHERE V_ID = :id`,
-        { 
-          STALL_NAME, 
-          V_FIRST_NAME, 
-          V_LAST_NAME, 
-          AREA, 
-          CITY, 
-          DISTRICT, 
-          STALL_TITLE, 
-          stallPic, 
-          LOCATION_URL,
-          status,  
-          SHOP_DESCRIPTION, 
-          
-          PHONE, 
-          profilePic,
-          Working_Hours,
-          hygiene_rating,
-          qrcode: null, 
-          id 
-        },
-        { autoCommit: true }
-      );
+          {
+            STALL_NAME,
+            V_FIRST_NAME,
+            V_LAST_NAME,
+            AREA,
+            CITY,
+            DISTRICT,
+            STALL_TITLE,
+            stallPic,
+            LOCATION_URL,
+            status,
+            SHOP_DESCRIPTION,
 
-     
-      res.redirect(`/vendor/${id}/profile`);
+            PHONE,
+            profilePic,
+            Working_Hours,
+            hygiene_rating,
+            qrcode: null,
+            id,
+          },
+          { autoCommit: true }
+        );
+
+        res.redirect(`/vendor/${id}/profile`);
+      } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).send('Server Error');
+      } finally {
+        if (connection) {
+          try {
+            await connection.close();
+            console.log('Database connection closed.');
+          } catch (err) {
+            console.error('Error closing connection:', err);
+          }
+        }
+      }
     } catch (error) {
-      console.error('Database error:', error);
+      console.error('Error in POST /:id/edit_profile:', error);
       res.status(500).send('Server Error');
+    }
+  }
+);
+
+///////////////////////////////Video_list/////////////////////////////
+router.get(
+  '/:id/Video_list',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT DISTINCT * FROM uploaded_videos p,user_promotes_vendor v,customers c WHERE p.video_id = v.video_id AND v.v_id = :id AND  p.c_id = c.c_id',
+        { id }
+      );
+      const result2 = await connection.execute('SELECT * FROM customers ');
+      const customerData = result2.rows;
+
+      const videoData = result.rows;
+      console.log('customer id', videoData);
+      res.render('vendor_ejs/video_list', { videoData, id, customerData });
+    } catch (err) {
+      console.error(err);
     } finally {
       if (connection) {
         try {
           await connection.close();
-          console.log('Database connection closed.');
         } catch (err) {
-          console.error('Error closing connection:', err);
+          console.error(err);
         }
       }
     }
-  } catch (error) {
-    console.error('Error in POST /:id/edit_profile:', error);
-    res.status(500).send('Server Error');
   }
-});
-
-///////////////////////////////Video_list/////////////////////////////
-router.get('/:id/Video_list', requirelogin,require_complete_reg, async (req, res) => {
-  const { id } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'SELECT DISTINCT * FROM uploaded_videos p,user_promotes_vendor v,customers c WHERE p.video_id = v.video_id AND v.v_id = :id AND  p.c_id = c.c_id',
-      { id }
-    );
-    const result2 = await connection.execute('SELECT * FROM customers ');
-    const customerData = result2.rows;
-
-    const videoData = result.rows;
-    console.log('customer id', videoData);
-    res.render('vendor_ejs/video_list', { videoData, id, customerData });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-});
+);
 ////////////////////////////////////vendor dashboard/////////////////////////////
-router.get('/:id/dashboard', requirelogin, require_complete_reg, async (req, res) => {
-  const { id } = req.params;
-  let connection;
-  try {
-    connection = await OracleDB.getConnection(dbConfig);
-    const result = await connection.execute(
-      'SELECT count(Food_id) as Foodcount FROM vendor_sells_food WHERE V_ID = :id',
-      { id }
-    );
-    const result2 = await connection.execute(
-      'SELECT count(c_id) as vendorReviewcount FROM customerreviewsvendor WHERE V_ID = :id',
-      { id }
-    );
-    const result3 = await connection.execute(
-      'SELECT count(c_id) as FoodReviewcount FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
-      { id }
-    );
-    const result4 = await connection.execute(
-      'SELECT v.shop_data.Hygiene_rating as Hygiene_rating FROM vendors v WHERE V_ID = :id',
-      { id }
-    );
-    const result5 = await connection.execute(
-      'SELECT avg(rating) as rating FROM customerreviewsvendor WHERE V_ID = :id',
-      { id }
-    );
-    const result6 = await connection.execute(
-      'SELECT avg(food_rating) as food_rating FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
-      { id }
-    );
-    const result7 = await connection.execute(
-      'SELECT * FROM vendors WHERE V_ID = :id',
-      { id }
-    );
-    const vendordata = result7.rows[0];
+router.get(
+  '/:id/dashboard',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT count(Food_id) as Foodcount FROM vendor_sells_food WHERE V_ID = :id',
+        { id }
+      );
+      const result2 = await connection.execute(
+        'SELECT count(c_id) as vendorReviewcount FROM customerreviewsvendor WHERE V_ID = :id',
+        { id }
+      );
+      const result3 = await connection.execute(
+        'SELECT count(c_id) as FoodReviewcount FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
+        { id }
+      );
+      const result4 = await connection.execute(
+        'SELECT v.shop_data.Hygiene_rating as Hygiene_rating FROM vendors v WHERE V_ID = :id',
+        { id }
+      );
+      const result5 = await connection.execute(
+        'SELECT avg(rating) as rating FROM customerreviewsvendor WHERE V_ID = :id',
+        { id }
+      );
+      const result6 = await connection.execute(
+        'SELECT avg(food_rating) as food_rating FROM customer_reviews_food, vendor_sells_food WHERE vendor_sells_food.V_ID = :id and vendor_sells_food.food_id = customer_reviews_food.food_id',
+        { id }
+      );
+      const result7 = await connection.execute(
+        'SELECT * FROM vendors WHERE V_ID = :id',
+        { id }
+      );
+      const vendordata = result7.rows[0];
 
-    const Hyginene_rating = result4.rows[0]?.HYGIENE_RATING ?? 0;
-    console.log(Hyginene_rating);
-    const vendor_rating = result5.rows[0]?.RATING ?? 0;
-    console.log(vendor_rating);
-    const food_rating = result6.rows[0]?.FOOD_RATING ?? 0;
-    console.log(food_rating);
-    const avg_rating = ((vendor_rating + food_rating + Hyginene_rating) / 3).toFixed(1);
+      const Hyginene_rating = result4.rows[0]?.HYGIENE_RATING ?? 0;
+      console.log(Hyginene_rating);
+      const vendor_rating = result5.rows[0]?.RATING ?? 0;
+      console.log(vendor_rating);
+      const food_rating = result6.rows[0]?.FOOD_RATING ?? 0;
+      console.log(food_rating);
+      const avg_rating = (
+        (vendor_rating + food_rating + Hyginene_rating) /
+        3
+      ).toFixed(1);
 
-    const FoodReviewcount = result3.rows[0]?.FOODREVIEWCOUNT ?? 0;
-    console.log(FoodReviewcount);
+      const FoodReviewcount = result3.rows[0]?.FOODREVIEWCOUNT ?? 0;
+      console.log(FoodReviewcount);
 
-    const vendorReviewcount = result2.rows[0]?.VENDORREVIEWCOUNT ?? 0;
-    console.log(vendorReviewcount);
+      const vendorReviewcount = result2.rows[0]?.VENDORREVIEWCOUNT ?? 0;
+      console.log(vendorReviewcount);
 
-    const Foodcount = result.rows[0]?.FOODCOUNT ?? 0;
-    console.log(Foodcount);
+      const Foodcount = result.rows[0]?.FOODCOUNT ?? 0;
+      console.log(Foodcount);
 
-    const totalReview = FoodReviewcount + vendorReviewcount;
-    console.log(totalReview);
-    
+      const totalReview = FoodReviewcount + vendorReviewcount;
+      console.log(totalReview);
 
-    res.render('vendor_ejs/dashboard', { Foodcount, totalReview, avg_rating, Hyginene_rating, vendor_rating, food_rating, vendordata });
-  } catch (err) {
-    console.error(err);
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+      res.render('vendor_ejs/dashboard', {
+        Foodcount,
+        totalReview,
+        avg_rating,
+        Hyginene_rating,
+        vendor_rating,
+        food_rating,
+        vendordata,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }
-});
+);
+
 /////////////////////////////////export Router/////////////////////////////
 module.exports = router;
