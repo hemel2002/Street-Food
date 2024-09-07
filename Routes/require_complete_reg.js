@@ -17,7 +17,7 @@ const require_complete_reg = async (req, res, next) => {
         connection = await oracledb.getConnection(dbConfig);
         const result = await connection.execute(
             `SELECT 
-shop_data
+            shop_data
             FROM VENDORS  
             WHERE email = :email`,
             [user_email]
@@ -45,5 +45,49 @@ shop_data
         }
     }
 };
+const require_complete_user_reg = async (req, res, next) => {
+    console.log("Session object:", req.session);
+    console.log("User email:", req.session.email);
+    
+    const user_email = req.session.email;
+    let connection;
+    try {
+        const id = req.params.id;
+        if (!id) {
+            console.log("USER_ID is undefined");
+            return res.status(400).send("USER_ID is not set in session");
+        }
+        
+        connection = await oracledb.getConnection(dbConfig);
+        const result = await connection.execute(
+            `SELECT 
+            first_name 
+            FROM customers  
+            WHERE email = :email`,
+            [user_email]
+        );
+     
+        const userdata = result.rows[0];
+        console.log(userdata);
+        if (userdata && userdata.FIRST_NAME === null) {
 
-module.exports = require_complete_reg;
+            res.redirect(`/user/${id}/edit_profile`);
+        } else {
+            next();
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Internal Server Error");
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
+}
+
+module.exports = { require_complete_reg, require_complete_user_reg };

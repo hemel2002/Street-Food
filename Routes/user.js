@@ -11,11 +11,97 @@ const { v4: uuid } = require('uuid');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const cloudinary = require('./cloudinary');
+const {require_complete_user_reg} = require('./require_complete_reg');
 const e = require('connect-flash');
 
 let videos = [];
 let vendor = [];
 let shoplocation = [];
+/////////////////user profile////////////////////////
+router.get('/:id/profile', requireloginuser, async (req, res) => {
+  const id = req.session.user_id;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM CUSTOMERS WHERE C_ID = :id',
+      { id }
+    );
+    const userdata = result.rows[0];
+    console.log(userdata);
+    res.render('blogger/profile', { userdata });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
+);
+////////////////////////edit profile////////////////////////
+router.get('/:id/edit_profile', requireloginuser, async (req, res) => {
+  const id = req.params.id;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      'SELECT * FROM CUSTOMERS WHERE C_ID = :id',
+      { id }
+    );
+    const userdata = result.rows[0];
+    console.log(userdata);
+    res.render('blogger/edit_profile', { userdata });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+//////////////////////////update profile////////////////////////
+router.post('/:id/edit_profile', async (req, res) => {
+  const id = req.params.id;
+  const { FIRST_NAME, LAST_NAME, PHONE, PASSWORD } =
+    req.body;
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    await connection.execute(
+      `UPDATE CUSTOMERS 
+       SET FIRST_NAME = :FIRST_NAME, LAST_NAME = :LAST_NAME, PHONE = :PHONE, PASSWORD = :PASSWORD 
+       WHERE C_ID = :id`,
+      { FIRST_NAME, LAST_NAME, PHONE,PASSWORD, id },
+      { autoCommit: true }
+    );
+    req.flash('update_profile', 'Profile updated successfully!');
+    res.redirect(`/user/${id}`);
+  } catch (err) {
+    console.error(err);
+    req.flash('error_update_profile', 'An error occurred during profile update');
+    res.redirect(`/user/${id}/edit_profile`);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+        req.flash('error_update_profile', 'An error occurred during profile update');
+        res.redirect(`/user/${id}/edit_profile`);
+      }
+    }
+  }
+}
+);
 
 router.get('/nearbyshop', (req, res) => {
   res.render('blogger/map');
@@ -105,7 +191,7 @@ router.get('/details_food', async (req, res) => {
   }
 });
 ///////////////////////////////upload video///////////////////////////
-router.get('/:id/upload_video', requireloginuser, async (req, res) => {
+router.get('/:id/upload_video', requireloginuser,require_complete_user_reg, async (req, res) => {
   const response = req.query.response;
   const FIRST_NAME = req.session.FIRST_NAME;
   const id = req.params.id;
@@ -288,7 +374,7 @@ router.get('/:id/shop', requireloginuser, async (req, res) => {
 });
 /////////review shop/////////////////////
 
-router.get('/:id/review', async (req, res) => {
+router.get('/:id/review',requireloginuser,require_complete_user_reg, async (req, res) => {
   const email = req.session.email;
   const FIRST_NAME = req.session.FIRST_NAME;
   const V_ID = req.query.vendor;
@@ -410,7 +496,7 @@ router.post('/:id/review', async (req, res) => {
   }
 });
 //////////////////////////complaint////////////////////////
-router.get('/:id/complaint', async (req, res) => {
+router.get('/:id/complaint',requireloginuser,require_complete_user_reg, async (req, res) => {
   const email = req.session.email;
   const FIRST_NAME = req.session.FIRST_NAME;
   const V_ID = req.query.V_ID;
@@ -584,11 +670,9 @@ router.post('/food_review', requireloginuser, async (req, res) => {
          WHERE food_id = :FOOD_ID
        ) 
        WHERE food_id = :FOOD_ID`,
-      { FOOD_ID,FOOD_ID },  // Assuming `food_id` is your variable
+      { FOOD_ID, FOOD_ID }, // Assuming `food_id` is your variable
       { autoCommit: true }
     );
-    
-
 
     req.flash('review', 'Review submitted successfully!');
     return res.redirect(`/user/${req.params.id}`);
@@ -634,10 +718,9 @@ router.post('/:id/edit_review', async (req, res) => {
          WHERE food_id = :FOOD_ID
        ) 
        WHERE food_id = :FOOD_ID`,
-      { FOOD_ID,FOOD_ID },  // Assuming `food_id` is your variable
+      { FOOD_ID, FOOD_ID }, // Assuming `food_id` is your variable
       { autoCommit: true }
     );
-    
 
     req.flash('review', 'Review updated successfully!');
     return res.redirect(`/user/${req.params.id}`);
@@ -657,4 +740,5 @@ router.post('/:id/edit_review', async (req, res) => {
     }
   }
 });
+
 module.exports = router;

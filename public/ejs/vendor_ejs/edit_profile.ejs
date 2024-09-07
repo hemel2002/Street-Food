@@ -126,6 +126,17 @@
                     value="<%= vendordata && vendordata.PHONE || '' %>" required name="PHONE">
                 <div class="invalid-feedback">Phone number is required.</div>
             </div>
+            <div class="mb-4">
+                <label class="form-label" for="openingTime">Opening Time</label>
+                <input type="time" id="openingTime" class="form-control" name="openingTime" required/>
+              
+              </div>
+      
+              <div class="mb-4">
+                <label class="form-label" for="closingTime">Closing Time</label>
+                <input type="time" id="closingTime" class="form-control" required name="closingTime"/>
+              
+              </div>
 
             <div class="mb-4">
                 <label for="profileImage" class="form-label">Profile Image</label>

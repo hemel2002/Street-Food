@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Profile</title>
+  <!-- MDB CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <!-- Custom CSS -->
+  <style>
+    .profile-header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 50px 0;
+      text-align: center;
+      border-radius: 0 0 50% 50%;
+      position: relative;
+    }
+
+    .profile-picture {
+      border-radius: 50%;
+      border: 5px solid white;
+      width: 150px;
+      height: 150px;
+      position: absolute;
+      top: 80%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .profile-info {
+      margin-top: 100px;
+      text-align: center;
+    }
+
+    .profile-card {
+      margin-top: 50px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+
+    .product-card, .comment-card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover, .comment-card:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Profile Header -->
+<section class="profile-header" id="profile-header" >
+  <h1 class="mb-0">Customer Profile</h1>
+  <p class="lead mb-0">Welcome, <%= userdata.FIRST_NAME %> </p>
+  <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-picture" id="profile-picture" >
+</section>
+
+<!-- Profile Info -->
+<div class="container profile-info" style="padding-top: 10px;">
+  <h3><%= userdata.FIRST_NAME %> <%= userdata.LAST_NAME %> </h3>
+  <p>Email: <%= userdata.EMAIL %> </p>
+</div>
+
+<!-- Favorite Products -->
+<div class="container">
+  <div class="section-title">Favorite Products</div>
+  <div class="row" id="favorite-products">
+    <div class="col-md-4">
+      <div class="card product-card p-3">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Product">
+        <div class="card-body">
+          <h5 class="card-title">Product 1</h5>
+          <p class="card-text">Price: $20</p>
+          <a href="#" class="btn btn-primary">More Info</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card product-card p-3">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Product">
+        <div class="card-body">
+          <h5 class="card-title">Product 2</h5>
+          <p class="card-text">Price: $50</p>
+          <a href="#" class="btn btn-primary">More Info</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card product-card p-3">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Product">
+        <div class="card-body">
+          <h5 class="card-title">Product 3</h5>
+          <p class="card-text">Price: $80</p>
+          <a href="#" class="btn btn-primary">More Info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Comments and Reviews -->
+<div class="container mt-5">
+  <div class="section-title">Comments and Reviews</div>
+  <div class="row" id="comments-section">
+    <div class="col-md-6">
+      <div class="card comment-card p-3">
+        <div class="card-body">
+          <h5 class="card-title">Product 1</h5>
+          <p class="card-text">"Great product! Highly recommend it."</p>
+          <p><strong>Rating:</strong> 4.5</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card comment-card p-3">
+        <div class="card-body">
+          <h5 class="card-title">Product 2</h5>
+          <p class="card-text">"Not what I expected, but decent quality."</p>
+          <p><strong>Rating:</strong> 3.8</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MDB JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script>
+<!-- GSAP JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+<script>
+  // Profile Header Animation
+  gsap.from("#profile-header", { 
+    duration: 1.2, 
+    y: -100, 
+    opacity: 0, 
+    ease: "power3.out" 
+  });
+
+  // Profile Picture Animation
+  gsap.from("#profile-picture", { 
+    duration: 1.2, 
+    opacity: 0, 
+    scale: 0.5, 
+    ease: "back.out(1.7)", 
+    delay: 0.5 
+  });
+
+  // Favorite Products Animation
+  gsap.from("#favorite-products .col-md-4", { 
+    duration: 1, 
+    opacity: 0, 
+    y: 100, 
+    stagger: 0.3, 
+    ease: "power2.out", 
+    delay: 1 
+  });
+
+  // Comments and Reviews Animation
+  gsap.from("#comments-section .col-md-6", { 
+    duration: 1, 
+    opacity: 0, 
+    x: 100, 
+    stagger: 0.3, 
+    ease: "power2.out", 
+    delay: 1.5 
+  });
+</script>
+
+</body>
+</html>

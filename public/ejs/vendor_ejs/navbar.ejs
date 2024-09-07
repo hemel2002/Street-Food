@@ -40,7 +40,7 @@
               Settings
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Edit Profile</a></li>
+              <li><a class="dropdown-item" href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/edit_profile">Edit Profile</a></li>
               <li><a class="dropdown-item" href="#">change Password</a></li>
               <li><a class="dropdown-item" href="#">Help & Support</a></li>
               <li> <a class="nav-link"

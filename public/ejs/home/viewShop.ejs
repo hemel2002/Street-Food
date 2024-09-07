@@ -184,9 +184,11 @@
                     style="margin-top: -170px; background: hsla(0, 0%, 100%, 0.7); backdrop-filter: blur(30px);">
                     <div class="card-body px-4 py-5 px-md-5">
                         <h1 class="display-3 fw-bold ls-tight mb-4 text-danger">
-                            <span>The best offer on the market</span>
+                            <span> <%= viewshop[0].STALL_TITLE.split(' ').slice(0, -3).join(' ') %> </span>
+                          
                             <br />
-                            <span class="text-primary">for your business</span>
+                            <span class="text-primary">  <%= viewshop[0].STALL_TITLE.split(' ').slice(-3).join(' ') %> </span>
+                          
                         </h1>
                         <a id="shop-details-btn" class="btn btn-primary btn-lg py-3 px-5 mb-2 mb-md-0 me-md-2"
                             role="button" aria-controls="#picker-editor" draggable="false" style="min-width: auto">

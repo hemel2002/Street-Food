@@ -32,6 +32,7 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'public', 'ejs'));
+
 app.set('view engine', 'ejs');
 var mode = 'light';
 const sessionConfig = {
@@ -70,6 +71,7 @@ app.use((req, res, next) => {
   res.locals.success_comment = req.flash('success_comment');
   res.locals.comment_error = req.flash('comment_error');
   res.locals.error_msg = req.flash('error_msg');
+  res.locals.update_profile = req.flash('update_profile');
   next();
 });
 //////////////////////////require login middleware/////////////////////////
@@ -558,7 +560,7 @@ app.get('/home/ViewShop', async (req, res) => {
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      `SELECT v.V_ID, v.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME , v.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME, v.EMAIL, v.PHONE, v.SHOP_DATA.AREA AS AREA, v.SHOP_DATA.STALL_PIC AS STALL_PIC , f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC ,f.FOOD_ID
+      `SELECT v.V_ID, v.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME , v.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME ,v.SHOP_DATA.STALL_TITLE AS STALL_TITLE , v.EMAIL, v.PHONE, v.SHOP_DATA.AREA AS AREA, v.SHOP_DATA.STALL_PIC AS STALL_PIC , f.FOOD_NAME, f.PRICE, f.RATING, f.INGREDIENT, f.AVAILABILITY, f.FOOD_PIC ,f.FOOD_ID
        FROM vendors v, food f 
        WHERE v.V_ID = :seller_id 
          AND f.FOOD_ID IN (SELECT vsf.FOOD_ID FROM VENDOR_SELLS_FOOD vsf WHERE vsf.V_ID = v.V_ID)`,
@@ -588,8 +590,6 @@ app.get('/home/ViewShop', async (req, res) => {
       console.error(err);
     }
   }
-
- 
 });
 ///////////////////////////shop location data////////////////////////
 app.get('/home/shopLocation', async (req, res) => {

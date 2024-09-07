@@ -6,7 +6,7 @@ const fs = require('fs');
 
 const { cloudinary } = require('./cloudinary');
 const { requirelogin } = require('./requirelogin_middleware');
-const require_complete_reg = require('./require_complete_reg');
+const {require_complete_reg} = require('./require_complete_reg');
 const OracleDB = require('oracledb');
 const multer = require('multer');
 const { storage } = require('./cloudinary');
@@ -354,7 +354,7 @@ router.post('/:id/qr', requirelogin,require_complete_reg, async (req, res) => {
         try {
           connection = await OracleDB.getConnection(dbConfig);
           await connection.execute(
-            'UPDATE VENDORS v SET v.shop_data.LOCATION_URL = :url WHERE V_ID = :id',
+            'UPDATE VENDORS v SET v.shop_data.Qr_code = :url WHERE V_ID = :id',
             { url: result.secure_url, id: req.params.id },
             { autoCommit: true }
           );
@@ -571,8 +571,10 @@ router.post('/:id/edit_profile', upload.fields([
 
     const profilePic = req.files['PROFILE_PIC'][0].path;
     const stallPic = req.files['STALL_PIC'][0].path;
-    const { V_FIRST_NAME, V_LAST_NAME, STALL_NAME,STALL_TITLE,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE } = req.body;
+    const { V_FIRST_NAME, V_LAST_NAME, STALL_NAME,STALL_TITLE,SHOP_DESCRIPTION,AREA,CITY,DISTRICT,LOCATION_URL,PHONE,openingTime,closingTime } = req.body;
     const status = 'open';
+    const hygiene_rating = 5;
+const Working_Hours = openingTime + ' - ' + closingTime;
     const { id } = req.params;
     console.log('id',id);
     console.log('Request body:', req.body); 
@@ -603,7 +605,10 @@ router.post('/:id/edit_profile', upload.fields([
           :stallPic, 
           :LOCATION_URL, 
           :status, 
-          :SHOP_DESCRIPTION
+          :SHOP_DESCRIPTION,
+          :Working_Hours ,
+        :hygiene_rating ,
+        :qrcode 
           
       ), 
       V.PHONE = :PHONE, 
@@ -623,7 +628,10 @@ router.post('/:id/edit_profile', upload.fields([
           SHOP_DESCRIPTION, 
           
           PHONE, 
-          profilePic, 
+          profilePic,
+          Working_Hours,
+          hygiene_rating,
+          qrcode: null, 
           id 
         },
         { autoCommit: true }

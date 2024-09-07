@@ -217,8 +217,8 @@
                 <div class="card text-center shadow-0">
                     <div class="card-body">
                         <h5 class="card-title mb-3">Scan the QR Code</h5>
-                        <% if (vendordata.SHOP_DATA.LOCATION_URL) { %>
-                            <center> <img src="<%= vendordata.SHOP_DATA.LOCATION_URL %>" alt="QR Code"
+                        <% if (vendordata.SHOP_DATA.QR_CODE) { %>
+                            <center> <img src="<%= vendordata.SHOP_DATA.QR_CODE %>" alt="QR Code"
                                     class="img-fluid mb-3" style="max-width: 300px;"></center>
 
                             <p class="card-text">Easily find our shop on Google Maps by scanning this code.</p>
@@ -244,7 +244,7 @@
                                                     novalidate>
                                                     <div class="form-outline" data-mdb-input-init>
                                                         <input type="url" id="form12" class="form-control" name="url"
-                                                            required />
+                                                            required value="<%= vendordata.SHOP_DATA.LOCATION_URL %>" />
                                                         <label class="form-label" for="form12">Enter your new map
                                                             URL</label>
                                                         <div class="invalid-feedback">Please enter a valid URL.</div>
