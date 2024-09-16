@@ -5,9 +5,10 @@ DROP TABLE VENDORS;
 CREATE SEQUENCE VENDORS_SEQ
   START WITH 1
   INCREMENT BY 1
-  NOMAXVALUE;
+  MAXVALUE 999999
+  NOCACHE;
 
-DROP SEQUENCE VENDORS_SEQ;
+
 -- Create table VENDORS
 CREATE TABLE "SYSTEM"."VENDORS" (
     "V_ID" VARCHAR2(50) NOT NULL ENABLE,
@@ -32,7 +33,8 @@ BEGIN
                  || VENDORS_SEQ.NEXTVAL;
 END;
 /
-DROP TRIGGER VENDORS_BEFORE_INSERT;
+
+
 ------------------------------------insert data------------------------------------
 INSERT INTO VENDORS (
     ACCOUNT_TYPE,
@@ -64,31 +66,28 @@ INSERT INTO VENDORS (
     NULL
 );
 
-INSERT INTO VENDORS (
-    ACCOUNT_TYPE,
+INSERT INTO USERS (
+    USER_ID,
   
     EMAIL,
-    PHONE,
+    PASSWORD
    
    
  
-    PASSWORD,
-    TERMS,
+ 
    
     
     
-    PROFILE_PIC,
+    
 ) VALUES (
-    INSERT INTO CUSTOMERS( ACCOUNT_TYPE, EMAIL,PHONE,  PASSWORD, TERMs,PROFILE_PIC, JOIN_DATE ) VALUES ( 'C_ID:VARCHAR2(100):NOT NULL', 'PHONE:VARCHAR2(20)', 'EMAIL:VARCHAR2(100)', 'ACCOUNT_TYPE:VARCHAR2(50):NOT NULL', 'FIRST_NAME:VARCHAR2(100)', 'LAST_NAME:VARCHAR2(100)', 'DISTRICT:VARCHAR2(100)', 'CITY:VARCHAR2(100)', 'AREA:VARCHAR2(100)', 'PASSWORD:VARCHAR2(300)', 'TERM:VARCHAR2(10)', 'JOIN_DATE:DATE' );
 
-'Seller',
+'A_1',
 
-'fahim1288@gmail.com',
-'01790159919',
+'hemalhemal787@gmail.com',
+'123'
 
-'1111',
-'on',
-'https://res.cloudinary.com/da7hqzvvf/image/upload/v1719749049/food/bxazddnypupfto0onl2t.jpg',
+
+
 
 );
 
@@ -181,3 +180,5 @@ INSERT INTO VENDORS (
     'khan pina',
     'https://www.google.com/maps/@23.82351,90.3926415,16z?entry=ttu'
 );
+
+

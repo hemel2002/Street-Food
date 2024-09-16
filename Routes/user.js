@@ -71,8 +71,8 @@ router.get('/:id/edit_profile', requireloginuser, async (req, res) => {
 //////////////////////////update profile////////////////////////
 router.post('/:id/edit_profile', async (req, res) => {
   const id = req.params.id;
-  const { FIRST_NAME, LAST_NAME, PHONE, PASSWORD } =
-    req.body;
+  const { FIRST_NAME, LAST_NAME, PHONE, PASSWORD } = req.body;
+  req.session.FIRST_NAME = FIRST_NAME;
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
@@ -245,6 +245,7 @@ router.post(
     const video_id = uuid();
     const { originalname: videoName, path: videoPath } = req.files['video'][0];
     const { originalname: imageName, path: imagePath } = req.files['image'][0];
+
     console.log('Request Body:', {
       C_ID,
       VIDEO_TITLE,
@@ -255,11 +256,50 @@ router.post(
       imageName,
     });
 
+    console.log('v_id from prevent', V_ID);
     let connection;
+
     try {
       connection = await OracleDB.getConnection(dbConfig);
+      
+      // Check for promotion prevention message
+      const result2 = await connection.execute(
+        `SELECT c.complaint_details.message AS message 
+         FROM customerreviewsvendor c 
+         WHERE V_id = :V_ID`, 
+        [V_ID]
+      );
+      const action = result2.rows;
+      console.log('Action:', action);
+
+      // If promotion is restricted, check for restriction dates
+      if (action.length > 0 && (action[0].MESSAGE === 'Prevent Promotion (2 Days)' || action[0].MESSAGE === 'Prevent Promotion (1 Day)')) {
+        const result3 = await connection.execute(
+          `SELECT restriction_start_date AS start_date, 
+                  restriction_end_date AS end_date 
+           FROM vendors
+           WHERE V_id = :V_ID`,
+          [V_ID]
+        );
+
+        if (result3.rows.length > 0) {
+          const start_date = new Date(result3.rows[0].START_DATE);
+          const end_date = new Date(result3.rows[0].END_DATE);
+          const current_date = new Date();
+
+          // Check if the current date falls within the restriction period
+          if (current_date >= start_date && current_date <= end_date) {
+            console.log('Vendor promotion is restricted');
+            req.flash('error_res', 'You aren\'t allowed to promote this Vendor at this Moment.');
+            return res.redirect(`/user/${C_ID}`); // Redirect vendor with a warning
+          }
+        }
+      }
+
+      // If no restriction, proceed with video and vendor promotion
       await connection.execute(
-        'INSERT INTO UPLOADED_VIDEOS (video_id,C_ID, VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, VIDEO_LINKS, IMAGE_LINKS) VALUES (:video_id,:C_ID, :VIDEO_TITLE, :VIDEO_DESCRIPTION, :TAGS, :videoPath, :imagePath)',
+        `INSERT INTO UPLOADED_VIDEOS (video_id, C_ID, VIDEO_TITLE, VIDEO_DESCRIPTION, TAGS, VIDEO_LINKS, IMAGE_LINKS) 
+         VALUES (:video_id, :C_ID, :VIDEO_TITLE, :VIDEO_DESCRIPTION, :TAGS, :videoPath, :imagePath)`,
         {
           video_id,
           C_ID,
@@ -271,30 +311,32 @@ router.post(
         },
         { autoCommit: true }
       );
+
       await connection.execute(
-        'INSERT INTO USER_PROMOTES_VENDOR (V_ID,  VIDEO_ID) VALUES ( :V_ID, :video_id)',
+        `INSERT INTO USER_PROMOTES_VENDOR (V_ID, VIDEO_ID) 
+         VALUES (:V_ID, :video_id)`,
         { V_ID, video_id },
         { autoCommit: true }
       );
+
+      // Success message
+      req.flash('upload_video', 'Video and image uploaded successfully!');
+      res.redirect(`/user/${C_ID}`);
     } catch (err) {
       console.error(err);
-      req.flash(
-        'error_upload_video',
-        'An error occurred during uploading, please try again'
-      );
-      return res.redirect(`/user/${req.params.id}`);
+      req.flash('error_upload_video', 'An error occurred during uploading, please try again');
+      return res.redirect(`/user/${C_ID}`);
     } finally {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
-    req.flash('upload_video', 'Video and image uploaded successfully!');
-    res.redirect(`/user/${req.params.id}`);
   }
 );
-
 router.post('/:id/navbar', (req, res) => {
   req.session.mode = req.body.mode;
   console.log(req.body.mode);
@@ -324,7 +366,7 @@ router.get('/:id', requireloginuser, async (req, res) => {
       { id }
     );
     const result2 = await connection.execute(
-      'SELECT V.SHOP_DATA AS SHOP_DATA, video_id FROM vendorS V, USER_PROMOTES_VENDOR WHERE V.V_ID = USER_PROMOTES_VENDOR.V_ID AND USER_PROMOTES_VENDOR.V_ID IN (SELECT V_ID FROM USER_PROMOTES_VENDOR WHERE VIDEO_ID IN (SELECT VIDEO_ID FROM UPLOADED_VIDEOS WHERE C_ID IN (:id)))',
+      'SELECT V.SHOP_DATA AS SHOP_DATA, video_id,v.v_id  as V_ID FROM vendorS V, USER_PROMOTES_VENDOR WHERE V.V_ID = USER_PROMOTES_VENDOR.V_ID AND USER_PROMOTES_VENDOR.V_ID IN (SELECT V_ID FROM USER_PROMOTES_VENDOR WHERE VIDEO_ID IN (SELECT VIDEO_ID FROM UPLOADED_VIDEOS WHERE C_ID IN (:id)))',
       { id }
     );
 
@@ -455,14 +497,27 @@ router.get('/:id/review',requireloginuser,require_complete_user_reg, async (req,
 ///////////////////////////post shop review////////////////////////
 router.post('/:id/review', async (req, res) => {
   const { rating, message, V_ID } = req.body;
-  const C_ID = req.session.id;
+  const C_ID = req.params.id;
+ 
   const FIRST_NAME = req.session.FIRST_NAME;
-  const V_NAME = req.session.V_NAME;
+
   const C_EMAIL = req.session.email;
   console.log(req.body);
+  console.log('Vendor ID:', V_ID);
+  console.log('Customer ID:', C_ID);
+  console.log('Customer Email:', C_EMAIL);
+  console.log('Customer Name:', FIRST_NAME);
+
+  
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      `SELECT * FROM vendors  WHERE V_ID = :V_ID `,
+      { V_ID }
+    );
+ 
+    const V_NAME = result.rows[0].SHOP_DATA.V_FIRST_NAME+' '+result.rows[0].SHOP_DATA.V_LAST_NAME;
     await connection.execute(
       'INSERT INTO CUSTOMERREVIEWSVENDOR (C_ID, V_ID, RATING,REVIEW_MESSAGE,C_NAME,V_NAME,C_EMAIL) VALUES (:C_ID, :V_ID, :rating,:message,:FIRST_NAME,:V_NAME,:C_EMAIL)',
       {
@@ -496,7 +551,7 @@ router.post('/:id/review', async (req, res) => {
   }
 });
 //////////////////////////complaint////////////////////////
-router.get('/:id/complaint',requireloginuser,require_complete_user_reg, async (req, res) => {
+router.get('/:id/complaint', requireloginuser, require_complete_user_reg, async (req, res) => {
   const email = req.session.email;
   const FIRST_NAME = req.session.FIRST_NAME;
   const V_ID = req.query.V_ID;
@@ -516,9 +571,9 @@ router.get('/:id/complaint',requireloginuser,require_complete_user_reg, async (r
     // Fetch customer complaints
     const result = await connection.execute(
       `SELECT 
-         C_ID, C_DATE,  c.COMPLAINT_DETAILS AS COMPLAINT , 
+         C_ID, C_DATE,  c.COMPLAINT_DETAILS AS COMPLAINT, 
          C_NAME, V_NAME, C_EMAIL 
-     from CUSTOMERREVIEWSVENDOR c
+       FROM CUSTOMERREVIEWSVENDOR c
        WHERE V_ID = :V_ID AND C_ID = :cust_id
        ORDER BY C_DATE DESC`,
       { V_ID, cust_id }
@@ -526,13 +581,14 @@ router.get('/:id/complaint',requireloginuser,require_complete_user_reg, async (r
 
     complaintdata = result.rows;
     console.log('Complaint data:', complaintdata);
+
     if (Request === 'json') {
       return res.json(complaintdata);
     }
 
     // Fetch vendor details
     const result2 = await connection.execute(
-      'SELECT V_ID,V.SHOP_DATA AS SHOP_DATA FROM VENDORS V WHERE V_ID = :V_ID',
+      'SELECT V_ID, V.SHOP_DATA AS SHOP_DATA FROM VENDORS V WHERE V_ID = :V_ID',
       { V_ID }
     );
 
@@ -545,14 +601,13 @@ router.get('/:id/complaint',requireloginuser,require_complete_user_reg, async (r
 
     // Check if customer has already complained about this vendor
     const complained = complaintdata.some(
-      (row) => row.COMPLAINT.COMPLAINT !== null
+      (row) => row.COMPLAINT !== null && row.COMPLAINT !== undefined
     );
 
     if (complained) {
       return res.render('blogger/already_complained', {
         complaintdata,
         FIRST_NAME,
-
         vendor: result2.rows,
         specificVendorId,
       });
@@ -586,13 +641,18 @@ router.post('/:id/complaint', async (req, res) => {
   const { complaint, V_ID, subject } = req.body;
   const C_ID = req.params.id; // Use req.params.id instead of req.query.id
   const FIRST_NAME = req.session.FIRST_NAME;
-  const V_NAME = req.session.V_NAME;
+
   const C_EMAIL = req.session.email;
   console.log(req.body);
 
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
+    const result3 = await connection.execute(
+      `SELECT * FROM vendors V WHERE V_ID = :V_ID `,
+      { V_ID }
+    );
+    const V_NAME = result3.rows[0].SHOP_DATA.V_FIRST_NAME+' '+result3.rows[0].SHOP_DATA.V_LAST_NAME;
     const result2 = await connection.execute(
       'SELECT * FROM CUSTOMERREVIEWSVENDOR WHERE V_ID = :V_ID AND C_ID = :C_ID',
       { V_ID, C_ID }

@@ -88,10 +88,14 @@
                                         <p>
                                             <%= complaintsdata.C_EMAIL %>
                                         </p>
-                                        <h5 class="text-danger">Previously Banded:</h5>
-                                        <h5 class="text-secondary">Total complaints:
-                                            <%= prev_complaint.length +1%>
+                                     
+                                        <h5 class="text-danger">Total complaints:
+                                            <% if (prev_complaint) { %>
+                                                <%= prev_complaint.length +1%>
                                                 times
+                                                <% } else { %>
+                                           <p class="text-warning">No Record found</p>
+                                                <% } %>
                                         </h5>
                                     </div>
                                     <div class="col-md-6">
@@ -113,9 +117,7 @@
                                                     <%= complaintsdata.STATUS %>
                                                 </p>
                                                 <% } %>
-                                                    <h5 class="text-warning">Previously warned:
-                                                        times
-                                                    </h5>
+                                                  
 
 
                                     </div>
@@ -127,31 +129,36 @@
                                 </p>
 
                                 <hr>
-                                <h5>Actions:</h5>
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                                    data-bs-target="#resolveModal">Resolve</button>
-                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
-                                    data-bs-target="#dismissModal">Dismiss</button>
-                                <button type="button" class="btn btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#warningModal">Warning</button>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#banModal">Ban</button>
-                                <hr>
+                                <% if (complaintsdata.MESSAGE) { %>
+                                    <h5>Actions:</h5>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                        data-bs-target="#resolveModal">Resolve</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#dismissModal">Dismiss</button>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#warningModal">Warning</button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                        data-bs-target="#banModal">Ban</button>
+                                    <hr>
+                                <% } else { %>
+                        
                                 <a href="#replyCollapse" class="link-info" data-bs-toggle="collapse"
                                     aria-expanded="false" aria-controls="replyCollapse">
-                                    Reply to Customer
+                                    Action
                                 </a>
                                 <div class="collapse mt-3" id="replyCollapse">
                                     <div class="card card-body">
-                                        <form id="replyForm">
+                                       
                                             <div class="mb-3">
-                                                <textarea class="form-control" id="replyMessage" rows="4"
-                                                    placeholder="Write your reply here..."></textarea>
+                                                <textarea class="form-control text-danger" id="replyMessage" rows="4"
+                                                    placeholder="Write your reply here..." readonly> <%= complaintsdata.MESSAGE %> </textarea>
+                                                    <p><%= complaintsdata.A_REPLY_DATE %></p>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Send Reply</button>
-                                        </form>
+                                           
+                                       
                                     </div>
                                 </div>
+                                <% } %>
 
                                 <hr>
                                 <h5>Previous Reports</h5>
@@ -248,19 +255,19 @@
                     </div>
                     <div class="modal-body">
                         <h5>Select Warning Type:</h5>
-                        <form id="warningForm">
+                        <form id="warningForm" action="/admin/<%= id %>/ComplaintAction?V_ID=<%= V_ID %>&C_ID=<%= C_ID %>" method="post">
                             <div class="mb-3">
                                 <label for="warningType" class="form-label">Warning Type:</label>
-                                <select class="form-select" id="warningType" required>
+                                <select class="form-select" id="warningType" required name="MESSAGE">
                                     <option value="" disabled selected>Select a warning</option>
-                                    <option value="restrict_food_creation">Restrict Food Creation (Max 2 posts/day)
+                                    <option value="restrict_food_creation Max 4 posts/day">Restrict Food Creation (Max 4 posts/day)
                                     </option>
-                                    <option value="prevent_promotion">Prevent Promotion (5 Days)</option>
-                                    <option value="ban_2_days">Ban for 2 Days</option>
-                                    <option value="ban_7_days">Ban for 7 Days</option>
-                                    <option value="ban_15_days">Ban for 15 Days</option>
-                                    <option value="ban_30_days">Ban for 30 Days</option>
-                                    <option value="permanent_ban">Permanent Ban</option>
+                                    <option value="restrict_food_creation Max 2 posts/day">Restrict Food Creation (Max 2 posts/day)
+                                    </option>
+                                    <option value="Prevent Promotion (1 Day)">Prevent Promotion (1 Day)</option>
+                                    <option value="Prevent Promotion (2 Days)">Prevent Promotion (2 Days)</option>
+                                    
+                                  
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-warning">Apply Warning</button>
@@ -286,11 +293,11 @@
                             <div class="mb-3">
                                 <select class="form-select" id="banDuration" required>
                                     <option value="" disabled selected>Select a duration</option>
-                                    <option value="2_days">Ban for 2 Days</option>
-                                    <option value="7_days">Ban for 7 Days</option>
-                                    <option value="15_days">Ban for 15 Days</option>
-                                    <option value="30_days">Ban for 30 Days</option>
-                                    <option value="permanent">Permanent Ban</option>
+                                    <option value="Ban 2 days">Ban for 2 Days</option>
+                                    <option value="Ban 7 days">Ban for 7 Days</option>
+                                    <option value="Ban 15 days">Ban for 15 Days</option>
+                                    <option value="Ban 30 days">Ban for 30 Days</option>
+                                    <option value="permanent Ban">Permanent Ban</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-secondary">Apply Ban</button>

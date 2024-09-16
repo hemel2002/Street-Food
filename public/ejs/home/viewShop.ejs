@@ -225,13 +225,12 @@
             </div>
         </section>
         <div class="pagination-center">
-            <button id="testimonial-prev-btn" class="btn btn-primary">
-                Previous
-            </button>
+            <button id="testimonial-prev-btn" class="btn btn-primary">Previous</button>
             <div id="testimonial-page-numbers"></div>
             <button id="testimonial-next-btn" class="btn btn-primary">Next</button>
         </div>
     </section>
+    
 
     <!-- Videos Section -->
     <section draggable="false" class="container pt-5">
@@ -250,97 +249,176 @@
     <script>
         let foodData = [];
         let videoData = [];
+        let testimonialData = [];
         let userId = '<%= id %>'; // Ensure id is defined and accessible
-
+    
         const getdata = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const sellerId = urlParams.get('id');
             document.getElementById('shop-details-btn').href = `/home/shopDetails?id=${sellerId}`;
             try {
-                const res = await axios.get(
-                    `/home/ViewShop?id=${sellerId}&responseType=json`
-                );
+                const res = await axios.get(`/home/ViewShop?id=${sellerId}&responseType=json`);
                 foodData = res.data.viewshop;
                 videoData = res.data.video;
+                testimonialData = res.data.review;
                 console.log('foodData', foodData);
                 console.log('videoData', videoData);
-
+                console.log('testimonialData', testimonialData);
+    
                 initializeFoodPagination();
                 initializeVideoPagination();
+                initializeTestimonialsPagination();
             } catch (error) {
                 console.log('error', error);
             }
         };
-
+    
         getdata();
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeFoodPagination();
-            initializeTestimonialsPagination();
-            initializeVideoPagination();
-        });
-
+    
+        function initializeTestimonialsPagination() {
+            const itemsPerPage = 3;
+            let currentPage = 1;
+            const totalPages = Math.ceil(testimonialData.length / itemsPerPage);
+            const testimonialCardsContainer = document.getElementById('testimonial-cards');
+            const prevBtn = document.getElementById('testimonial-prev-btn');
+            const nextBtn = document.getElementById('testimonial-next-btn');
+            const pageNumbers = document.getElementById('testimonial-page-numbers');
+    
+            function renderTestimonialItems() {
+                testimonialCardsContainer.innerHTML = '';
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const itemsToRender = testimonialData.slice(start, end);
+    
+                if (itemsToRender.length === 0) {
+                    testimonialCardsContainer.innerHTML = '<p>No reviews available.</p>';
+                    return;
+                }
+    
+                itemsToRender.forEach((item) => {
+                    const testimonialCard = document.createElement('div');
+                    testimonialCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
+                    testimonialCard.innerHTML = `
+                        <div class="card testimonial-card">
+                            <div class="card-body">
+                                <h5 class="card-title">${item.C_NAME || 'Anonymous'}</h5>
+                                <p class="card-text">"${item.REVIEW_MESSAGE || 'No message provided'}"</p>
+                                <div class="rating text-warning">
+                                    ${generateStars(item.RATING || 0)}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    testimonialCardsContainer.appendChild(testimonialCard);
+                });
+            }
+    
+            function generateStars(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                }
+                return stars;
+            }
+    
+            function updatePagination() {
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+    
+                pageNumbers.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const pageNumberBtn = document.createElement('button');
+                    pageNumberBtn.classList.add('page-btn', 'btn', 'btn-sm', 'mx-1');
+                    pageNumberBtn.innerText = i;
+    
+                    if (i === currentPage) {
+                        pageNumberBtn.classList.add('active');
+                    }
+    
+                    pageNumberBtn.addEventListener('click', () => {
+                        currentPage = i;
+                        renderTestimonialItems();
+                        updatePagination();
+                    });
+    
+                    pageNumbers.appendChild(pageNumberBtn);
+                }
+            }
+    
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTestimonialItems();
+                    updatePagination();
+                }
+            });
+    
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderTestimonialItems();
+                    updatePagination();
+                }
+            });
+    
+            renderTestimonialItems();
+            updatePagination();
+        }
+    
         function initializeFoodPagination() {
             const itemsPerPage = 6;
             let currentPage = 1;
             const totalPages = Math.ceil(foodData.length / itemsPerPage);
-
             const foodCardsContainer = document.getElementById('food-cards');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             const pageNumbers = document.getElementById('page-numbers');
-
+    
             function renderFoodItems() {
                 foodCardsContainer.innerHTML = '';
                 const start = (currentPage - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
                 const itemsToRender = foodData.slice(start, end);
-
+    
                 const renderedImages = new Set();
-
+    
                 itemsToRender.forEach((item) => {
                     if (!renderedImages.has(item.FOOD_PIC)) {
                         const foodCard = document.createElement('div');
                         foodCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
                         foodCard.innerHTML = `
-<div class="cardS" style="background-image: url('${item.FOOD_PIC}');">
-    <div class="cardS__content card">
-        <p class="cardS__title">${item.FOOD_NAME}</p>
-        <div class="ingredient-container text-danger">
-            <p class="card-text ingredient-text">${item.INGREDIENT}</p>
-        </div>
-        <p class="card-text text-danger">Price: ${item.PRICE} Tk</p>
-        <div class="rating text-danger">
-            ${generateStars(item.RATING)}
-        </div>
-        <button class="btn btn-success btn-md ingredient-button"
-            style="float: right;"
-            onclick="window.location.href='/user/details_food?FOOD_ID=${item.FOOD_ID}'">
-            Details
-        </button>
-    </div>
-</div>
-
-
+                            <div class="cardS" style="background-image: url('${item.FOOD_PIC}');">
+                                <div class="cardS__content card">
+                                    <p class="cardS__title">${item.FOOD_NAME}</p>
+                                    <div class="ingredient-container text-danger">
+                                        <p class="card-text ingredient-text">${item.INGREDIENT}</p>
+                                    </div>
+                                    <p class="card-text text-danger">Price: ${item.PRICE} Tk</p>
+                                    <div class="rating text-danger">
+                                        ${generateStars(item.RATING)}
+                                    </div>
+                                    <button class="btn btn-success btn-md ingredient-button"
+                                        style="float: right;"
+                                        onclick="window.location.href='/user/details_food?FOOD_ID=${item.FOOD_ID}'">
+                                        Details
+                                    </button>
+                                </div>
+                            </div>
                         `;
                         foodCardsContainer.appendChild(foodCard);
                         renderedImages.add(item.FOOD_PIC);
                     }
                 });
             }
-
+    
             function generateStars(rating) {
                 let stars = '';
                 for (let i = 1; i <= 5; i++) {
-                    if (i <= rating) {
-                        stars += '<i class="fas fa-star"></i>'; // Filled star
-                    } else {
-                        stars += '<i class="far fa-star"></i>'; // Empty star
-                    }
+                    stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
                 }
                 return stars;
             }
-
+    
             function renderPageNumbers() {
                 pageNumbers.innerHTML = '';
                 for (let i = 1; i <= totalPages; i++) {
@@ -350,64 +428,81 @@
                     pageNumber.addEventListener('click', () => {
                         currentPage = i;
                         renderFoodItems();
+                        renderPageNumbers();
+                        updateButtons();
                     });
+                    if (i === currentPage) {
+                        pageNumber.classList.add('active');
+                    }
                     pageNumbers.appendChild(pageNumber);
                 }
             }
-
+    
+            function updateButtons() {
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+    
             prevBtn.addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
                     renderFoodItems();
+                    renderPageNumbers();
+                    updateButtons();
                 }
             });
-
+    
             nextBtn.addEventListener('click', () => {
                 if (currentPage < totalPages) {
                     currentPage++;
                     renderFoodItems();
+                    renderPageNumbers();
+                    updateButtons();
                 }
             });
-
+    
             renderFoodItems();
             renderPageNumbers();
+            updateButtons();
         }
-
+    
         function initializeVideoPagination() {
-            const itemsPerPage = 6;
+            const itemsPerPage = 3;
             let currentPage = 1;
             const totalPages = Math.ceil(videoData.length / itemsPerPage);
-
             const videoCardsContainer = document.getElementById('video-cards');
             const prevBtn = document.getElementById('video-prev-btn');
             const nextBtn = document.getElementById('video-next-btn');
             const pageNumbers = document.getElementById('video-page-numbers');
-
+    
             function renderVideoItems() {
                 videoCardsContainer.innerHTML = '';
                 const start = (currentPage - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
                 const itemsToRender = videoData.slice(start, end);
-
+    
                 itemsToRender.forEach((item) => {
                     const videoCard = document.createElement('div');
                     videoCard.classList.add('col-lg-4', 'col-md-12', 'mb-4', 'mb-lg-0');
                     videoCard.innerHTML = `
-                        <div class="card card-custom h-100">
-                            <div class="bg-image hover-overlay ripple ripple-surface-light h-100" data-ripple-color="light">
-                                <video src="${item.VIDEO_LINKS}" class="img-fluid w-100 h-100" controls poster="${item.IMAGE_LINKS}"></video>
-                            </div>
+                        <div class="card testimonial-card">
                             <div class="card-body">
                                 <h5 class="card-title">${item.VIDEO_TITLE}</h5>
                                 <p class="card-text">${item.VIDEO_DESCRIPTION}</p>
-                                <button class="btn btn-primary btn-md">Watch</button>
+                                <div class="ratio ratio-16x9">
+                                    <iframe
+                                        src="${item.VIDEO_LINKS}"
+                                        title="${item.VIDEO_TITLE}"
+                                        allowfullscreen
+                                    ></iframe>
+                                </div>
                             </div>
                         </div>
                     `;
                     videoCardsContainer.appendChild(videoCard);
                 });
             }
-
+    
             function renderPageNumbers() {
                 pageNumbers.innerHTML = '';
                 for (let i = 1; i <= totalPages; i++) {
@@ -417,33 +512,46 @@
                     pageNumber.addEventListener('click', () => {
                         currentPage = i;
                         renderVideoItems();
+                        renderPageNumbers();
+                        updateButtons();
                     });
+                    if (i === currentPage) {
+                        pageNumber.classList.add('active');
+                    }
                     pageNumbers.appendChild(pageNumber);
                 }
             }
-
+    
+            function updateButtons() {
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            }
+    
             prevBtn.addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
                     renderVideoItems();
+                    renderPageNumbers();
+                    updateButtons();
                 }
             });
-
+    
             nextBtn.addEventListener('click', () => {
                 if (currentPage < totalPages) {
                     currentPage++;
                     renderVideoItems();
+                    renderPageNumbers();
+                    updateButtons();
                 }
             });
-
+    
             renderVideoItems();
             renderPageNumbers();
-        }
-
-        function initializeTestimonialsPagination() {
-            // Add testimonial pagination logic here if needed
+            updateButtons();
         }
     </script>
+    
+    
 </body>
 
 </html>

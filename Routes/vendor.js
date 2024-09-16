@@ -15,6 +15,7 @@ const dbConfig = require('./dbConfig');
 const { v4: uuid } = require('uuid');
 const nodemailer = require('nodemailer');
 const { Console } = require('console');
+const warning = require('./warning');
 let foodData = [];
 let reviews = [];
 ///////////////////////////////dark_mode////////////////////////
@@ -120,7 +121,7 @@ router.get(
 router.post(
   '/:id/add_food',
   requirelogin,
-  require_complete_reg,
+  require_complete_reg,warning,
   upload.single('image'),
   async (req, res) => {
     console.log(req.body);
@@ -621,6 +622,7 @@ router.post(
         openingTime,
         closingTime,
       } = req.body;
+      req.session.FIRST_NAME = V_FIRST_NAME;
       const status = 'open';
       const hygiene_rating = 5;
       const Working_Hours = openingTime + ' - ' + closingTime;

@@ -209,8 +209,8 @@
               <div class="invalid-feedback">Please select the vendor.</div>
               <datalist id="vendor-list">
                 <% for(let index=0; index < vendor.length; index++) { %>
-                  <option value="<%= vendor[index].V_ID %>">
-                    <%= vendor[index].V_ID %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%=
+                  <option value="<%= vendor[index].V_ID.toUpperCase() %>">
+                    <%= vendor[index].V_ID.toUpperCase() %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%=
                           vendor[index].SHOP_DATA.V_LAST_NAME %>)
                           FROM <%= vendor[index].SHOP_DATA.DISTRICT %>-<%= vendor[index].SHOP_DATA.CITY %>-<%=
                                 vendor[index].SHOP_DATA.AREA %>
@@ -218,7 +218,7 @@
                   <% } %>
               </datalist>
             </div>
-
+          
             <div class="form-outline mb-4" data-mdb-input-init>
               <input type="text" id="videotitle" class="form-control" name="VIDEO_TITLE" required />
               <label class="form-label" for="videotitle">Video Title</label>

@@ -35,6 +35,7 @@ router.get('/:id', requireloginadmin, async (req, res) => {
         C_ID,
         FIRST_NAME,
         EMAIL,
+        PROFILE_PICTURE,
         EXTRACT(DAY FROM (SYSTIMESTAMP - JOIN_DATE)) AS DAYS,
         EXTRACT(HOUR FROM (SYSTIMESTAMP - JOIN_DATE)) AS HOURS,
         EXTRACT(MINUTE FROM (SYSTIMESTAMP - JOIN_DATE)) AS MINUTES,
@@ -51,7 +52,7 @@ router.get('/:id', requireloginadmin, async (req, res) => {
       SELECT
         v_ID,
         V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,
-        EMAIL,
+        EMAIL,PROFILE_PIC,
         EXTRACT(DAY FROM (SYSTIMESTAMP - JOIN_DATE)) AS DAYS,
         EXTRACT(HOUR FROM (SYSTIMESTAMP - JOIN_DATE)) AS HOURS,
         EXTRACT(MINUTE FROM (SYSTIMESTAMP - JOIN_DATE)) AS MINUTES,
@@ -69,22 +70,43 @@ router.get('/:id', requireloginadmin, async (req, res) => {
     const result9 = await connection.execute(
       `SELECT GET_RECENT_CUSTOMERS_COUNT() AS recent_customers_count FROM DUAL`
     );
+    const result11 = await connection.execute(
+      `SELECT COUNT("FOOD_ID") AS "TOTAL_FOOD" FROM "FOOD" WHERE "CATEGORY" = 'Dessert'`
+    );
+    const Dessert=result11.rows[0].TOTAL_FOOD||0;
+
+       const result12 = await connection.execute(
+      `SELECT COUNT("FOOD_ID") AS "TOTAL_FOOD" FROM "FOOD" WHERE "CATEGORY" = 'Others'`
+    );
+    const Others=result12.rows[0].TOTAL_FOOD||0;
+    const result13 = await connection.execute(
+      `SELECT COUNT("FOOD_ID") AS "TOTAL_FOOD" FROM "FOOD" WHERE "CATEGORY" = 'Fast Food'`
+    );
+    const FastFood=result13.rows[0].TOTAL_FOOD||0;
+    const result14 = await connection.execute(
+      `SELECT COUNT("FOOD_ID") AS "TOTAL_FOOD" FROM "FOOD" WHERE "CATEGORY" = 'Beverage'`
+    );
+    const Beverage=result14.rows[0].TOTAL_FOOD||0;
+   
+
+    console.log('food cat',result11.rows);
+
     const recentVendorsCount = result8.rows[0].RECENT_VENDORS_COUNT;
     const recentCustomersCount = result9.rows[0].RECENT_CUSTOMERS_COUNT;
-    console.log(recentVendorsCount);
-    console.log(recentCustomersCount);
+    // console.log(recentVendorsCount);
+    // console.log(recentCustomersCount);
     const C_data = result6.rows;
     const v_data = result7.rows;
 
     customersdata = result.rows;
     vendorsdata = result2.rows;
-    console.log(C_data);
+    // console.log(C_data);
     ///////////////////pending_complaints count////////////////////////
     const result10 = await connection.execute(
       `SELECT COUNT(*) AS pending_complaints FROM CUSTOMERREVIEWSVENDOR C WHERE C.COMPLAINT_DETAILS.STATUS = 'Pending'`
     );
     const pending_complaints = result10.rows[0].PENDING_COMPLAINTS;
-    console.log('pending_complaints: ', pending_complaints);
+    // console.log('pending_complaints: ', pending_complaints);
     req.session.pending_complaints = pending_complaints;
 
     res.render('Admin/Admin_Dashboard', {
@@ -98,6 +120,10 @@ router.get('/:id', requireloginadmin, async (req, res) => {
       recentVendorsCount,
       recentCustomersCount,
       pending_complaints,
+      Dessert,
+      Others,
+      FastFood,
+      Beverage
     });
   } catch (err) {
     console.error(err);
@@ -208,11 +234,39 @@ router.get(
     try {
       connection = await OracleDB.getConnection(dbConfig);
       const result = await connection.execute(
-        `SELECT C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME, C_ID, V_ID, C_ID||V_ID AS COMPLAINT_ID 
+        `SELECT C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME, C_ID, V_ID, C_ID||V_ID AS COMPLAINT_ID,C.COMPLAINT_DETAILS.COMPLAINT AS COMPLAINT, C.COMPLAINT_DETAILS.SUBJECT AS SUBJECT, C.COMPLAINT_DETAILS.STATUS AS STATUS
          FROM customerreviewsvendor C 
          WHERE C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL 
          ORDER BY C.COMPLAINT_DETAILS.C_COMPLAINT_DATE DESC`
       );
+      const result2 = await connection.execute(
+        `SELECT count(c_id) AS total_complaints, C.v_id AS v_id
+         FROM customerreviewsvendor C
+         WHERE C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL
+         GROUP BY v_id
+         ORDER BY total_complaints DESC
+         FETCH FIRST 3 ROWS ONLY`
+      );
+      const result3 = await connection.execute(
+        `select count(C.COMPLAINT_DETAILS.status) as total_complaints from customerreviewsvendor C where C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL and C.COMPLAINT_DETAILS.status='Pending'`
+      );
+      const result4 = await connection.execute(
+        `select count(C.COMPLAINT_DETAILS.status) as total_complaints from customerreviewsvendor C where C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL and C.COMPLAINT_DETAILS.status='Resolved'`
+      );
+      const result5 = await connection.execute(
+        `select count(C.COMPLAINT_DETAILS.status) as total_complaints from customerreviewsvendor C where C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL and C.COMPLAINT_DETAILS.status='Dismissed'`
+      );
+
+      const pending_complaints = result3.rows[0].TOTAL_COMPLAINTS;
+      const resolved_complaints = result4.rows[0].TOTAL_COMPLAINTS;
+      const dismissed_complaints = result5.rows[0].TOTAL_COMPLAINTS;
+
+      console.log('pending com',pending_complaints);
+      console.log('resolved com',resolved_complaints);
+      console.log('dismissed com',dismissed_complaints);
+
+const complaint = result2.rows;
+
 
       const complaintsdata = result.rows;
       console.log(complaintsdata);
@@ -230,6 +284,11 @@ router.get(
         totalPages,
         displayedItems,
         itemsPerPage,
+        complaint,
+        pending_complaints,
+        resolved_complaints,
+        dismissed_complaints,
+        
       });
     } catch (err) {
       console.error(err);
@@ -254,7 +313,7 @@ router.get('/:id/complain_details', requireloginadmin, async (req, res) => {
     const result = await connection.execute(
       `SELECT C_ID||V_ID AS COMPLAINT_ID, C_EMAIL, C.COMPLAINT_DETAILS.C_COMPLAINT_DATE AS C_COMPLAINT_DATE, C_NAME, 
       C.COMPLAINT_DETAILS.COMPLAINT AS COMPLAINT, C.COMPLAINT_DETAILS.SUBJECT AS SUBJECT, 
-      C.COMPLAINT_DETAILS.STATUS AS STATUS 
+      C.COMPLAINT_DETAILS.STATUS AS STATUS ,C.COMPLAINT_DETAILS.MESSAGE AS MESSAGE, C.COMPLAINT_DETAILS.A_REPLY_DATE AS A_REPLY_DATE
       FROM customerreviewsvendor C 
       WHERE C_ID=:C_ID AND V_ID=:V_ID AND C.COMPLAINT_DETAILS.C_COMPLAINT_DATE IS NOT NULL`,
       [C_ID, V_ID]
@@ -278,6 +337,8 @@ router.get('/:id/complain_details', requireloginadmin, async (req, res) => {
     res.render('Admin/Admin_Complaint_details', {
       complaintsdata,
       prev_complaint,
+      C_ID,
+      V_ID,
     });
   } catch (err) {
     console.error(err);
@@ -292,5 +353,80 @@ router.get('/:id/complain_details', requireloginadmin, async (req, res) => {
     }
   }
 });
+//////////////////////////////////////////////ADMIN COMPLAINT RESOLVE//////////////////////////////////////////////
+router.post('/:id/ComplaintAction', requireloginadmin, async (req, res) => {
+  const { V_ID } = req.query;
+  const { MESSAGE } = req.body;
+  const STATUS = 'Resolved';
+
+  console.log(req.body);
+  console.log(req.query.V_ID);
+
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result = await connection.execute(
+      `SELECT * FROM Vendors WHERE V_ID = :V_ID`,
+      [V_ID]
+    );
+    console.log(result.rows);
+
+    if (result.rows.length > 0) {
+      const vendorData = result.rows[0]; // Get the first row of the result
+      const SHOP_DATA = vendorData.SHOP_DATA;
+
+      if (SHOP_DATA && SHOP_DATA.HYGIENE_RATING) {
+        const HYGIENE_RATING = SHOP_DATA.HYGIENE_RATING - 0.5;
+        console.log(HYGIENE_RATING);
+
+        await connection.execute(
+          `UPDATE customerreviewsvendor c
+           SET c.COMPLAINT_DETAILS.STATUS = :STATUS,
+               c.COMPLAINT_DETAILS.MESSAGE = :MESSAGE,
+               c.COMPLAINT_DETAILS.A_REPLY_DATE = SYSTIMESTAMP
+           WHERE V_ID = :V_ID`,
+          {
+            STATUS,
+            MESSAGE,
+            V_ID
+          },
+          { autoCommit: true }
+        );
+
+        await connection.execute(
+          `UPDATE vendors V
+           SET restriction_start_date = SYSDATE,
+               restriction_end_date = SYSDATE + 2,
+               V.shop_data.HYGIENE_RATING = :HYGIENE_RATING
+           WHERE v_id = :V_ID`,
+          [HYGIENE_RATING, V_ID],
+          { autoCommit: true }
+        );
+      } else {
+        console.error('SHOP_DATA or HYGIENE_RATING is missing');
+        res.status(400).send('Invalid data');
+        return;
+      }
+    } else {
+      console.error('Vendor not found');
+      res.status(404).send('Vendor not found');
+      return;
+    }
+
+    res.redirect(`/admin/${V_ID}/admin_complaints_dashboard`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+
 
 module.exports = router;

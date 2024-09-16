@@ -72,6 +72,7 @@ app.use((req, res, next) => {
   res.locals.comment_error = req.flash('comment_error');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.update_profile = req.flash('update_profile');
+  res.locals.error_res= req.flash('error_res');
   next();
 });
 //////////////////////////require login middleware/////////////////////////
@@ -274,12 +275,12 @@ app.post('/home/login', async (req, res) => {
         } else {
           // Check in the USERS table
           result = await connection.execute(
-            `SELECT FIRST_NAME, EMAIL, USER_ID, PASSWORD FROM users WHERE USER_ID = :email OR EMAIL = :email`,
+            `SELECT  EMAIL, USER_ID, PASSWORD FROM users WHERE USER_ID = :email OR EMAIL = :email`,
             { email: email }
           );
           USER_ID = result.rows[0].USER_ID;
           EMAIL = result.rows[0].EMAIL;
-          FIRST_NAME = result.rows[0].FIRST_NAME;
+          FIRST_NAME = result.rows[0].FIRST_NAME||'Admin';
         }
       }
 
@@ -572,12 +573,18 @@ app.get('/home/ViewShop', async (req, res) => {
       [seller_id]
     );
     video = videoresult.rows;
+    const result2 = await connection.execute(
+      'select *from customerreviewsvendor where v_id=:seller_id',
+      [seller_id]
+    );
+    const review = result2.rows;
+    console.log('reviews',review);
 
     console.log(viewshop);
     if (responseType === 'json') {
-      res.json({ viewshop, video });
+      res.json({ viewshop, video, review });
     } else {
-      res.render('home/viewShop', { viewshop, video });
+      res.render('home/viewShop', { viewshop, video ,review});
     }
   } catch (err) {
     console.error(err);

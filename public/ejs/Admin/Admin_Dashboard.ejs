@@ -105,7 +105,7 @@
                                     <% for (let i=0; i < Math.min(C_data.length, 8); i++) { %>
                                         <div class="card m-2" style="width: 12rem;">
 
-                                            <img src="<%= C_data[i].profile_picture || '/path/to/default-avatar.png' %>"
+                                            <img src="<%= C_data[i].PROFILE_PICTURE || '/path/to/default-avatar.png' %>"
                                                 alt="<%= C_data[i].FIRST_NAME %>">
                                             <div class="card-body text-center">
                                                 <h5 class="card-title">
@@ -158,7 +158,7 @@
                                 <div class="d-flex flex-wrap">
                                     <% for (let i=0; i < Math.min(v_data.length, 4); i++) { %>
                                         <div class="card m-2" style="width: 12rem;">
-                                            <img src="<%= v_data[i].profile_picture || '/path/to/default-avatar.png' %>"
+                                            <img src="<%= v_data[i].PROFILE_PIC || '/path/to/default-avatar.png' %>"
                                                 alt="<%= v_data[i].V_FIRST_NAME %>">
                                             <div class="card-body text-center">
                                                 <h5 class="card-title">
@@ -249,24 +249,24 @@
                                     <div class="col-md-3 mb-3">
                                         <div class="card text-center bg-primary text-white">
                                             <div class="card-body">
-                                                <h3>Food</h3>
-                                                <h1>250</h1>
+                                                <h3>Desserts</h3>
+                                                <h1><%= Dessert %></h1>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <div class="card text-center bg-secondary text-white">
                                             <div class="card-body">
-                                                <h3>Drinks</h3>
-                                                <h1>150</h1>
+                                                <h3>Beverage</h3>
+                                                <h1><%= Beverage %></h1>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3 mb-3">
                                         <div class="card text-center bg-success text-white">
                                             <div class="card-body">
-                                                <h3>Desserts</h3>
-                                                <h1>100</h1>
+                                                <h3>Fast Food</h3>
+                                                <h1><%= FastFood %></h1>
                                             </div>
                                         </div>
                                     </div>
@@ -274,7 +274,7 @@
                                         <div class="card text-center bg-danger text-white">
                                             <div class="card-body">
                                                 <h3>Others</h3>
-                                                <h1>50</h1>
+                                                <h1><%= Others %></h1>
                                             </div>
                                         </div>
                                     </div>
@@ -361,10 +361,10 @@
             new Chart(ctxVendorCategories, {
                 type: 'bar',
                 data: {
-                    labels: ['Food Trucks', 'Restaurants', 'Street Stalls', 'Carts'],
+                    labels: ['Desserts', 'Beverage', 'Fast Food', 'Others'],
                     datasets: [{
-                        label: 'Number of Vendors',
-                        data: [200, 150, 100, 50],
+                        label: 'Number of Different Foods',
+                        data: [<%= Dessert %>, <%= Beverage %>, <%= FastFood %>, <%= Others %>],
                         backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
                     }]
                 },

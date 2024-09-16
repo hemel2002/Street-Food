@@ -104,6 +104,7 @@
                             </div>
                         </div>
 
+
                         <div class="row">
                             <!-- Complaints Overview Card -->
                             <div class="col-md-12 col-lg-12 mb-4">
@@ -135,7 +136,13 @@
                                                         <td>
                                                             <%= complaintsdata[i].C_COMPLAINT_DATE %>
                                                         </td>
-                                                        <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                                        <td>
+                                                            <span
+                                                                class="badge <%= complaintsdata[i].STATUS === 'Resolved' ? 'bg-success' : 'bg-warning text-dark' %>">
+                                                                <%= complaintsdata[i].STATUS %>
+                                                            </span>
+                                                        </td>
+
                                                         <td><a href="/admin/<%= id %>/complain_details?V_ID=<%= complaintsdata[i].V_ID %>&C_ID=<%= complaintsdata[i].C_ID %>"
                                                                 class="btn btn-info btn-sm">View</a></td>
                                                     </tr>
@@ -184,10 +191,12 @@
                                                     <div class="card vendor-card">
                                                         <div class="card-body">
                                                             <h5 class="card-title">Top Vendor with Most Complaints</h5>
-                                                            <p class="card-text">Vendor Name: <strong>Vendor A</strong>
+                                                            <p class="card-text">Vendor Name: <strong><a
+                                                                        href="/home/shopDetails?id=<%= complaint[0].V_ID %>">
+                                                                        <%= complaint[0].V_ID %>
+                                                                    </a> </strong>
                                                             </p>
-                                                            <p class="card-text">Total Complaints: <strong>25</strong>
-                                                            </p>
+
                                                             <div class="chart-container">
                                                                 <!-- Example Chart Placeholder -->
                                                                 <canvas id="vendorChart" class="chart-size"></canvas>
@@ -226,10 +235,16 @@
                             new Chart(ctxVendor, {
                                 type: 'bar',
                                 data: {
-                                    labels: ['Vendor A', 'Vendor B', 'Vendor C'],
+                                    labels: [ <% complaint.forEach(element => { %>
+                                        '<%= element.V_ID %>',
+                         
+                         <% }) %>],
                                     datasets: [{
                                         label: 'Complaints',
-                                        data: [25, 15, 10],
+                                        data: [ <% complaint.forEach(element => { %>
+                                            <%= element.TOTAL_COMPLAINTS %>,
+                         
+                         <% }) %>],
                                         backgroundColor: '#007bff',
                                     }]
                                 },
@@ -254,7 +269,7 @@
                                     labels: ['Pending', 'Resolved', 'Dismissed'],
                                     datasets: [{
                                         label: 'Complaints Status',
-                                        data: [40, 25, 15],
+                                        data: [<%= pending_complaints %>, <%= resolved_complaints %>, <%= dismissed_complaints %>],
                                         backgroundColor: ['#ffc107', '#28a745', '#dc3545'],
                                     }]
                                 },

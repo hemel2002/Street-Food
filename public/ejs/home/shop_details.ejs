@@ -75,7 +75,7 @@
                             <a class="nav-link" href="#">Products/Services</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Reviews</a>
+                            <a class="nav-link" href="/user/<%= id %>/review?vendor=<%= vendordata.V_ID %>">Reviews</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Contact</a>
@@ -245,7 +245,7 @@
                         <div class="card-body">
                             <h5 class="card-title mb-3">Scan the QR Code</h5>
                             <% if (vendordata.SHOP_DATA.LOCATION_URL) { %>
-                                <center> <img src="<%= vendordata.SHOP_DATA.LOCATION_URL %>" alt="QR Code"
+                                <center> <img src="<%= vendordata.SHOP_DATA.QR_CODE%>" alt="QR Code"
                                         class="img-fluid mb-3" style="max-width: 300px;"></center>
 
                                 <p class="card-text">Easily find our shop on Google Maps by scanning this code.</p>
