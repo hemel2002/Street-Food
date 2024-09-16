@@ -369,6 +369,14 @@ router.get('/:id', requireloginuser, async (req, res) => {
       'SELECT V.SHOP_DATA AS SHOP_DATA, video_id,v.v_id  as V_ID FROM vendorS V, USER_PROMOTES_VENDOR WHERE V.V_ID = USER_PROMOTES_VENDOR.V_ID AND USER_PROMOTES_VENDOR.V_ID IN (SELECT V_ID FROM USER_PROMOTES_VENDOR WHERE VIDEO_ID IN (SELECT VIDEO_ID FROM UPLOADED_VIDEOS WHERE C_ID IN (:id)))',
       { id }
     );
+    const result3 = await connection.execute('SELECT * FROM vendors');
+    const result4 = await connection.execute(
+      'select * from Food'
+    );
+    const vendors = result3.rows; 
+    const food = result4.rows;
+
+
 
     const vendordata = result2.rows;
     console.log('the vendordata res is', vendordata);
@@ -391,6 +399,8 @@ router.get('/:id', requireloginuser, async (req, res) => {
       currentPage,
       videos,
       vendordata,
+      vendor,
+      food,
     });
   } catch (err) {
     console.error(err);

@@ -116,11 +116,38 @@
       <a href="/<%= id[0] === 'U' ? 'user' : 'home' %>/nearbyshop" class="btn btn-outline-primary me-2">Nearby Shops</a>
     </div>
     <form class="d-flex mt-3" role="search">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      <input class="form-control me-2" list="vendor-list" type="search" placeholder="Search Vendors or Food" aria-label="Search">
       <button class="btn btn-outline-success" type="submit">Search</button>
+
+      <!-- Dropdown for selecting Vendors or Food -->
+      <select class="form-select ms-2" aria-label="Search Category">
+        <option value="vendors" selected>Vendors</option>
+        <option value="food">Food</option>
+      </select>
+
+      <datalist id="vendor-list">
+        <% for(let index = 0; index < vendor.length; index++) { %>
+          <option value="<%= vendor[index].V_ID.toUpperCase() %>">
+            <%= vendor[index].V_ID.toUpperCase() %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%= vendor[index].SHOP_DATA.V_LAST_NAME %>)
+            FROM <%= vendor[index].SHOP_DATA.DISTRICT %> - <%= vendor[index].SHOP_DATA.CITY %> - <%= vendor[index].SHOP_DATA.AREA %>
+          </option>
+        <% } %>
+        <% food.forEach(element => { %>
+          <option value="<%=element.FOOD_NAME%>">
+         <%= element.FOOD_NAME %>
+          </option>
+        <% }) %>
+        <% food.forEach(element => { %>
+          <option value="<%=element.CATEGOREY%>">
+         <%= element.CATEGOREY %>
+          </option>
+        <% }) %>
+      </datalist>
     </form>
   </div>
 </header>
+
+
 <!-- jQuery -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
