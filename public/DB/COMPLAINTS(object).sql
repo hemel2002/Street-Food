@@ -246,3 +246,18 @@ CREATE OR REPLACE TYPE COMPLAINTS AS
     WHERE
         C_ID = 'U_8'
         AND V_ID = 'S_13';
+
+
+
+
+INSERT INTO employees (employee_id, first_name, last_name, hire_date, salary)
+VALUES (1, 'John', 'Doe', TO_DATE('15-08-2020', 'DD-MM-YYYY'), 5000.00);
+
+INSERT INTO employees (employee_id, first_name, last_name, hire_date, salary)
+VALUES (2, 'Jane', 'Smith', TO_DATE('22-09-2021', 'DD-MM-YYYY'), 6000.00);
+
+INSERT INTO employees (employee_id, first_name, last_name, hire_date, salary)
+VALUES (3, 'Mike', 'Johnson', TO_DATE('30-11-2019', 'DD-MM-YYYY'), 5500.00);
+
+INSERT INTO employees (employee_id, first_name, last_name, hire_date, salary)
+VALUES (4, 'Emily', 'Davis', TO_DATE('01-01-2022', 'DD-MM-YYYY'), 4800.00);

@@ -24,6 +24,7 @@ const sendOtpEmail = require('./Routes/email.js');
 const admin = require('./Routes/admin');
 const { PASSWORD_RESET_REQUEST_TEMPLATE } = require('./Routes/EmailTemp.js');
 const { VERIFICATION_EMAIL_TEMPLATE } = require('./Routes/EmailTemp.js');
+const { Console } = require('console');
 const app = express();
 const port = 3000;
 
@@ -103,28 +104,82 @@ app.post('/home', (req, res) => {
   res.redirect('/home'); // Adjust the redirection URL as needed
 });
 ///////////////////////////home///////////////////////////////////////
-let shop = [];
-app.get('/landing', async (req, res) => {
-  res.render('home/home1');
-});
+// let shop = [];
+// app.get('/landing', async (req, res) => {
+//   res.render('home/home1');
+// });
 app.get('/home', async (req, res) => {
   const currentPage = parseInt(req.query.page) || 1;
   const itemsPerPage = 6;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const request = req.query.request;
+  const extradata=req.query.extradata||4;
 
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
     const result = await connection.execute(
-      'SELECT V.SHOP_DATA.STALL_PIC AS STALL_PIC , V.SHOP_DATA.STALL_NAME AS STALL_NAME, V_ID,V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,JOIN_DATE,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE FROM vendors V'
+      `SELECT 
+        V.SHOP_DATA.STALL_PIC AS STALL_PIC,
+        V.SHOP_DATA.STALL_NAME AS STALL_NAME,
+        V_ID,
+        V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,
+        V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME,
+      
+        V.SHOP_DATA.STALL_TITLE AS STALL_TITLE,
+        round(SYSDATE - TRUNC(JOIN_DATE)) AS DAYS_SINCE_JOIN  
+      FROM vendors V 
+      ORDER BY JOIN_DATE DESC`
     );
+    const result2 = await connection.execute(
+      'SELECT V.SHOP_DATA.STALL_PIC AS STALL_PIC , V.SHOP_DATA.STALL_NAME AS STALL_NAME, V_ID,V.SHOP_DATA.V_FIRST_NAME AS V_FIRST_NAME,V.SHOP_DATA.V_LAST_NAME AS V_LAST_NAME, round(SYSDATE - TRUNC(JOIN_DATE)) AS DAYS_SINCE_JOIN  ,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE,V.SHOP_DATA.STALL_TITLE AS STALL_TITLE FROM vendors V order by avg_rating desc fetch first :extradata rows only',
+      [extradata]
+    );
+    const result3 = await connection.execute(
+      'select count(V.v_id) as total_vendors from vendors V'
+
+    );
+    const result4 = await connection.execute(
+      'select count(C.c_id) as total_customers from customers C'
+
+    );
+    const result5 = await connection.execute(
+      'select count(F.food_id) as total_foods from food F'
+
+    );
+    const result6 = await connection.execute(
+      'select count(V.video_id) as total_videos from uploaded_videos V'
+
+    );
+    const  TOTAL_VENDORS = result3.rows[0].TOTAL_VENDORS;
+    const  TOTAL_CUSTOMERS = result4.rows[0].TOTAL_CUSTOMERS;
+    const  TOTAL_FOODS = result5.rows[0].TOTAL_FOODS;
+    const  TOTAL_VIDEOS = result6.rows[0].TOTAL_VIDEOS;
+
+    console.log('total',TOTAL_VENDORS, TOTAL_CUSTOMERS, TOTAL_FOODS,TOTAL_VIDEOS);
+    console.log('home extra data call',result2.rows);
+    const top_rated_shop = result2.rows;
     shop = result.rows;
     if (request === 'json') {
       return res.json(shop);
     }
     console.log(result.rows);
+    const displayedItems = shop.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(shop.length / itemsPerPage);
+  
+    res.render('home/home', {
+      currentPage,
+      itemsPerPage,
+      displayedItems,
+      totalPages,
+      shop,
+      top_rated_shop,
+      TOTAL_VENDORS,
+      TOTAL_CUSTOMERS,
+      TOTAL_FOODS,
+      TOTAL_VIDEOS,
+    });
   } catch (err) {
     console.error(err);
   } finally {
@@ -137,16 +192,7 @@ app.get('/home', async (req, res) => {
     }
   }
 
-  const displayedItems = shop.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(shop.length / itemsPerPage);
-
-  res.render('home/services', {
-    currentPage,
-    itemsPerPage,
-    displayedItems,
-    totalPages,
-    shop,
-  });
+ 
 });
 
 ////////////////////////signup//////////////////////////////

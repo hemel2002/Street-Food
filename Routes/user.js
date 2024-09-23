@@ -373,8 +373,12 @@ router.get('/:id', requireloginuser, async (req, res) => {
     const result4 = await connection.execute(
       'select * from Food'
     );
+    const result5 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
     const vendors = result3.rows; 
     const food = result4.rows;
+    const category = result5.rows;
 
 
 
@@ -401,6 +405,7 @@ router.get('/:id', requireloginuser, async (req, res) => {
       vendordata,
       vendor,
       food,
+      category,
     });
   } catch (err) {
     console.error(err);
@@ -743,6 +748,28 @@ router.post('/food_review', requireloginuser, async (req, res) => {
       { FOOD_ID, FOOD_ID }, // Assuming `food_id` is your variable
       { autoCommit: true }
     );
+    const result = await connection.execute(
+      'SELECT v.shop_data.hygiene_rating as hygiene_rating,v.V_id as v_id FROM vendors v,WHERE v.v_id= (SELECT v_id FROM vendor_sells_food WHERE food_id = :FOOD_ID)',
+      { FOOD_ID }
+    );
+    const hygiene_rating = result.rows[0].HYGIENE_RATING;
+    const V_ID = result.rows[0].V_ID;
+    await connection.execute(
+      'select AVG(rating) as avg_food_rating from food where food_id in (select food_id from vendor_sells_food where v_id = :V_ID)',
+      { V_ID }
+    );
+    const avg_food_rating = result.rows[0].AVG_FOOD_RATING;
+    const avg_rating = ((avg_food_rating + hygiene_rating) / 2).toFixed(1);
+
+    await connection.execute(
+      `UPDATE vendors 
+       SET avg_rating = :avg_rating 
+       WHERE v_id = :V_ID`,
+      { avg_rating, V_ID },
+      { autoCommit: true }
+    );
+
+
 
     req.flash('review', 'Review submitted successfully!');
     return res.redirect(`/user/${req.params.id}`);
