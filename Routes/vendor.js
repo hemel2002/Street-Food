@@ -56,6 +56,17 @@ router.get('/:id', requirelogin, async (req, res) => {
     );
     const top_food_data = topfood_result.rows;
 
+    const result3 = await connection.execute('SELECT * FROM vendors');
+    const result4 = await connection.execute(
+      'select * from Food'
+    );
+    const result5 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result3.rows; 
+    const food = result4.rows;
+    const category = result5.rows;
+
     foodData = foodResult.rows;
     reviews = reviewResult.rows;
     const currentPage = parseInt(req.query.page) || 1;
@@ -73,6 +84,9 @@ router.get('/:id', requirelogin, async (req, res) => {
       reviews,
       id,
       top_food_data,
+      vendor,
+      food,
+      category,
     });
     console.log(reviews);
   } catch (err) {
@@ -835,6 +849,41 @@ router.get(
         }
       }
     }
+  }
+);
+////////////////////////////////serach/////////////////////////////
+router.get(
+  '/:id/search',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const search_key=req.query.search_key;
+    const option = req.query.option;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      if(option==='food')
+      {
+        const result = await connection.execute(
+          `SELECT * FROM food where  food_name LIKE '%${search_key}%' `,
+          
+        );
+      }
+   
+      const foodData = result.rows;
+      res.render('vendor_ejs/search', { foodData});
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+
   }
 );
 
