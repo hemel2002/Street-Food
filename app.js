@@ -156,6 +156,16 @@ app.get('/home', async (req, res) => {
     const  TOTAL_CUSTOMERS = result4.rows[0].TOTAL_CUSTOMERS;
     const  TOTAL_FOODS = result5.rows[0].TOTAL_FOODS;
     const  TOTAL_VIDEOS = result6.rows[0].TOTAL_VIDEOS;
+    const result7 = await connection.execute('SELECT * FROM vendors');
+    const result8 = await connection.execute(
+      'select * from Food'
+    );
+    const result9 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result7.rows; 
+    const food = result8.rows;
+    const category = result9.rows;
 
     console.log('total',TOTAL_VENDORS, TOTAL_CUSTOMERS, TOTAL_FOODS,TOTAL_VIDEOS);
     console.log('home extra data call',result2.rows);
@@ -179,6 +189,10 @@ app.get('/home', async (req, res) => {
       TOTAL_CUSTOMERS,
       TOTAL_FOODS,
       TOTAL_VIDEOS,
+      vendor,
+      food,
+      category,
+
     });
   } catch (err) {
     console.error(err);
@@ -762,6 +776,118 @@ app.get('/home/shopDetails', async (req, res) => {
       foodData: result2.rows,
       allFoodData: result3.rows,
     });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+
+//////////////////////////////search post////////////////////////
+app.post('/home/search', async (req, res) => {
+  const sortBY = req.query.sortBY || 'FOOD_NAME';
+  const orderBY = req.query.orderBY || 'ASC';
+  const search = req.body.search || ''; // Use query for search in a GET request
+  req.session.search = search;
+  console.log(search);
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    
+    // Validating sortBY and orderBY to avoid SQL injection
+    const validSortColumns = ['FOOD_NAME', 'INGREDIENT', 'CATEGORY'];
+    const validOrder = ['ASC', 'DESC'];
+    
+    const safeSortBY = validSortColumns.includes(sortBY) ? sortBY : 'FOOD_NAME';
+    const safeOrderBY = validOrder.includes(orderBY) ? orderBY : 'ASC';
+
+    const result = await connection.execute(
+      `SELECT * FROM food WHERE FOOD_NAME LIKE :search OR INGREDIENT LIKE :search OR CATEGORY LIKE :search ORDER BY ${safeSortBY} ${safeOrderBY}`,
+      { search: `%${search}%` }
+    );
+
+    console.log(result.rows);
+
+    const result2 = await connection.execute(
+      'SELECT * FROM vendors v WHERE v.shop_data.STALL_NAME LIKE :search OR v.shop_data.AREA LIKE :search',
+      { search: `%${search}%` }
+    );
+    console.log(result2.rows);
+
+    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+});
+
+//////////////////////////////search get////////////////////////
+app.get('/home/search', async (req, res) => {
+  let sortBY ;
+  let sortByVendor;
+ const orderBY = req.query.orderBY || 'ASC';
+
+ if(req.query.sortBY === 'FOOD_NAME'){
+  sortBY = req.query.sortBY || 'FOOD_NAME';
+
+  sortByVendor='v.shop_data.STALL_NAME';
+ }
+ if(req.query.sortBY === 'CREATE_DATE'){
+  sortBY = req.query.sortBY || 'FOOD_NAME';
+ 
+  sortByVendor='v.JOIN_DATE';
+ }
+ if(req.query.sortBY === 'RATING'){
+  sortBY = req.query.sortBY || 'FOOD_NAME';
+
+  sortByVendor='v.AVG_RATING';
+ }
+
+ 
+ 
+  const search = req.session.search || ''; // Use query for search in a GET request
+
+  console.log('the search is get',search);
+  console.log(orderBY)
+  console.log(sortBY)
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    
+    // Validating sortBY and orderBY to avoid SQL injection
+    const validSortColumns = ['FOOD_NAME', 'INGREDIENT', 'CATEGORY'];
+    const validOrder = ['ASC', 'DESC'];
+    
+    const safeSortBY = validSortColumns.includes(sortBY) ? sortBY : 'FOOD_NAME';
+    const safeOrderBY = validOrder.includes(orderBY) ? orderBY : 'ASC';
+
+    const result = await connection.execute(
+      `SELECT * FROM food WHERE FOOD_NAME LIKE :search OR INGREDIENT LIKE :search OR CATEGORY LIKE :search ORDER BY ${sortBY} ${orderBY}`,
+      { search: `%${search}%` }
+    );
+
+    console.log(result.rows);
+
+    const result2 = await connection.execute(
+      `SELECT * FROM vendors v WHERE v.shop_data.STALL_NAME LIKE :search OR v.shop_data.AREA LIKE :search ORDER BY ${sortByVendor} ${orderBY}`,
+      { search: `%${search}%` }
+    );
+    console.log(result2.rows);
+
+    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows });
   } catch (err) {
     console.error(err);
   } finally {

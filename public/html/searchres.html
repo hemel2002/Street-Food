@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background for contrast */
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar, .header {
+            background-color: #343a40; /* Dark background for navbar */
+            color: white;
+        }
+        .navbar a, .navbar button {
+            color: white; /* White text for navbar links */
+        }
+        .search-result-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: white; /* White background for sections */
+        }
+        .card {
+            border-radius: 10px; /* Rounded corners for cards */
+            transition: transform 0.3s; /* Smooth transform on hover */
+        }
+        .card:hover {
+            transform: scale(1.05); /* Scale up on hover */
+        }
+        h3 {
+            margin-bottom: 20px; /* Space between heading and content */
+            font-size: 1.5rem; /* Larger font size for headings */
+            text-align: center; /* Centered headings */
+        }
+        .filter-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-signup {
+            background-color: #ff9800; /* New color for Sign-up button */
+            border-color: #ff9800; /* Match border with button */
+        }
+        .card-img-top {
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Cover the image area */
+            border-radius: 10px 10px 0 0; /* Rounded corners for image */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Street Food Management</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Menu</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Vendors</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Contact Us</a></li>
+                </ul>
+                <div class="d-flex">
+                    <a href="home/login"><button type="button" class="btn btn-outline-light me-2">Login</button></a>
+                    <a href="home/signup"><button type="button" class="btn btn-signup">Sign-up</button></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header py-4">
+        <div class="container text-center">
+            <h1 class="text-white">Search for Your Favorite Food!</h1>
+            <form class="mt-3">
+                <input type="search" class="form-control mb-2" placeholder="Search a stall ...." aria-label="Search">
+                <button class="btn btn-success" type="submit">Search</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Search Results Sections -->
+    <div class="container">
+
+        <!-- Food Section -->
+        <div class="search-result-section">
+            <h3>Food Section</h3>
+            <div class="filter-section">
+                <h5>Filter by Type</h5>
+                <select class="form-select mb-2" id="foodTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="Fast Food">Fast Food</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Main Course">Main Course</option>
+                    <!-- Add more food types as needed -->
+                </select>
+                <h5>Filter by Category</h5>
+                <select class="form-select mb-3" id="foodCategoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Asian">Asian</option>
+                    <option value="American">American</option>
+                    <!-- Add more categories as needed -->
+                </select>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/300x200.png?text=Pizza" class="card-img-top" alt="Pizza">
+                        <div class="card-body">
+                            <h5 class="card-title">Pizza</h5>
+                            <p class="card-text">Category: Fast Food</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/300x200.png?text=Sushi" class="card-img-top" alt="Sushi">
+                        <div class="card-body">
+                            <h5 class="card-title">Sushi</h5>
+                            <p class="card-text">Category: Japanese</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more food items with images as needed -->
+            </div>
+        </div>
+
+        <!-- Vendor Section -->
+        <div class="search-result-section">
+            <h3>Vendor Section</h3>
+            <div class="filter-section">
+                <h5>Filter by Location</h5>
+                <select class="form-select mb-2" id="vendorLocationFilter">
+                    <option value="">All Locations</option>
+                    <option value="City A">City A</option>
+                    <option value="City B">City B</option>
+                    <option value="City C">City C</option>
+                    <!-- Add more locations as needed -->
+                </select>
+                <h5>Filter by Type</h5>
+                <select class="form-select mb-3" id="vendorTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="Street Vendor">Street Vendor</option>
+                    <option value="Food Truck">Food Truck</option>
+                    <!-- Add more vendor types as needed -->
+                </select>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/300x200.png?text=Vendor+1" class="card-img-top" alt="Vendor 1">
+                        <div class="card-body">
+                            <h5 class="card-title">John Doe's Stall</h5>
+                            <p class="card-text">From: City A, Area 1</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/300x200.png?text=Vendor+2" class="card-img-top" alt="Vendor 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Jane Smith's Stall</h5>
+                            <p class="card-text">From: City B, Area 2</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more vendors with images as needed -->
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MDB and GSAP JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script>
+        // GSAP Animation for Search Result Sections
+        gsap.from(".search-result-section", {
+            duration: 1,
+            opacity: 0,
+            y: -50,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".search-result-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background for contrast */
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar, .header {
+            background-color: #343a40; /* Dark background for navbar */
+            color: white;
+        }
+        .navbar a, .navbar button {
+            color: white; /* White text for navbar links */
+        }
+        .search-result-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: white; /* White background for sections */
+        }
+        .card {
+            border-radius: 10px; /* Rounded corners for cards */
+            transition: transform 0.3s; /* Smooth transform on hover */
+        }
+        .card:hover {
+            transform: scale(1.05); /* Scale up on hover */
+        }
+        h3 {
+            margin-bottom: 20px; /* Space between heading and content */
+            font-size: 1.5rem; /* Larger font size for headings */
+            text-align: center; /* Centered headings */
+        }
+        .filter-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-signup {
+            background-color: #ff9800; /* New color for Sign-up button */
+            border-color: #ff9800; /* Match border with button */
+        }
+        .card-img-top {
+            height: 200px; /* Fixed height for images */
+            object-fit: cover; /* Cover the image area */
+            border-radius: 10px 10px 0 0; /* Rounded corners for image */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Street Food Management</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a href="/home" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Menu</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Vendors</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Contact Us</a></li>
+                </ul>
+                <div class="d-flex">
+                    <a href="home/login"><button type="button" class="btn btn-outline-light me-2">Login</button></a>
+                    <a href="home/signup"><button type="button" class="btn btn-signup">Sign-up</button></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="header py-4">
+        <div class="container text-center">
+            <h1 class="text-white">Search for Your Favorite Food!</h1>
+            <form class="mt-3">
+                <input type="search" class="form-control mb-2" placeholder="Search a stall ...." aria-label="Search">
+                <button class="btn btn-success" type="submit">Search</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Search Results Sections -->
+    <div class="container">
+
+<!-- Food Section -->
+<div class="search-result-section">
+    <h3>Food Section</h3>
+    <div class="filter-section">
+        <% if (foodResult.length > 0) { %>
+            <div class="filter-section"></div>
+                <h5>Filter By</h5>
+                <select class="form-select mb-2" id="foodFilter" onchange="redirectToUrl(this.value)">
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="/home/search?sortBY=FOOD_NAME&orderBY=DESC">Desc (Z-A)</option>
+                    <option value="/home/search?sortBY=FOOD_NAME&orderBY=ASC">Asc (A-Z)</option>
+                    <option value="/home/search?sortBY=CREATE_DATE&orderBY=DESC">Most Recent</option>
+                    <option value="/home/search?sortBY=RATING&orderBY=DESC">Top Rated</option>
+                </select>
+           <% } %> 
+    </div>
+
+    <% if (foodResult.length > 0) { %>
+        <div class="row">
+            <% foodResult.forEach((element, index) => { %>
+                <% if (index % 4 === 0 && index !== 0) { %>
+                    </div><div class="row">
+                <% } %>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <a href="/user/details_food?FOOD_ID=<%= element.FOOD_ID %>"> 
+                                <img src="<%= element.FOOD_PIC %>" class="card-img-top" alt="Pizza">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= element.FOOD_NAME %></h5>
+                                <p class="card-text">Category: <%= element.CATEGORY %></p>
+                            </div>
+                        </div>
+                    </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="col-md-12">
+            <h5>No Items found</h5>
+            <center> 
+                <dotlottie-player src="https://lottie.host/e3fa42c4-6ba4-4a6b-80ed-cde0b5f97930/XwCBb0Kh71.json" background="transparent" speed="1" style="width: 400px; height: 400px;" loop autoplay></dotlottie-player>
+            </center>
+        </div>
+    <% } %>
+</div>
+
+<!-- Vendor Section -->
+<div class="search-result-section">
+    <h3>Vendor Section</h3>
+
+
+    <% if (vendorResult.length > 0) { %>
+        <div class="row">
+            <% vendorResult.forEach((element, index) => { %>
+                <% if (index % 4 === 0 && index !== 0) { %>
+                    </div><div class="row">
+                <% } %>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <a href="/home/viewShop?id=<%= element.V_ID %>">
+                                <img src="<%= element.SHOP_DATA.STALL_PIC %>" class="card-img-top" alt="Vendor">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= element.SHOP_DATA.STALL_NAME %></h5>
+                                <p class="card-text">From: <%= element.SHOP_DATA.AREA %></p>
+                            </div>
+                        </div>
+                    </div>
+            <% }) %>
+        </div>
+    <% } else { %>
+        <div class="col-md-12">
+            <h5>No vendors found</h5>
+            <center>       
+                <dotlottie-player src="https://lottie.host/e3fa42c4-6ba4-4a6b-80ed-cde0b5f97930/XwCBb0Kh71.json" background="transparent" speed="1" style="width: 1200px; height: 900px;" loop autoplay></dotlottie-player>
+            </center>
+        </div>
+    <% } %>
+</div>
+
+
+
+
+    </div>
+
+
+
+    <!-- MDB and GSAP JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script>
+        function redirectToUrl(url) {
+            if (url) {
+                window.location.href = url;
+            }
+        }
+    </script>
+    <script>
+        // GSAP Animation for Search Result Sections
+        gsap.from(".search-result-section", {
+            duration: 1,
+            opacity: 0,
+            y: -50,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: ".search-result-section",
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+            }
+        });
+    </script>
+</body>
+</html>
