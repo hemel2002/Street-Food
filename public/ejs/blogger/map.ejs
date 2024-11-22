@@ -1,11 +1,16 @@
-<html data-bs-theme="dark" lang="en">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Pricing - Brand</title>
-    <link rel="stylesheet" href="../../assets/bootstrap/css/bootstrap.min.css?h=ae25e30cd2ef0f4f5b70ebf4c668048b">
-    <link rel="stylesheet" href="../../assets/css/styles.min.css?h=e8c1536a33179f90226900eab82bae2d">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
     <link rel="stylesheet" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
@@ -25,127 +30,192 @@
         .suggestion:hover {
             background-color: #f1f1f1;
         }
+
+        .navbar-toggler {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #ffffff;
+            width: 30px;
+            height: 30px;
+        }
     </style>
 </head>
 
 <body>
     <!-- Start: Navbar Centered Links -->
-    <%- include('../home/home_navbar') %>
-        <!-- End: Navbar Centered Links -->
-
-        <section class="py-5">
-            <!-- Start: Pricing Duo -->
-            <div class="container py-5">
-                <div class="row mb-5">
-                    <div class="col-md-8 col-xl-6 text-center mx-auto">
-                        <h2 class="fw-bold">Heading</h2>
-                        <p class="text-muted">Curae hendrerit donec commodo hendrerit egestas tempus, turpis facilisis
-                            nostra nunc.
-                            Vestibulum dui eget ultrices.</p>
+    <% if (id) { %>
+        <nav class="navbar">
+            <div class="container-fluid">
+                <button class="navbar-toggler danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarLight"
+                    aria-controls="offcanvasNavbarLight" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+        
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarLight"
+            aria-labelledby="offcanvasNavbarLightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLightLabel">Street Food Management</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
+                            Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <% if (id[0]==='V') { %>
+                            <a class="nav-link" href="/vendor/<%= id %>/dashboard">Dashboard</a>
+                        <% } %>
+                        
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Settings
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item"
+                                    href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/edit_profile">Edit
+                                    Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar"
+                    method="post">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Switch mode!
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button type="submit" class="dropdown-item d-flex align-items-center" name="mode"
+                                    value="light">
+                                    Light Mode
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" name="mode" value="dark" class="dropdown-item d-flex align-items-center">
+                                    Dark Mode
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                </div>
-                <div class="container mt-5">
-                    <div class="row">
-                        <div class="col-md-6 offset-md-3">
-                            <div class="md-form">
-                                <input type="text" id="locationInput" class="form-control"
-                                    placeholder="Enter a location" />
-                                <label for="locationInput">Search Location</label>
-                            </div>
-                            <div id="suggestions" class="list-group"></div>
-                        </div>
-                    </div>
-                    <div class="row mt-4">
+                </form>
+                <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout"
+                    method="post">
+                    <ul class="navbar-nav mt-3">
                         <div class="col-12">
-                            <div id="map" class="z-depth-1 rounded"></div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button>
                         </div>
+                    </ul>
+                </form>
+            </div>
+        </div>
+     
+    <% } else {%>
+        <div class="container-fluid bg-danger text-white py-2">
+            <div class="container d-flex justify-content-between">
+              <div>
+                <a href="http://localhost:3000/user/nearbyshop" class="btn btn-danger">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span id="locationLink" class="cursor-pointer">
+                    Select Location
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        
+          <header class="py-3 border-bottom">
+            <div class="container d-flex flex-wrap justify-content-between align-items-center">
+              <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+                <img src="../../img/logo1.jpeg" height="50" alt="Logo">
+                <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+              </a>
+              <div class="d-flex align-items-center">
+                <a href="/home/login" class="btn btn-outline-danger me-2">Sign in</a>
+                <a href="#" class="btn btn-danger">Sign up</a>
+              </div>
+            </div>
+          </header>
+
+        <% } %>
+
+    <!-- End: Navbar Centered Links -->
+
+    <section class="py-5">
+        <!-- Start: Pricing Duo -->
+        <div class="container py-5">
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="md-form">
+                            <input type="text" id="locationInput" class="form-control" placeholder="Enter a location" />
+                            <label for="locationInput">Search Location</label>
+                        </div>
+                        <div id="suggestions" class="list-group"></div>
                     </div>
                 </div>
-
-                <!-- Modal Structure -->
-
-
-                <div class="modal fade" id="shopModal" tabindex="-1" aria-labelledby="shopModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="shopModalLabel"></h5>
-                                <button type="button" class="btn-close" data-mdb-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <img id="shopImage" src="" class="img-fluid mb-3" alt="Shop Image" />
-                                <p><strong>Vendor Name:</strong> <span id="vendorName"></span></p>
-                                <p><strong>Established Date:</strong> <span id="establishedDate"></span></p>
-                                <p><strong>Rating:</strong> <span id="shopRating"></span></p>
-                                <p><strong>Total Distance:</strong> <span id="totalDistance"></span></p>
-                            </div>
-                            <div class="modal-footer">
-                                <a id="detailsLink" href="#" class="btn btn-primary">Details</a>
-                                <button type="button" class="btn btn-secondary" id="routeButton">Show Routes</button>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-                </div>
-                <!-- End: Pricing Duo -->
-        </section>
-
-        <!-- Start: Footer Multi Column -->
-        <footer class="bg-dark">
-            <div class="container py-4 py-lg-5">
-                <div class="row justify-content-center">
-                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column item">
-                        <h3 class="fs-6 text-white">Services</h3>
-                        <ul class="list-unstyled">
-                            <li><a class="link-light" href="#">Web design</a></li>
-                            <li><a class="link-light" href="#">Development</a></li>
-                            <li><a class="link-light" href="#">Hosting</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column item">
-                        <h3 class="fs-6 text-white">About</h3>
-                        <ul class="list-unstyled">
-                            <li><a class="link-light" href="#">Company</a></li>
-                            <li><a class="link-light" href="#">Team</a></li>
-                            <li><a class="link-light" href="#">Careers</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column item">
-                        <h3 class="fs-6 text-white">Partners</h3>
-                        <ul class="list-unstyled">
-                            <li><a class="link-light" href="#">Lorem Ipsum</a></li>
-                            <li><a class="link-light" href="#">Lorem Ipsum</a></li>
-                            <li><a class="link-light" href="#">Lorem Ipsum</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-3 text-center text-lg-start d-flex flex-column item social">
-                        <h3 class="fs-6 text-white">Follow us</h3>
-                        <a href="#"><i class="icon ion-social-facebook"></i></a>
-                        <a href="#"><i class="icon ion-social-twitter"></i></a>
-                        <a href="#"><i class="icon ion-social-instagram"></i></a>
-                        <p class="copyright">Company Name © 2023</p>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div id="map" class="z-depth-1 rounded"></div>
                     </div>
                 </div>
             </div>
-        </footer>
-        <!-- End: Footer Multi Column -->
 
-        <script src="/assets/bootstrap/js/bootstrap.min.js?h=d4ef0e14ecaf3a2a61e000404ae26eb5"></script>
-        <script src="/assets/js/script.min.js?h=a9e23209ed61667f8c916f11265af9b8"></script>
-        <script src="../../bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.5/umd/popper.min.js"></script>
-        <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
-        <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
-        <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
-        <!-- Code injected by live-server -->
+            <!-- Modal Structure -->
+            <div class="modal fade" id="shopModal" tabindex="-1" aria-labelledby="shopModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="shopModalLabel"></h5>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img id="shopImage" src="" class="img-fluid mb-3" alt="Shop Image" />
+                            <p><strong>Vendor Name:</strong> <span id="vendorName"></span></p>
+                            <p><strong>Established Date:</strong> <span id="establishedDate"></span></p>
+                            <p><strong>Rating:</strong> <span id="shopRating"></span></p>
+                            <p><strong>Total Distance:</strong> <span id="totalDistance"></span></p>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="detailsLink" href="#" class="btn btn-primary">Details</a>
+                            <button type="button" class="btn btn-secondary" id="routeButton">Show Routes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End: Pricing Duo -->
+    </section>
+
+    <!-- Start: Footer Multi Column -->
+    <!-- End: Footer Multi Column -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.5/umd/popper.min.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <!-- Code injected by live-server -->
         <script>
             // <![CDATA[  <-- For SVG support
             if ('WebSocket' in window) {

@@ -210,8 +210,31 @@ app.get('/home', async (req, res) => {
 });
 
 ////////////////////////signup//////////////////////////////
-app.get('/home/signup', (req, res) => {
-  res.render('login_signup_ejs/signup');
+app.get('/home/signup', async(req, res) => {
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result7 = await connection.execute('SELECT * FROM vendors');
+    const result8 = await connection.execute(
+      'select * from Food'
+    );
+    const result9 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result7.rows; 
+    const food = result8.rows;
+    const category = result9.rows;
+    res.render('login_signup_ejs/signup', { vendor,food,category });
+
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'An error occurred during signup.');
+    return res.redirect('/home/signup');
+
+  }
+  
+
+
 });
 app.post('/home/signup', upload.single('stallPic'), async (req, res) => {
   const {
@@ -287,9 +310,31 @@ app.use('/admin', admin);
 app.use('/user', user);
 ////////////////////////home page/////////////////////////////
 //////////////////login//////////////////
-app.get('/home/login', (req, res) => {
+app.get('/home/login', async(req, res) => {
   console.log(mode);
-  res.render('login_signup_ejs/login');
+  let connection;
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+    const result7 = await connection.execute('SELECT * FROM vendors');
+    const result8 = await connection.execute(
+      'select * from Food'
+    );
+    const result9 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result7.rows; 
+    const food = result8.rows;
+    const category = result9.rows;
+    res.render('login_signup_ejs/login', { mode,vendor,food,category });
+
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'An error occurred during signup.');
+    return res.redirect('/home/signup');
+
+  }
+  
+ 
 });
 
 app.post('/home/login', async (req, res) => {
@@ -795,7 +840,7 @@ app.post('/home/search', async (req, res) => {
   const orderBY = req.query.orderBY || 'ASC';
   const search = req.body.search || ''; // Use query for search in a GET request
   req.session.search = search;
-  console.log(search);
+  console.log('the search key is',search);
   let connection;
   try {
     connection = await OracleDB.getConnection(dbConfig);
@@ -819,8 +864,21 @@ app.post('/home/search', async (req, res) => {
       { search: `%${search}%` }
     );
     console.log(result2.rows);
+    const result7 = await connection.execute('SELECT * FROM vendors');
+    const result8 = await connection.execute(
+      'select * from Food'
+    );
+    const result9 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result7.rows; 
+    const food = result8.rows;
+    const category = result9.rows;
 
-    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows });
+
+   
+
+    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows, vendor,food,category});
   } catch (err) {
     console.error(err);
   } finally {
@@ -886,8 +944,19 @@ app.get('/home/search', async (req, res) => {
       { search: `%${search}%` }
     );
     console.log(result2.rows);
+    console.log(result2.rows);
+    const result7 = await connection.execute('SELECT * FROM vendors');
+    const result8 = await connection.execute(
+      'select * from Food'
+    );
+    const result9 = await connection.execute(
+      'SELECT distinct Category FROM Food'
+    );
+    const vendor = result7.rows; 
+    const food = result8.rows;
+    const category = result9.rows;
 
-    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows });
+    res.render('home/searchResult', { foodResult: result.rows, vendorResult: result2.rows, vendor,food,category});
   } catch (err) {
     console.error(err);
   } finally {
@@ -900,6 +969,9 @@ app.get('/home/search', async (req, res) => {
     }
   }
 });
+
+///////////////////////////view review////////////////////////
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

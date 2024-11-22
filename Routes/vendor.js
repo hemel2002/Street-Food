@@ -223,9 +223,20 @@ router.get(
         'SELECT FOOD_ID, FOOD_NAME, PRICE, INGREDIENT, AVAILABILITY, ORIGINAL_PATH, FOOD_PIC FROM food WHERE FOOD_ID = :id',
         [food_id]
       );
+      const result7 = await connection.execute('SELECT * FROM vendors');
+      const result8 = await connection.execute(
+        'select * from Food'
+      );
+      const result9 = await connection.execute(
+        'SELECT distinct Category FROM Food'
+      );
+      const vendor = result7.rows; 
+      const food = result8.rows;
+      const category = result9.rows;
       if (result.rows.length > 0) {
         findfoodData = result.rows[0];
       }
+      res.render('vendor_ejs/update_food', { findfoodData ,vendor,food,category});
     } catch (err) {
       console.error(err);
     } finally {
@@ -238,7 +249,7 @@ router.get(
       }
     }
 
-    res.render('vendor_ejs/update_food', { findfoodData });
+    
   }
 );
 
@@ -884,6 +895,35 @@ router.get(
       }
     }
 
+  }
+);
+/////////////////////////////// review food/////////////////////////////
+router.get(
+  '/:id/review_food',
+  requirelogin,
+  require_complete_reg,
+  async (req, res) => {
+    const { id } = req.params;
+    let connection;
+    try {
+      connection = await OracleDB.getConnection(dbConfig);
+      const result = await connection.execute(
+        'SELECT * FROM VENDOR_CUSTOMER_REVIEWS_VIEW  WHERE V_ID = :id AND food.food_id = vendor_sells_food.food_id ORDER BY rating desc',
+        { id }
+      );
+      const foodData = result.rows;
+      res.render('vendor_ejs/review_food', { foodData, id });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (connection) {
+        try {
+          await connection.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
   }
 );
 

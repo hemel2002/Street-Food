@@ -1,0 +1,32 @@
+<div class="container-fluid bg-danger text-white py-2">
+    <div class="container d-flex justify-content-between">
+      <div>
+        <a href="http://localhost:3000/user/nearbyshop" class="btn btn-danger">
+          <i class="bi bi-geo-alt-fill"></i>
+          <span id="locationLink" class="cursor-pointer">
+            Select Location
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <header class="py-3 border-bottom">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+        <img src="../../img/logo1.jpeg" height="50" alt="Logo">
+        <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+      </a>
+      <div class="d-flex align-items-center">
+      <% if (!id) { %>
+        <a href="/home/login" class="btn btn-outline-danger me-2">Sign in</a>
+        <a href="/home/signup" class="btn btn-danger">Sign up</a>
+       
+      <% } %>
+      
+         
+        
+        
+      </div>
+    </div>
+  </header>

@@ -39,7 +39,7 @@
       .btn-update {
         width: 100%;
         background-color: #ff5722;
-        margin-top: 30px; /* Added margin to prevent overlap */
+        margin-top: 30px;
       }
 
       .form-section {
@@ -53,71 +53,132 @@
         border: 5px solid white;
         width: 100px;
         height: 100px;
-      }
-
-      .password-toggle {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
+        object-fit: cover; /* Ensure the image fits the circle */
       }
     </style>
   </head>
   <body>
+    <nav class="navbar">
+      <div class="container-fluid">
+          <button class="navbar-toggler danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarLight"
+              aria-controls="offcanvasNavbarLight" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+      </div>
+  </nav>
+  
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarLight"
+      aria-labelledby="offcanvasNavbarLightLabel">
+      <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLightLabel">Street Food Management</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+              <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="/home">Home</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link"
+                      href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
+                      Profile
+                  </a>
+              </li>
+              <li class="nav-item">
+                <% if (id[0]==='V') { %>
+                  <a class="nav-link" href="/vendor/<%= id %>/dashboard">Dashboard</a>
+              <% } %>
+              </li>
+              <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      Settings
+                  </a>
+                  <ul class="dropdown-menu">
+                      <li><a class="dropdown-item"
+                              href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/edit_profile">Edit
+                              Profile</a></li>
+                      <li>
+                          <hr class="dropdown-divider">
+                      </li>
+                  </ul>
+              </li>
+          </ul>
+          <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar"
+              method="post">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      Switch mode!
+                  </button>
+                  <ul class="dropdown-menu">
+                      <li>
+                          <button type="submit" class="dropdown-item d-flex align-items-center" name="mode"
+                              value="light">
+                              Light Mode
+                          </button>
+                      </li>
+                      <li>
+                          <button type="submit" name="mode" value="dark" class="dropdown-item d-flex align-items-center">
+                              Dark Mode
+                          </button>
+                      </li>
+                  </ul>
+              </div>
+          </form>
+          <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout"
+              method="post">
+              <ul class="navbar-nav mt-3">
+                  <div class="col-12">
+                      <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button>
+                  </div>
+              </ul>
+          </form>
+      </div>
+  </div>
     <!-- Edit Profile Header -->
     <section class="edit-profile-header" id="edit-profile-header">
       <h1 class="mb-0">Edit Profile</h1>
     </section>
-    <% if ( !userdata.FIRST_NAME) { %>
-
-                       
-                      <div class="modal top fade show" id="exampleModal" tabindex="-1"
-                        aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="true"
-                        data-mdb-keyboard="true" style="display: block;">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel">Update Profile</h5>
-                              <button type="button" class="btn-close" data-mdb-dismiss="modal"
-                                aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p>Please update your profile before proceeding.</p>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-success" data-mdb-dismiss="modal">
-                                Close
-                              </button>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                          const modalElement = document.getElementById('exampleModal');
-                          const modalInstance = new mdb.Modal(modalElement);
-                          modalInstance.show();
-                        });
-                      </script>
-                    
-    <% } %>
-
 
     <!-- Edit Profile Form -->
     <div class="container edit-profile-form">
       <div class="form-section" id="edit-form">
-        <div class="text-center">
-          <img
-            src="<%= userdata?.PROFILE_PIC??'https://via.placeholder.com/100' %>"
-            alt="Profile Picture"
-            class="profile-picture mb-4"
-            id="profile-picture"
-          />
-          
-        </div>
-        <form id="profileForm" class="needs-validation" action="/user/<%= id %>/edit_profile" method="post" novalidate>
+        <form
+          id="profileForm"
+          class="needs-validation"
+          action="/user/<%= id %>/edit_profile"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate
+        >
+          <div class="text-center">
+            <img
+              src="<%= userdata?.PROFILE_PIC??'https://via.placeholder.com/100' %>"
+              alt="Profile Picture"
+              class="profile-picture mb-4"
+              id="profile-picture"
+            />
+            <br />
+            <!-- Add icon button for image upload inside the form -->
+            <button
+              class="btn btn-light"
+              id="uploadBtn"
+              type="button"
+              onclick="document.getElementById('fileInput').click();"
+            >
+              <i class="fa fa-camera"></i> Upload Image
+            </button>
+            <input
+              type="file"
+              id="fileInput"
+              style="display:none;"
+              accept="image/*"
+              name="profileImage"
+              onchange="previewImage(event)"
+            />
+          </div>
+
           <div class="row">
             <div class="col-6">
               <div class="form-outline">
@@ -167,40 +228,9 @@
               value="<%= userdata?.PHONE??'' %>"
               name="PHONE"
               required
- pattern="^\+?\d{10,}$"
+              pattern="^\+?\d{10,}$"
             />
             <label class="form-label" for="phone">Phone Number</label>
-          </div>
-
-          <div class="form-outline position-relative">
-            <input
-              type="password"
-              id="password"
-              class="form-control"
-              value="<%= userdata?.PASSWORD??'' %>"
-              name="PASSWORD"
-              required
-              pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}"
-            />
-            <label class="form-label" for="password">Password</label>
-            <i class="fa fa-eye-slash password-toggle" id="togglePassword"></i>
-            <div class="invalid-feedback">
-              Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a digit, and a special character.
-            </div>
-          </div>
-
-          <div class="form-outline position-relative">
-            <input
-              type="password"
-              id="retypePassword"
-              class="form-control"
-              required
-            />
-            <label class="form-label" for="retypePassword">Re-type Password</label>
-            <i class="fa fa-eye-slash password-toggle" id="toggleRetypePassword"></i>
-            <div class="invalid-feedback">
-              Passwords do not match.
-            </div>
           </div>
 
           <button
@@ -216,80 +246,19 @@
 
     <!-- MDB JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.3.0/mdb.min.js"></script>
-    <!-- GSAP JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
+
+    <!-- Image preview script -->
     <script>
-      // Animate Header
-      gsap.from('#edit-profile-header', {
-        duration: 1,
-        y: -100,
-        opacity: 0,
-        ease: 'bounce.out',
-      });
-
-      // Animate Form
-      gsap.from('#edit-form', {
-        duration: 1.2,
-        opacity: 0,
-        y: 100,
-        ease: 'power2.out',
-        delay: 0.5,
-      });
-
-      // Animate Profile Picture
-      gsap.from('#profile-picture', {
-        duration: 1,
-        scale: 0.5,
-        opacity: 0,
-        ease: 'back.out(1.7)',
-        delay: 0.5,
-      });
-
-      // Toggle password visibility
-      const togglePassword = document.getElementById('togglePassword');
-      const toggleRetypePassword = document.getElementById('toggleRetypePassword');
-      const passwordField = document.getElementById('password');
-      const retypePasswordField = document.getElementById('retypePassword');
-
-      togglePassword.addEventListener('click', () => {
-        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordField.setAttribute('type', type);
-        togglePassword.classList.toggle('fa-eye');
-        togglePassword.classList.toggle('fa-eye-slash');
-      });
-
-      toggleRetypePassword.addEventListener('click', () => {
-        const type = retypePasswordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        retypePasswordField.setAttribute('type', type);
-        toggleRetypePassword.classList.toggle('fa-eye');
-        toggleRetypePassword.classList.toggle('fa-eye-slash');
-      });
-
-      // Form validation
-      (function () {
-        'use strict';
-
-        const form = document.querySelector('#profileForm');
-
-        form.addEventListener('submit', function (event) {
-          const password = document.getElementById('password');
-          const retypePassword = document.getElementById('retypePassword');
-
-          if (password.value !== retypePassword.value) {
-            retypePassword.setCustomValidity('Passwords do not match');
-          } else {
-            retypePassword.setCustomValidity('');
-          }
-
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-
-          form.classList.add('was-validated');
-        });
-      })();
+      function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const output = document.getElementById('profile-picture');
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
     </script>
   </body>
 </html>

@@ -129,7 +129,7 @@
                                 </p>
 
                                 <hr>
-                                <% if (complaintsdata.MESSAGE) { %>
+                                <% if (!complaintsdata.MESSAGE) { %>
                                     <h5>Actions:</h5>
                                     <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                         data-bs-target="#resolveModal">Resolve</button>
@@ -137,8 +137,7 @@
                                         data-bs-target="#dismissModal">Dismiss</button>
                                     <button type="button" class="btn btn-warning" data-bs-toggle="modal"
                                         data-bs-target="#warningModal">Warning</button>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#banModal">Ban</button>
+                                  
                                     <hr>
                                 <% } else { %>
                         
@@ -280,35 +279,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="banModal" tabindex="-1" aria-labelledby="banModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="banModalLabel">Ban Options</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h5>Select Ban Duration:</h5>
-                        <form id="banForm">
-                            <div class="mb-3">
-                                <select class="form-select" id="banDuration" required>
-                                    <option value="" disabled selected>Select a duration</option>
-                                    <option value="Ban 2 days">Ban for 2 Days</option>
-                                    <option value="Ban 7 days">Ban for 7 Days</option>
-                                    <option value="Ban 15 days">Ban for 15 Days</option>
-                                    <option value="Ban 30 days">Ban for 30 Days</option>
-                                    <option value="permanent Ban">Permanent Ban</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-secondary">Apply Ban</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const darkModeSwitch = document.getElementById('darkModeSwitch');

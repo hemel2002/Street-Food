@@ -205,6 +205,113 @@
 </head>
 
 <body>
+    <% if (id) { %>
+        <nav class="navbar">
+            <div class="container-fluid">
+                <button class="navbar-toggler danger" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbarLight"
+                    aria-controls="offcanvasNavbarLight" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+        
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbarLight"
+            aria-labelledby="offcanvasNavbarLightLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLightLabel">Street Food Management</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                            href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/profile">
+                            Profile
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/vendor/<%= id %>/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Settings
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item"
+                                    href="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/edit_profile">Edit
+                                    Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/navbar"
+                    method="post">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Switch mode!
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button type="submit" class="dropdown-item d-flex align-items-center" name="mode"
+                                    value="light">
+                                    Light Mode
+                                </button>
+                            </li>
+                            <li>
+                                <button type="submit" name="mode" value="dark" class="dropdown-item d-flex align-items-center">
+                                    Dark Mode
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+                <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout"
+                    method="post">
+                    <ul class="navbar-nav mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Logout</button>
+                        </div>
+                    </ul>
+                </form>
+            </div>
+        </div>
+     
+    <% } else {%>
+        <div class="container-fluid bg-danger text-white py-2">
+            <div class="container d-flex justify-content-between">
+              <div>
+                <a href="http://localhost:3000/user/nearbyshop" class="btn btn-danger">
+                  <i class="bi bi-geo-alt-fill"></i>
+                  <span id="locationLink" class="cursor-pointer">
+                    Select Location
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        
+          <header class="py-3 border-bottom">
+            <div class="container d-flex flex-wrap justify-content-between align-items-center">
+              <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+                <img src="../../img/logo1.jpeg" height="50" alt="Logo">
+                <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+              </a>
+              <div class="d-flex align-items-center">
+                <a href="/home/login" class="btn btn-outline-danger me-2">Sign in</a>
+                <a href="#" class="btn btn-danger">Sign up</a>
+              </div>
+            </div>
+          </header>
+
+        <% } %>
+    
     <% if(viewshop.length > 0) {   %>
         <section draggable="false" class="overflow-hidden pt-0">
             <section class="mb-10">

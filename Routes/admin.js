@@ -358,6 +358,7 @@ router.post('/:id/ComplaintAction', requireloginadmin, async (req, res) => {
   const { V_ID } = req.query;
   const { MESSAGE } = req.body;
   const STATUS = 'Resolved';
+  const A_id=req.params.id;
 
   console.log(req.body);
   console.log(req.query.V_ID);
@@ -413,7 +414,7 @@ router.post('/:id/ComplaintAction', requireloginadmin, async (req, res) => {
       return;
     }
 
-    res.redirect(`/admin/${V_ID}/admin_complaints_dashboard`);
+    res.redirect(`/admin/${A_id}/admin_complaints_dashboard`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
@@ -427,6 +428,11 @@ router.post('/:id/ComplaintAction', requireloginadmin, async (req, res) => {
     }
   }
 });
-
+//////////////////////////////////////////////logout//////////////////////////////////////////////
+router.post('/:id/logout', requireloginadmin, (req, res) => {
+  req.session.user_id = null;
+  req.flash('logout', 'Successfully logged out');
+  res.redirect('/home');
+});
 
 module.exports = router;

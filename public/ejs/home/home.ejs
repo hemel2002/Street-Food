@@ -8,8 +8,7 @@
   <!-- Custom stylesheet -->
   <link href="../../css/stylesheet.css" rel="stylesheet">
   <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -20,188 +19,152 @@
 </head>
 
 <body data-mdb-theme="<%= mode %>">
-
+  <!-- Flash Alert -->
   <div class="row">
-    <%- include('../flash-alert/flash') %>
-    <%- include('home_nav.ejs') %>
-    <%- include('../flash-alert/signupFlash') %>
+    <%- include('../flash-alert/flash') %> 
+  </div>
 
-    <!-- Page Content -->
-    <div class="container d-flex flex-wrap justify-content-center"
-      style="background-image: url('../img/fuchka3_1.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-      <div class="px-4 py-5 my-5 text-center" style="color: #fdfefe;">
-        <h1 class="display-5 fw-bold">Discover the Best Street Food in Town</h1>
-        <div class="col-lg-6 mx-auto">
-          <p class="lead mb-4">"Connecting food lovers with the best street food experiences. From tantalizing treats
-            to exquisite meals, discover the culinary treasures of the city."</p>
-          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <button type="button" class="btn btn-primary btn-lg px-4">Explore Now</button>
-            <a href="/user/nearbyshop" class="btn btn-primary btn-lg px-4">Find Nearby Shop</a>
-          </div>
-        </div>
+  <!-- Header -->
+  <div class="container-fluid bg-danger text-white py-2">
+    <div class="container d-flex justify-content-between">
+      <div>
+        <a href="http://localhost:3000/user/nearbyshop" class="btn btn-danger">
+          <i class="bi bi-geo-alt-fill"></i>
+          <span id="locationLink" class="cursor-pointer">
+            Select Location
+          </span>
+        </a>
       </div>
     </div>
+  </div>
 
-    <!-- Popular Stall Section -->
-    <section class="py-5 text-center container">
-      <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-          <h1 class="fw-light">Most Popular Stall</h1>
-        </div>
+  <header class="py-3 border-bottom">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+        <img src="../../img/logo1.jpeg" height="50" alt="Logo">
+        <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+      </a>
+      <div class="d-flex align-items-center">
+        <a href="/home/login" class="btn btn-outline-danger me-2">Sign in</a>
+        <a href="#" class="btn btn-danger">Sign up</a>
       </div>
-    </section>
+    </div>
+  </header>
 
-    <!-- Stalls Listing -->
-    <div class="album py-5 bg-body-tertiary">
-      <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          <% top_rated_shop.forEach(element => { %>
-            <div class="col">
-              <div class="card shadow-sm">
-                <img src="<%= element.STALL_PIC %>" height="250" class="card-img-top" alt="Stall Image">
-                <div class="card-body">
-                  <h3 class="stall"> <%= element.STALL_NAME %></h3>
-                  <p class="card-text"><%= element.STALL_TITLE %></p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div class="btn-group">
-                      <a href="/home/viewShop?id=<%= element.V_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
-                    </div>
-                    <small class="text-body-secondary"><%= element.DAYS_SINCE_JOIN %> days</small>
-                  </div>
+  <!-- Hero Section -->
+
+
+  <!-- Popular Stall Section -->
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Most Popular Stall</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stalls Listing -->
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <% top_rated_shop.forEach(element => { %>
+        <div class="col">
+          <div class="card shadow-sm hover-shadow-zoom">
+            <img src="<%= element.STALL_PIC %>" height="250" class="card-img-top" alt="Stall Image">
+            <div class="card-body">
+              <h3 class="stall"> <%= element.STALL_NAME %></h3>
+              <p class="card-text"><%= element.STALL_TITLE %></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="/home/ViewShop?id=<%= element.V_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
                 </div>
+                <small class="text-body-secondary"><%= element.DAYS_SINCE_JOIN %> days</small>
               </div>
             </div>
-          <% }) %>
-        </div>
-    
-        <!-- Add a new row for the "More" button -->
-        <div class="row mt-4">
-          <div class="col-12 text-center">
-            <a href="/home/viewShop" class="btn btn-lg btn-outline-secondary">More</a>
           </div>
+        </div>
+        <% }) %>
+      </div>
+      <!-- "More" Button -->
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <a href="/home/viewShop" class="btn btn-lg btn-outline-secondary">More</a>
         </div>
       </div>
     </div>
-    <section class="py-5 text-center container">
-      <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-          <h1 class="fw-light">Most Recently Created Shops</h1>
-        </div>
+  </div>
+
+  <!-- Food Section -->
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Most Popular Foods</h1>
       </div>
-    </section>
-    <!-- Additional Shops Section -->
-    <div class="album py-5 bg-body-tertiary">
-      <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="food-list">
-          <% for (let i = (currentPage - 1) * 6; i < Math.min(currentPage * 6, shop.length); i++) { %>
+    </div>
+  </section>
+
+  <!-- Foods Listing -->
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <% food.forEach(food => { %>
+          <% if (food.RATING>=3) { %>
             <div class="col">
-              <div class="card h-100">
-                <div class="bg-image hover-overlay ripple" data-mdb-ripple-color="light">
-                  <img src="<%= shop[i].STALL_PIC %>" class="card-img-top" alt="Stall Image" />
-                  <a href="/home/viewShop?id=<%= shop[i].V_ID %>">
-                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.15)"></div>
-                  </a>
-                </div>
+              <div class="card shadow-sm hover-shadow-zoom">
+                <img src="<%= food.FOOD_PIC %>" height="250" class="card-img-top" alt="Food Image">
                 <div class="card-body">
-                  <h3 class="stall">
-                    <%= shop[i].STALL_NAME %>
-                  </h3>
-                  <p class="card-text"><%= shop[i].STALL_TITLE %></p>
+                  <h3 class="food"> <%= food.FOOD_NAME %></h3>
+                  <p class="card-text"><%= food.FOOD_DESCRIPTION %></p>
                   <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                      <a href="/home/viewShop?id=<%= shop[i].V_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
+                      
+                      <a href="/user/details_food?FOOD_ID=<%= food.FOOD_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
                     </div>
-                    <small class="text-muted"><%= shop[i].DAYS_SINCE_JOIN %> days</small>
+                    <small class="text-body-secondary"><%= food.RATING %> stars</small>
                   </div>
                 </div>
               </div>
             </div>
           <% } %>
-         
+     
+        <% }) %>
+      </div>
+      <!-- "More" Button for Foods -->
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <a href="/home/viewFood" class="btn btn-lg btn-outline-secondary">More</a>
         </div>
-
-        <!-- Pagination -->
-        <nav aria-label="Pagination example" class="mt-4">
-          <ul class="pagination pagination-lg flex-wrap justify-content-center" id="food-pagination">
-            <!-- Previous Button -->
-            <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-              <a class="page-link" href="?page=<%= Math.max(currentPage - 1, 1) %>" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <!-- Page Numbers -->
-            <% for (let i = 1; i <= totalPages; i++) { %>
-              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-              </li>
-            <% } %>
-            <!-- Next Button -->
-            <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-              <a class="page-link" href="?page=<%= Math.min(currentPage + 1, totalPages) %>" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
       </div>
     </div>
+  </div>
 
-    <!-- Counters Section -->
-    <section class="mt-5" id="counters" style="background-color: #4fa6f8;">
-      <div class="container">
-        <div class="row text-center">
-          <div class="col-md-3">
-            <div class="counter">
-              <span class="counter-value" data-count="<%= TOTAL_VENDORS %>"><%= TOTAL_VENDORS %></span>
-              <h3 class="counter-title">Total Vendors</h3>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="counter">
-              <span class="counter-value" data-count="<%= TOTAL_CUSTOMERS %>"><%= TOTAL_CUSTOMERS %></span>
-              <h3 class="counter-title">Total Customers</h3>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="counter">
-              <span class="counter-value" data-count="<%= TOTAL_VIDEOS %>"><%= TOTAL_VIDEOS %></span>
-              <h3 class="counter-title">Total Blogging Videos</h3>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="counter">
-              <span class="counter-value" data-count="<%= TOTAL_FOODS %>"><%= TOTAL_FOODS %></span>
-              <h3 class="counter-title">Total Street Foods</h3>
-            </div>
-          </div>
-
+  <!-- Counters Section -->
+  <section class="py-5 text-center bg-primary text-white" id="counters">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h3>Total Vendors</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_VENDORS %>"><%= TOTAL_VENDORS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Customers</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_CUSTOMERS %>"><%= TOTAL_CUSTOMERS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Blogging Videos</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_VIDEOS %>"><%= TOTAL_VIDEOS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Street Foods</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_FOODS %>"><%= TOTAL_FOODS %></span>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Scripts for Counter -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const counters = document.querySelectorAll('.counter-value');
-        counters.forEach(counter => {
-          const updateCount = () => {
-            const target = +counter.getAttribute('data-count');
-            const count = +counter.innerText;
-            const speed = 200;
-            const increment = target / speed;
-            if (count < target) {
-              counter.innerText = Math.ceil(count + increment);
-              setTimeout(updateCount, 10);
-            } else {
-              counter.innerText = target;
-            }
-          };
-          updateCount();
-        });
-      });
-    </script>
+  <script src="../../js/app.js"></script>
 
-  </div>
 </body>
 
 </html>
+

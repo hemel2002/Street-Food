@@ -24,10 +24,12 @@
                     <%= pending_complaints %>
                 </span>
             </a>
-            <a class="nav-link" href="#">
-                <span class="material-icons-sharp">logout</span>
-                Logout
-            </a>
+            <form action="/<%= id[0] === 'U' ? 'user' : id[0] === 'A' ? 'admin' : 'vendor' %>/<%= id %>/logout" method="post" class="w-100">
+                <button type="submit" class="btn btn-primary nav-link text-start">
+                    <span class="material-icons-sharp">logout</span>
+                    Logout
+                </button>
+            </form>
         </nav>
     </div>
 </aside>

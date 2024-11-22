@@ -53,3 +53,11 @@ INSERT INTO USER_PROMOTES_VENDOR (
     '490fde4a-0380-4c0a-8ba9-d7c0da0366cf',
     'S_16'
 );
+
+
+
+
+
+
+
+set SERVEROUTPUT ON;

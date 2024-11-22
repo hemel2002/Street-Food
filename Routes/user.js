@@ -69,20 +69,29 @@ router.get('/:id/edit_profile', requireloginuser, async (req, res) => {
   }
 });
 //////////////////////////update profile////////////////////////
-router.post('/:id/edit_profile', async (req, res) => {
+router.post('/:id/edit_profile', upload.single('profileImage'), async (req, res) => {
   const id = req.params.id;
-  const { FIRST_NAME, LAST_NAME, PHONE, PASSWORD } = req.body;
+  const { FIRST_NAME, LAST_NAME, PHONE } = req.body;
   req.session.FIRST_NAME = FIRST_NAME;
+  const profile_pic= req.file.path;
   let connection;
+
   try {
+    // Prepare Cloudinary URL for the image
+   
+
+    // Connect to OracleDB and update profile details
     connection = await OracleDB.getConnection(dbConfig);
-    await connection.execute(
+    connection.execute(
       `UPDATE CUSTOMERS 
-       SET FIRST_NAME = :FIRST_NAME, LAST_NAME = :LAST_NAME, PHONE = :PHONE, PASSWORD = :PASSWORD 
+       SET FIRST_NAME = :FIRST_NAME, LAST_NAME = :LAST_NAME, PHONE = :PHONE, PROFILE_PICture = :profile_pic
        WHERE C_ID = :id`,
-      { FIRST_NAME, LAST_NAME, PHONE,PASSWORD, id },
+      { FIRST_NAME, LAST_NAME, PHONE, id, profile_pic },
       { autoCommit: true }
     );
+ 
+ 
+
     req.flash('update_profile', 'Profile updated successfully!');
     res.redirect(`/user/${id}`);
   } catch (err) {
@@ -100,8 +109,7 @@ router.post('/:id/edit_profile', async (req, res) => {
       }
     }
   }
-}
-);
+});
 
 router.get('/nearbyshop', (req, res) => {
   res.render('blogger/map');
@@ -114,6 +122,7 @@ router.get('/data', (req, res) => {
 ////////////////////////////DETAILS////////////////////////
 router.get('/details_food', async (req, res) => {
   const FOOD_ID = req.query.FOOD_ID;
+  console.log('Food ID:', FOOD_ID);
 
   let connection;
   try {
@@ -761,13 +770,14 @@ router.post('/food_review', requireloginuser, async (req, res) => {
     const avg_food_rating = result.rows[0].AVG_FOOD_RATING;
     const avg_rating = ((avg_food_rating + hygiene_rating) / 2).toFixed(1);
 
-    await connection.execute(
+   const result2= await connection.execute(
       `UPDATE vendors 
        SET avg_rating = :avg_rating 
        WHERE v_id = :V_ID`,
       { avg_rating, V_ID },
       { autoCommit: true }
     );
+    console.log(result2);
 
 
 
@@ -833,6 +843,75 @@ router.post('/:id/edit_review', async (req, res) => {
         console.error(err);
         req.flash('error_review', 'An error occurred during review update');
         return res.redirect(`/user/${req.params.id}`);
+      }
+    }
+  }
+});
+
+//////////////////////////customer food review////////////////////////
+router.get('/:id/food_review', requireloginuser, require_complete_user_reg, async (req, res) => {
+  const email = req.session.email;
+  const FIRST_NAME = req.session.FIRST_NAME;
+  const FOOD_ID = req.query.FOOD_ID;
+  const cust_id = req.params.id;
+  let connection;
+  let reviewddata = [];
+
+  console.log('Food ID:', FOOD_ID);
+  console.log('Customer ID:', cust_id);
+
+  try {
+    connection = await OracleDB.getConnection(dbConfig);
+
+    // Fetch customer reviews
+    const result = await connection.execute(
+      `SELECT 
+         * FROM CUSTOMER_FOOD_REVIEWS_VIEW 
+       WHERE c_id = :cust_id 
+       ORDER BY C_DATE DESC`,
+      { cust_id }
+    );
+    reviewddata = result.rows;
+
+    // Check if customer has already reviewed this food item
+    const reviewed = result.rows.some((row) => row.C_ID === cust_id);
+
+    // Fetch food details
+    const result3 = await connection.execute(
+      'SELECT * FROM FOOD WHERE FOOD_ID = :FOOD_ID',
+      { FOOD_ID }
+    );
+
+    if (result3.rows.length === 0) {
+      console.log('No food item found with the provided ID.');
+      return res.status(404).send('Food item not found');
+    }
+
+    const food_name = result3.rows[0].FOOD_NAME;
+
+    if (reviewed) {
+      return res.render('blogger/already_review_food', {
+        reviewddata,
+        FIRST_NAME,
+        food_name,
+      });
+    } else {
+      return res.render('blogger/user_review_food', {
+        reviewddata,
+        email,
+        FIRST_NAME,
+        FOOD_ID,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
       }
     }
   }

@@ -1,0 +1,52 @@
+
+  <section class="mb-10 position-relative text-center text-lg-start">
+    <div class="px-4 py-5 px-md-5">
+      <div class="container">
+        <div class="row gx-lg-5 align-items-center">
+          <div class="col-lg-6 mb-5 mb-lg-0 py-5" style="z-index: 1">
+            <h1 class="my-5 display-4 fw-bold ls-tight">
+              <span>From street to your seat,</span>
+              <br>
+              <span class="text-danger">enjoy every bite!</span>
+            </h1>
+            <div class="d-md-flex flex-column align-items-start">
+              <!-- Enhanced Input Field and Button -->
+              <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" method="post" action="/home/search">
+              <div class="form-outline w-100 mb-4">
+                <input type="text" id="formControlLocation" class="form-control form-control-lg location-input " 
+                  placeholder="Search vendor or user" name="search"
+                  style="background-color: #fff; color: #000; border-radius: 8px; border: 2px solid #dc3545;" list="vendor-list">
+              </div>
+              <button type="submit" class="btn btn-danger btn-lg" style="border-radius: 8px;">
+                <i class="fas fa-search me-2"></i>Search
+              </button>
+              <datalist id="vendor-list">
+                <% for(let index = 0; index < vendor.length; index++) { %>
+                  <option value="<%= vendor[index].SHOP_DATA.STALL_NAME %>">
+                    <%= vendor[index].V_ID.toUpperCase() %> (<%= vendor[index].SHOP_DATA.V_FIRST_NAME %>, <%= vendor[index].SHOP_DATA.V_LAST_NAME %>)
+                    FROM <%= vendor[index].SHOP_DATA.DISTRICT %> - <%= vendor[index].SHOP_DATA.CITY %> - <%= vendor[index].SHOP_DATA.AREA %>
+                  </option>
+                <% } %>
+                <% food.forEach(element => { %>
+                  <option value="<%=element.FOOD_NAME%>">
+                 <%= element.FOOD_NAME %>
+                  </option>
+                <% }) %>
+                <% category.forEach(element => { %>
+                  <option value="<%=element.CATEGORY%>">
+                 <%= element.CATEGORY %>
+                  </option>
+                <% }) %>
+              </datalist>
+            </form>
+
+
+            </div>
+          </div>
+          <div class="col-lg-6 mb-5 mb-lg-0" style="z-index: 1">
+            <img src="../../img/home/home.jpeg" class="img-fluid large-img" alt="Street Food Stall">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
