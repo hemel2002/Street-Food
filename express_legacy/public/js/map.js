@@ -1,0 +1,325 @@
+var map = L.map('map').setView([0, 0], 2); // Initialize map with a default view
+var marker; // Declare marker variable
+var currentLocationMarker; // Marker for current location
+var currentLocation; // Coordinates of current location
+var routeLayer; // Layer to display route
+let address = [];
+let selectedShopCoordinates; // Store selected shop coordinates
+
+// Custom icons
+var shopIcon = L.icon({
+  iconUrl:
+    'data:image/png;base64,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', // Shop icon URL
+  iconSize: [32, 32],
+});
+
+var currentLocationIcon = L.icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png', // Current location icon URL
+  iconSize: [32, 32],
+});
+
+var searchLocationIcon = L.icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/854/854878.png', // Search location icon URL
+  iconSize: [32, 32],
+});
+
+// Add a tile layer
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
+
+// Get current location of the user
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function (position) {
+      currentLocation = [position.coords.latitude, position.coords.longitude];
+      currentLocationMarker = L.marker(currentLocation, {
+        icon: currentLocationIcon,
+      })
+        .addTo(map)
+        .bindPopup('You are here')
+        .openPopup();
+      map.setView(currentLocation, 12);
+    },
+    function (error) {
+      console.error('Error getting location: ', error);
+    }
+  );
+} else {
+  alert('Geolocation is not supported by this browser.');
+}
+
+// Function to handle input change event
+function handleInput() {
+  var input = document.getElementById('locationInput').value;
+  if (input.trim() === '') {
+    clearSuggestions();
+    return;
+  }
+  fetchSuggestions(input);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3000/home/shopLocation')
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      const address = data.map((item) => ({
+        area: item.AREA,
+        vendorName: item.V_FIRST_NAME + ' ' + item.V_LAST_NAME,
+        establishedDate: item.JOIN_DATE,
+        rating: item.AVG_RATING + '🌟',
+        imageUrl: item.STALL_PIC,
+        V_ID: item.V_ID,
+      })); // Convert to the desired format
+      addAddressMarkers(address); // Call the function to add markers after data is fetched
+    })
+    .catch((error) => console.error('Error fetching data:', error));
+});
+
+// Function to fetch suggestions from Geoapify API
+function fetchSuggestions(input) {
+  var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+  var url =
+    'https://api.geoapify.com/v1/geocode/autocomplete?text=' +
+    encodeURIComponent(input) +
+    '&apiKey=' +
+    apiKey;
+
+  axios
+    .get(url)
+    .then(function (response) {
+      displaySuggestions(response.data.features);
+    })
+    .catch(function (error) {
+      console.error('Error fetching suggestions:', error);
+    });
+}
+
+// Function to display suggestions
+function displaySuggestions(suggestions) {
+  var suggestionsContainer = document.getElementById('suggestions');
+  suggestionsContainer.innerHTML = '';
+
+  suggestions.forEach(function (suggestion) {
+    var suggestionText = suggestion.properties.formatted;
+    var suggestionItem = document.createElement('div');
+    suggestionItem.textContent = suggestionText;
+    suggestionItem.classList.add(
+      'suggestion',
+      'list-group-item',
+      'list-group-item-action'
+    );
+    suggestionItem.addEventListener('click', function () {
+      document.getElementById('locationInput').value = suggestionText;
+      clearSuggestions();
+      var coordinates = suggestion.geometry.coordinates;
+      centerMapAndAddMarker(coordinates, suggestionText);
+    });
+    suggestionsContainer.appendChild(suggestionItem);
+  });
+}
+
+// Function to clear suggestions
+function clearSuggestions() {
+  document.getElementById('suggestions').innerHTML = '';
+}
+
+// Function to center the map and add a marker on a specific location
+function centerMapAndAddMarker(coordinates, label) {
+  var latLng = [coordinates[1], coordinates[0]]; // Leaflet expects [lat, lng]
+  map.setView(latLng, 12);
+
+  if (marker) {
+    marker.setLatLng(latLng).bindPopup(label).openPopup();
+  } else {
+    marker = L.marker(latLng, { icon: searchLocationIcon })
+      .addTo(map)
+      .bindPopup(label)
+      .openPopup();
+  }
+}
+
+// Function to fetch and display directions
+function fetchAndDisplayDirections(start, end) {
+  var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+  var url =
+    'https://api.geoapify.com/v1/routing?waypoints=' +
+    start[0] +
+    ',' +
+    start[1] +
+    '|' +
+    end[1] +
+    ',' +
+    end[0] +
+    '&mode=drive&lang=en&details=instruction_details&apiKey=' +
+    apiKey;
+
+  axios
+    .get(url)
+    .then(function (response) {
+      // Extracting route information from the response
+      var routeData = response.data.features[0];
+      var routeCoordinates = routeData.geometry.coordinates[0]; // Assuming the first set of coordinates
+
+      // Draw route polyline on the map
+      if (routeLayer) {
+        map.removeLayer(routeLayer);
+      }
+
+      routeLayer = L.polyline(
+        routeCoordinates.map(function (coord) {
+          return [coord[1], coord[0]]; // GeoJSON coordinates are [lng, lat], Leaflet expects [lat, lng]
+        }),
+        { color: 'blue' }
+      ).addTo(map);
+      map.fitBounds(routeLayer.getBounds());
+
+      // Display route instructions and mark waypoints
+      displayRouteInstructions(routeData.properties.legs[0].steps);
+
+      // Display distance
+      var distance = routeData.properties.distance; // Distance in meters
+      var distanceKm = (distance / 1000).toFixed(2); // Convert to kilometers and format to 2 decimal places
+      document.getElementById('totalDistance').innerText = distanceKm + ' km';
+    })
+    .catch(function (error) {
+      console.error('Error fetching directions:', error);
+    });
+}
+
+// Function to display route instructions and mark waypoints
+function displayRouteInstructions(instructions) {
+  instructions.forEach(function (instruction) {
+    var instructionText = instruction.instruction.text;
+    console.log(instructionText); // Output the instruction text to console
+
+    // Reverse geocode the coordinates to get the address
+    if (instruction.instruction && instruction.instruction.location) {
+      var coordinates = instruction.instruction.location;
+      reverseGeocode(coordinates, instructionText);
+    }
+  });
+}
+
+// Function to reverse geocode coordinates and mark waypoints on the map
+function reverseGeocode(coordinates, instructionText) {
+  var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+  var url =
+    'https://api.geoapify.com/v1/geocode/reverse?lat=' +
+    coordinates[1] +
+    '&lon=' +
+    coordinates[0] +
+    '&apiKey=' +
+    apiKey;
+
+  axios
+    .get(url)
+    .then(function (response) {
+      var address = response.data.features[0].properties.formatted;
+      console.log('Address:', address); // Output the reverse geocoded address to console
+
+      // Mark waypoint on the map
+      var marker = L.marker([coordinates[1], coordinates[0]])
+        .addTo(map)
+        .bindPopup(instructionText + '<br>' + address)
+        .openPopup();
+    })
+    .catch(function (error) {
+      console.error('Error reverse geocoding coordinates:', error);
+    });
+}
+
+// Function to add address markers to the map and set up click event listeners
+function addAddressMarkers(addresses) {
+  var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+
+  addresses.forEach(function (location) {
+    var query = location.area;
+    var url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+      query
+    )}&apiKey=${apiKey}`;
+
+    axios
+      .get(url)
+      .then(function (response) {
+        if (response.data.features.length > 0) {
+          var coordinates = response.data.features[0].geometry.coordinates;
+          var latLng = [coordinates[1], coordinates[0]]; // Leaflet expects [lat, lng]
+
+          var addressMarker = L.marker(latLng, { icon: shopIcon })
+            .addTo(map)
+            .bindPopup(location.area);
+
+          addressMarker.on('click', function () {
+            selectedShopCoordinates = coordinates;
+
+            // Populate modal with shop details
+            document.getElementById('vendorName').innerText =
+              location.vendorName;
+            document.getElementById('establishedDate').innerText =
+              location.establishedDate;
+            document.getElementById('shopRating').innerText = location.rating;
+            document.getElementById('shopImage').src = location.imageUrl;
+            document.getElementById(
+              'detailsLink'
+            ).href = `http://localhost:3000/home/viewShop?id=${location.V_ID}`;
+            document.getElementById('totalDistance').innerText =
+              'Calculating...';
+
+            // Show the modal
+            var modal = new mdb.Modal(document.getElementById('shopModal'));
+            modal.show();
+
+            // Calculate distance without displaying route
+            if (currentLocation) {
+              calculateDistance(currentLocation, coordinates);
+            }
+          });
+        }
+      })
+      .catch(function (error) {
+        console.error('Error geocoding address:', error);
+      });
+  });
+}
+
+// Function to calculate distance between two points
+function calculateDistance(start, end) {
+  var apiKey = '7fa23b5a9b194102a9be9a11ce64a57c'; // Replace with your Geoapify API key
+  var url =
+    'https://api.geoapify.com/v1/routing?waypoints=' +
+    start[0] +
+    ',' +
+    start[1] +
+    '|' +
+    end[1] +
+    ',' +
+    end[0] +
+    '&mode=drive&lang=en&apiKey=' +
+    apiKey;
+
+  axios
+    .get(url)
+    .then(function (response) {
+      var routeData = response.data.features[0];
+      var distance = routeData.properties.distance; // Distance in meters
+      var distanceKm = (distance / 1000).toFixed(2); // Convert to kilometers and format to 2 decimal places
+      document.getElementById('totalDistance').innerText = distanceKm + ' km';
+    })
+    .catch(function (error) {
+      console.error('Error calculating distance:', error);
+    });
+}
+
+// Add event listener to input field
+document.getElementById('locationInput').addEventListener('input', handleInput);
+
+// Event listener for the route button inside the modal
+document.getElementById('routeButton').addEventListener('click', function () {
+  if (currentLocation && selectedShopCoordinates) {
+    fetchAndDisplayDirections(currentLocation, selectedShopCoordinates);
+  } else {
+    alert('Current location or shop coordinates not available.');
+  }
+});

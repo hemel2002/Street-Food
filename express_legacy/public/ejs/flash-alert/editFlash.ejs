@@ -1,0 +1,8 @@
+<% if(error_msg && error_msg.length>0 ){ %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong style="text-align: center;">
+        <%= error_msg %>
+      </strong>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>

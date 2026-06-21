@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Street Food Management System</title>
+  <!-- Custom stylesheet -->
+  <link href="../../css/stylesheet.css" rel="stylesheet">
+  <!-- Bootstrap -->
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+</head>
+
+<body data-mdb-theme="<%= mode %>">
+  <!-- Flash Alert -->
+  <div class="row">
+    <%- include('../flash-alert/flash') %> 
+  </div>
+
+  <!-- Header -->
+  <div class="container-fluid bg-danger text-white py-2">
+    <div class="container d-flex justify-content-between">
+      <div>
+        <a href="http://localhost:3000/user/nearbyshop" class="btn btn-danger">
+          <i class="bi bi-geo-alt-fill"></i>
+          <span id="locationLink" class="cursor-pointer">
+            Select Location
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <header class="py-3 border-bottom">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 text-decoration-none">
+        <img src="../../img/logo1.jpeg" height="50" alt="Logo">
+        <h1 class="logo text-danger fs-4 ms-2">Street Food Bangladesh</h1>
+      </a>
+      <div class="d-flex align-items-center">
+        <a href="/home/login" class="btn btn-outline-danger me-2">Sign in</a>
+        <a href="#" class="btn btn-danger">Sign up</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+
+
+  <!-- Popular Stall Section -->
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Most Popular Stall</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stalls Listing -->
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <% top_rated_shop.forEach(element => { %>
+        <div class="col">
+          <div class="card shadow-sm hover-shadow-zoom">
+            <img src="<%= element.STALL_PIC %>" height="250" class="card-img-top" alt="Stall Image">
+            <div class="card-body">
+              <h3 class="stall"> <%= element.STALL_NAME %></h3>
+              <p class="card-text"><%= element.STALL_TITLE %></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="/home/ViewShop?id=<%= element.V_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
+                </div>
+                <small class="text-body-secondary"><%= element.DAYS_SINCE_JOIN %> days</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+      <!-- "More" Button -->
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <a href="/home/viewShop" class="btn btn-lg btn-outline-secondary">More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Food Section -->
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <h1 class="fw-light">Most Popular Foods</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- Foods Listing -->
+  <div class="album py-5 bg-body-tertiary">
+    <div class="container">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <% food.forEach(food => { %>
+          <% if (food.RATING>=3) { %>
+            <div class="col">
+              <div class="card shadow-sm hover-shadow-zoom">
+                <img src="<%= food.FOOD_PIC %>" height="250" class="card-img-top" alt="Food Image">
+                <div class="card-body">
+                  <h3 class="food"> <%= food.FOOD_NAME %></h3>
+                  <p class="card-text"><%= food.FOOD_DESCRIPTION %></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      
+                      <a href="/user/details_food?FOOD_ID=<%= food.FOOD_ID %>" class="btn btn-sm btn-outline-secondary">View</a>
+                    </div>
+                    <small class="text-body-secondary"><%= food.RATING %> stars</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+     
+        <% }) %>
+      </div>
+      <!-- "More" Button for Foods -->
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <a href="/home/viewFood" class="btn btn-lg btn-outline-secondary">More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Counters Section -->
+  <section class="py-5 text-center bg-primary text-white" id="counters">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-3">
+          <h3>Total Vendors</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_VENDORS %>"><%= TOTAL_VENDORS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Customers</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_CUSTOMERS %>"><%= TOTAL_CUSTOMERS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Blogging Videos</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_VIDEOS %>"><%= TOTAL_VIDEOS %></span>
+        </div>
+        <div class="col-md-3">
+          <h3>Total Street Foods</h3>
+          <span class="counter-value display-4" data-count="<%= TOTAL_FOODS %>"><%= TOTAL_FOODS %></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="../../js/app.js"></script>
+
+</body>
+
+</html>
+

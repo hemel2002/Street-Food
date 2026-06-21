@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit/js/mdb.min.js"></script>
+
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .complain-section {
+            margin-top: 20px;
+        }
+
+
+
+        .profile-photo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .dark-mode {
+            margin-top: 20px;
+        }
+
+        .profile {
+            margin-top: 20px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+
+        <div class="container-fluid">
+            <div class="row">
+                <%- include('side_navbar') %>
+                    <div class="col-md-10">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="mb-0">Complaint Details</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5>Complaint ID:</h5>
+                                        <p>
+                                            <%= complaintsdata.COMPLAINT_ID %>
+                                        </p>
+                                        <h5>Customer Name:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_NAME %>
+                                        </p>
+                                        <h5>Email:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_EMAIL %>
+                                        </p>
+                                     
+                                        <h5 class="text-danger">Total complaints:
+                                            <% if (prev_complaint) { %>
+                                                <%= prev_complaint.length +1%>
+                                                times
+                                                <% } else { %>
+                                           <p class="text-warning">No Record found</p>
+                                                <% } %>
+                                        </h5>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5>Complaint Date:</h5>
+                                        <p>
+                                            <%= complaintsdata.C_COMPLAINT_DATE %>
+                                        </p>
+                                        <h5>Subject:</h5>
+                                        <p>
+                                            <%= complaintsdata.SUBJECT %>
+                                        </p>
+                                        <h5>Status:</h5>
+                                        <% if (complaintsdata.STATUS==='Pending' ) { %>
+                                            <p class="badge bg-warning text-dark">
+                                                <%= complaintsdata.STATUS %>
+                                            </p>
+                                            <% } else { %>
+                                                <p class="badge bg-success">
+                                                    <%= complaintsdata.STATUS %>
+                                                </p>
+                                                <% } %>
+                                                  
+
+
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5>Description:</h5>
+                                <p>
+                                    <%= complaintsdata.COMPLAINT %>
+                                </p>
+
+                                <hr>
+                                <% if (!complaintsdata.MESSAGE) { %>
+                                    <h5>Actions:</h5>
+                                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                        data-bs-target="#resolveModal">Resolve</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal"
+                                        data-bs-target="#dismissModal">Dismiss</button>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#warningModal">Warning</button>
+                                  
+                                    <hr>
+                                <% } else { %>
+                        
+                                <a href="#replyCollapse" class="link-info" data-bs-toggle="collapse"
+                                    aria-expanded="false" aria-controls="replyCollapse">
+                                    Action
+                                </a>
+                                <div class="collapse mt-3" id="replyCollapse">
+                                    <div class="card card-body">
+                                       
+                                            <div class="mb-3">
+                                                <textarea class="form-control text-danger" id="replyMessage" rows="4"
+                                                    placeholder="Write your reply here..." readonly> <%= complaintsdata.MESSAGE %> </textarea>
+                                                    <p><%= complaintsdata.A_REPLY_DATE %></p>
+                                            </div>
+                                           
+                                       
+                                    </div>
+                                </div>
+                                <% } %>
+
+                                <hr>
+                                <h5>Previous Reports</h5>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card-deck">
+                                            <% if (prev_complaint && prev_complaint.length> 0) { %>
+                                                <% prev_complaint.forEach(element=> { %>
+                                                    <div class="card mb-4 shadow-2-strong">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                Report ID: <%= element.COMPLAINT_ID %>
+                                                            </h5>
+                                                            <p class="card-text">
+                                                                <strong>Subject:</strong>
+                                                                <%= element.SUBJECT %><br>
+                                                                    <strong>Date:</strong>
+                                                                    <%= element.C_COMPLAINT_DATE %><br>
+                                                                        <strong>Status:</strong>
+                                                                        <span
+                                                                            class="badge <%= element.STATUS === 'Pending' ? 'bg-warning' : 'bg-success' %>">
+                                                                            <%= element.STATUS %>
+                                                                        </span>
+                                                            </p>
+                                                            <a href="/admin/<%= id %>/complain_details?V_ID=<%= element.V_ID  %>&C_ID=<%= element.C_ID  %>"
+                                                                class="btn btn-outline-primary">View Details</a>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
+                                                        <% } else { %>
+                                                            <div class="card mb-4 shadow-2-strong">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title text-success">
+                                                                        No Previous Complaints Found
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
+                                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal fade" id="resolveModal" tabindex="-1" aria-labelledby="resolveModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resolveModalLabel">Resolve Complaint</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to resolve this complaint?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Resolve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="dismissModal" tabindex="-1" aria-labelledby="dismissModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dismissModalLabel">Dismiss Complaint</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to dismiss this complaint?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger">Dismiss</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="warningModalLabel">Issue Warning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Select Warning Type:</h5>
+                        <form id="warningForm" action="/admin/<%= id %>/ComplaintAction?V_ID=<%= V_ID %>&C_ID=<%= C_ID %>" method="post">
+                            <div class="mb-3">
+                                <label for="warningType" class="form-label">Warning Type:</label>
+                                <select class="form-select" id="warningType" required name="MESSAGE">
+                                    <option value="" disabled selected>Select a warning</option>
+                                    <option value="restrict_food_creation Max 4 posts/day">Restrict Food Creation (Max 4 posts/day)
+                                    </option>
+                                    <option value="restrict_food_creation Max 2 posts/day">Restrict Food Creation (Max 2 posts/day)
+                                    </option>
+                                    <option value="Prevent Promotion (1 Day)">Prevent Promotion (1 Day)</option>
+                                    <option value="Prevent Promotion (2 Days)">Prevent Promotion (2 Days)</option>
+                                    
+                                  
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-warning">Apply Warning</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

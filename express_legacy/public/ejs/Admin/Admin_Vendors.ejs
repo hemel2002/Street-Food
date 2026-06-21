@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet">
+    <title>Admin Analytics</title>
+    <style>
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+            background-color: #007bff;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .complain-section {
+            margin-top: 20px;
+        }
+
+        .profile-photo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .dark-mode {
+            margin-top: 20px;
+        }
+
+        .profile {
+            margin-top: 20px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .progress {
+            height: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('header') %>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar Section -->
+                <%- include('side_navbar') %>
+                    <!-- End of Sidebar Section -->
+
+                    <!-- Main Content -->
+                    <main class="col-md-7 p-4">
+                        <h1 class="mb-4">Customer List</h1>
+
+                        <!-- Customer List Table -->
+                        <div class="table-responsive  p-4 rounded shadow-sm">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                    <tr>
+                                        <th scope="col">V-ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Hygiene Rating</th>
+                                        <th scope="col">Chart</th>
+                                    </tr>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Replace with dynamic data from backend or database -->
+                                    <% for(let i=0; i < vendorsdata.length; i++) { %>
+                                        <tr>
+                                            <td>
+                                                <%= vendorsdata[i].V_ID %>
+                                            </td>
+                                            <td>
+                                                <%= vendorsdata[i].V_FIRST_NAME %>
+                                            </td>
+                                            <td>
+                                                <%= vendorsdata[i].EMAIL %>
+                                            </td>
+                                            <td>
+                                                <%= vendorsdata[i].PHONE %>
+                                            </td>
+                                            <% for(let j=0; j < avg_data.length; j++) { %>
+                                                <% if (avg_data[j].V_ID===vendorsdata[i].V_ID) { %>
+                                                    <td>
+                                                        <%= avg_data[j].AVG_RATING %>
+                                                    </td>
+                                                    <td>
+                                                        <div class="progress">
+                                                            <div class="progress-bar" role="progressbar"
+                                                                style="width: <%= avg_data[j].AVG_RATING * 20 %>%; color: white;"
+                                                                aria-valuenow="<%= avg_data[j].AVG_RATING * 20 %>"
+                                                                aria-valuemin="0" aria-valuemax="100">
+                                                                <%= avg_data[j].AVG_RATING %> / 5
+                                                            </div>
+                                                        </div>
+
+                                                    </td>
+                                                    <% } %>
+                                                        <% } %>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                            </ul>
+                        </nav>
+                    </main>
+                    <!-- End of Main Content -->
+
+                    <!-- Right Section -->
+                    <%- include('Admin_Complaints_Section') %>
+                        <!-- End of Right Section -->
+            </div>
+        </div>
+        <!-- Pagination -->
+
+        <!-- End of Main Content -->
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+                const body = document.body;
+
+                // Check localStorage for dark mode preference
+                if (localStorage.getItem('darkMode') === 'enabled') {
+                    body.setAttribute('data-mdb-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                }
+
+                darkModeSwitch.addEventListener('change', function () {
+                    if (darkModeSwitch.checked) {
+                        body.setAttribute('data-mdb-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        body.removeAttribute('data-mdb-theme');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

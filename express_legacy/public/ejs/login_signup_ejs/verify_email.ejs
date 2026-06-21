@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+    <style>
+        .bg-image {
+            background-image: url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w5NjI0M3wwfDF8c2VhcmNofDEwfHxmb29kfGVufDB8fHx8MTcyMDU1MDkxM3ww&ixlib=rb-4.0.3&q=80&w=1080');
+            height: 500px;
+            background-size: cover;
+            background-position: 50% 50%;
+            background-color: transparent;
+        }
+
+        .card-custom {
+            margin-top: -170px;
+            background: hsla(0, 0%, 100%, 0.7);
+            backdrop-filter: blur(30px);
+        }
+
+        .form-outline input.form-control {
+            border: 1px solid #55a6f8;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-outline label.form-label {
+            color: #495057;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="container pt-5">
+        <section class="mb-10">
+            <div class="p-5 text-center bg-image"></div>
+            <div class="card mx-4 mx-md-5 text-center shadow-5-strong card-custom">
+                <div class="card-body px-4 py-5 px-md-5">
+                    <h1 class="display-3 fw-bold ls-tight mb-4">
+                        <span>HELLO,</span>
+                        <br>
+                        <span class="text-danger">&nbsp;Enter the&nbsp; One-Time Password (OTP) to verify your email
+                            address:</span>
+                    </h1>
+
+                    <div class="form-outline" data-mdb-input-init>
+                        <input type="text" id="form12" class="form-control" />
+                        <label class="form-label" for="form12">Enter OTP</label>
+                    </div>
+                    <form id="otpForm" action="/emailVerification/otp?<%= queryParams %>" method="POST">
+                        <input type="hidden" id="otpHidden" name="otpHidden" value="" />
+                        <button type="submit" class="btn btn-success btn-lg py-3 px-5 mb-2 me-2" id="verify">
+                            VERIFY
+                        </button>
+                        <a id="resendButton" class="btn btn-danger btn-lg py-3 px-5 mb-2 me-2 ripple-surface-danger"
+                            role="button" style="min-width: auto;">SEND OTP</a>
+                    </form>
+
+                    <div id="timer" class="mt-3"></div>
+                    <div id="alertPlaceholder"></div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <script>
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const interval = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    document.getElementById('resendButton').classList.remove('disabled');
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accountType = urlParams.get('accountType');
+            const firstName = urlParams.get('firstName');
+            const lastName = urlParams.get('lastName');
+            const email = urlParams.get('email');
+            const phone = urlParams.get('phone');
+            const district = urlParams.get('district');
+            const city = urlParams.get('city');
+            const location = urlParams.get('location');
+            const stallName = urlParams.get('stallName');
+            const stallPic = urlParams.get('stallPic');
+            const shopLocationUrl = urlParams.get('shopLocationUrl');
+            const password = urlParams.get('password');
+            const terms = urlParams.get('terms');
+
+            const queryParams = new URLSearchParams({
+                accountType,
+                firstName,
+                lastName,
+                email,
+                phone,
+                district,
+                city,
+                location,
+                stallName,
+                stallPic,
+                shopLocationUrl,
+                password,
+                terms,
+            }).toString();
+
+            document.getElementById('verify').addEventListener('click', (event) => {
+                event.preventDefault();
+                const otpInput = document.getElementById('form12');
+                const otpValue = otpInput.value;
+                const otpHidden = document.getElementById('otpHidden').value;
+
+                console.log('Entered OTP:', otpValue);  // Log entered OTP
+                console.log('Hidden OTP:', otpHidden);  // Log hidden OTP
+
+                if (otpValue !== otpHidden) {
+                    showAlert('OTP doesn\'t match, please try again');
+                } else {
+                    document.getElementById('otpForm').submit();
+                }
+            });
+
+            document.getElementById('resendButton').addEventListener('click', (event) => {
+                event.preventDefault();
+                const resendButton = document.getElementById('resendButton');
+                const timerDisplay = document.getElementById('timer');
+                let timerDuration = 120; // 120 seconds = 2 minutes
+
+                resendButton.classList.add('disabled');
+                startTimer(timerDuration, timerDisplay);
+
+                fetch(`/otp_val_verify?${queryParams}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fetched OTP:', data);  // Log fetched OTP
+                        document.getElementById('otpHidden').value = data; // Update hidden input with OTP
+                    })
+                    .catch(error => {
+                        console.error('Error fetching OTP:', error);
+                        showAlert('An error occurred while sending OTP.');
+                    });
+            });
+        };
+
+        function showAlert(message) {
+            const alertPlaceholder = document.getElementById('alertPlaceholder');
+            const alertHTML = `
+                <div class="alert alert-danger mb-0 alert-dismissible alert-absolute fade show" role="alert">
+                    <i class="fas fa-triangle-exclamation me-2"></i> ${message}
+                    <button type="button" class="btn-close ms-2" data-mdb-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+            alertPlaceholder.innerHTML = alertHTML;
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+/* styles.css */
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .bg-danger {
+    background-color: #dc3545 !important;
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+
+
+
+  
+
+/* hero section */body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.hero-section {
+    background-color: #f8f9fa;
+    background-image: url('images/bg-pattern.png'); /* Add a subtle pattern or image as background if needed */
+    background-size: cover;
+    background-position: center;
+    padding: 50px 0;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.2;
+    color:#dc3545; /* A shade of red that matches the theme */
+}
+
+.highlight {
+    color: #ff0000;
+}
+
+.subtitle {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.input-group {
+    margin-top: 30px;
+}
+
+/* Custom styles for location input and button */
+.location-input {
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.find-stall-btn {
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-size: 1.1rem;
+    background-color: #dc3545;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.find-stall-btn:hover {
+    background-color: #f32337;
+}
+
+/* Custom styles for image */
+.large-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* Add some rounding for a smoother look */
+  margin-right: -10%;
+  transform: scale(1.2); /* Scale the image */
+}

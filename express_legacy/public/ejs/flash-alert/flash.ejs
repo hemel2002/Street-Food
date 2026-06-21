@@ -1,0 +1,110 @@
+<% if (success && success.length> 0) { %>
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong style="text-align: center;">
+      <%= success[0] %>
+    </strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <% } %>
+
+    <% if (error && error.length> 0) { %>
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong style="text-align: center;">
+          <%= error %>
+        </strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <% } %>
+        <% if(complete && complete.length>0){ %>
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong style="text-align: center;">
+              <%= complete %>
+            </strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <% } %>
+            <% if(sendemail && sendemail.length>0){ %>
+              <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <strong style="text-align: center;">
+                  <%= sendemail %>
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <% } %>
+                <% if(foodupdated && foodupdated.length>0){ %>
+                  <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <strong style="text-align: center;">
+                      <%= foodupdated %>
+                    </strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  <% } %>
+                    <% if(requireLOGIN && requireLOGIN.length>0){ %>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong style="text-align: center;">
+                          <%= requireLOGIN %>
+                        </strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                      <% } %>
+                        <% if(logout && logout.length>0){ %>
+                          <div class="alert alert-info alert-dismissible fade show" role="alert">
+                            <strong style="text-align: center;">
+                              <%= logout %>
+                            </strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>
+                          <% } %>
+                            <% if(delete_success && delete_success.length>0){ %>
+                              <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <strong style="text-align: center;">
+                                  <%= delete_success %>
+                                </strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                  aria-label="Close"></button>
+                              </div>
+                              <% } %>
+
+                                <% if(review && review.length>0){ %>
+                                  <div class="modal top fade show" id="exampleModal" tabindex="-1"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true" data-mdb-backdrop="true"
+                                    data-mdb-keyboard="true" style="display: block;">
+                                    <div class="modal-dialog">
+                                      <div class="modal-content">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="exampleModalLabel">Success</h5>
+                                          <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                            aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                          <%= review %>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button type="button" class="btn btn-success" data-mdb-dismiss="modal">
+                                            Close
+                                          </button>
+
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                      const modalElement = document.getElementById('exampleModal');
+                                      const modalInstance = new mdb.Modal(modalElement);
+                                      modalInstance.show();
+                                    });
+                                  </script>
+                                  <% } %>
+                                    <% if (review_error && review_error.length> 0) { %>
+                                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong style="text-align: center;">
+                                          <%= review_error %>
+                                        </strong>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                          aria-label="Close"></button>
+                                      </div>
+                                      <% } %>
+
+
+                                        <!-- End Example Code -->

@@ -1,0 +1,52 @@
+/* Custom Styles for Admin Dashboard */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+aside {
+    background: #3a3a3a;
+    color: #fff;
+}
+
+aside .nav-link {
+    color: #ddd;
+}
+
+aside .nav-link:hover {
+    background: #444;
+    color: #fff;
+}
+
+.nav-link.active {
+    background: #555;
+}
+
+.profile {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.profile-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.reminders .card {
+    margin-top: 1rem;
+    background: #f8f9fa;
+    border: none;
+}
+
+.dark-mode span {
+    cursor: pointer;
+}
+
+.dark-mode .active {
+    display: inline;
+}
+
+.dark-mode span:not(.active) {
+    display: none;
+}

@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gold: #F9CC21;
+  --color-gold-hover: #E0B410;
+  --color-brand-black: #000000;
+  --color-brand-dark: #0F0F10;
+  --color-brand-gray: #868686;
+  --color-brand-light: #F5F5F7;
+  --color-brand-gainsboro: #E6E5E5;
+  --color-brand-firebrick: #C32B2B;
+  --color-glass-bg: rgba(255, 255, 255, 0.7);
+  --color-glass-dark: rgba(15, 15, 16, 0.7);
+  
+  --font-outfit: var(--font-outfit);
+  --font-inter: var(--font-inter);
+  --font-sans: var(--font-outfit), var(--font-inter), system-ui, -apple-system, sans-serif;
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-slide-up: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-tilt: tilt 10s infinite linear;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes tilt {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
+}
+
+:root {
+  --background: #F5F5F7;
+  --foreground: #0F0F10;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode {
+  --background: #09090A;
+  --foreground: #F5F5F7;
+  --card-bg: rgba(15, 15, 16, 0.85);
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-outfit), var(--font-inter), sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+}
+
+/* Custom Scrollbar for premium look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(134, 134, 134, 0.3);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(134, 134, 134, 0.5);
+}
+
+/* Hide scrollbar for category list */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

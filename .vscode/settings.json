@@ -1,0 +1,11 @@
+{
+  "liveServer.settings.port": 5501,
+  "editor.multiCursorLimit": 10000,
+  "chat.tools.terminal.autoApprove": {
+    "npx vercel": true,
+    "/^node -e \"\nconst \\{ createClient \\} = require\\('@supabase/supabase-js'\\);\nconst dbUrl = 'https://momizqjzfukedqbzoxdn\\.supabase\\.co';\nconst key = 'sb_publishable_W0LHvB8YlCTX6hqAjoeHZw_0kBHmtaR';\nconst sb = createClient\\(dbUrl, key\\);\nsb\\.from\\('stalls'\\)\\.select\\('\\*'\\)\\.limit\\(1\\)\\.then\\(console\\.log\\)\\.catch\\(console\\.error\\);\n\"$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}
