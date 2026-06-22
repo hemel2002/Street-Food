@@ -142,7 +142,7 @@ interface AppContextType {
   setPromoCode: (code: string) => void;
   setCurrentLocation: (loc: string) => void;
   toggleTheme: () => void;
-  loginUser: (email: string, role: 'customer' | 'vendor' | 'admin') => void;
+  loginUser: (email: string, role: 'customer' | 'vendor' | 'admin') => Promise<void>;
   logoutUser: () => void;
   addReview: (stallId: string, rating: number, comment: string) => Promise<void>;
   addFood: (foodData: Omit<Food, 'id'>) => Promise<boolean>;
@@ -868,12 +868,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
-  const loginUser = (email: string, role: 'customer' | 'vendor' | 'admin') => {
+  const loginUser = async (email: string, role: 'customer' | 'vendor' | 'admin') => {
     const found = profiles.find(p => p.email.toLowerCase() === email.toLowerCase());
     if (found) {
       setCurrentUser(found);
     } else {
-      let id = `simulated-user-${role}`;
+      let id = `user-${Date.now()}`;
       if (email === 'hemal@gmail.com') id = 'cust-1';
       else if (email === 'vendor@gmail.com') id = 'owner-1';
       else if (email === 'admin@gmail.com') id = 'admin-1';
@@ -883,7 +883,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         email,
         full_name: email.split('@')[0],
         phone: '+1 555-0199',
-        role
+        role,
+        blocked: false
       };
       setCurrentUser(profile);
       setProfiles(prev => {
@@ -892,6 +893,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
         return prev;
       });
+
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+      ) {
+        try {
+          const { error } = await supabase.from('profiles').insert(profile);
+          if (error) throw error;
+        } catch (e) {
+          console.error('Failed to sync new profile to Supabase:', e);
+        }
+      }
     }
   };
 
