@@ -77,6 +77,7 @@ export default function DetailView() {
     
     const success = await addComplaint(selectedStall.id, complaintReason);
     if (success) {
+      alert('✓ Complaint escalated to admin board successfully!');
       setComplaintReason('');
       setComplaintSuccess(true);
       setTimeout(() => {
