@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, User, LogOut, ShieldCheck, ShoppingBag, PlusCircle, UserCheck, Lock, Sparkles, Phone, Compass } from 'lucide-react';
+import { ArrowLeft, User, LogOut, ShieldCheck, ShoppingBag, PlusCircle, UserCheck, Lock, Sparkles, Phone, Compass, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 
 export default function AuthView() {
-  const { currentUser, loginUser, registerUser, logoutUser, updateProfile } = useApp();
+  const { currentUser, loginUser, registerUser, logoutUser, updateProfile, orders } = useApp();
   const router = useRouter();
   
   // Login input states
@@ -25,6 +25,7 @@ export default function AuthView() {
   const [profilePhone, setProfilePhone] = useState(currentUser?.phone || '');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [profileSuccessMsg, setProfileSuccessMsg] = useState('');
+  const [expandedOrders, setExpandedOrders] = useState<Record<string, boolean>>({});
 
   // 3D Card States
   const [isFlipped, setIsFlipped] = useState(false);
@@ -97,6 +98,15 @@ export default function AuthView() {
     await registerUser(email, fullName, role);
     setIsLoggingIn(false);
     router.push(role === 'admin' ? '/admin' : role === 'vendor' ? '/dashboard' : '/menu');
+  };
+
+  const userOrders = orders ? orders.filter(o => o.user_id === currentUser?.id) : [];
+
+  const toggleOrderExpand = (orderId: string) => {
+    setExpandedOrders(prev => ({
+      ...prev,
+      [orderId]: !prev[orderId]
+    }));
   };
 
   return (
@@ -198,6 +208,112 @@ export default function AuthView() {
                   {isUpdatingProfile ? 'Saving Details...' : 'Save Profile Changes'}
                 </button>
               </form>
+            </div>
+
+            {/* Order History Panel */}
+            <div className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800 rounded-[32px] p-6 shadow-xl space-y-4">
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-neutral-400 dark:text-neutral-500 flex items-center gap-1.5 pl-1">
+                <ShoppingBag size={12} className="text-gold" />
+                <span>Order History</span>
+              </h4>
+
+              {userOrders.length === 0 ? (
+                <div className="text-center py-6 text-brand-gray text-[11px] font-semibold">
+                  You haven't placed any orders yet.
+                </div>
+              ) : (
+                <div className="max-h-[300px] overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+                  {userOrders.map((order) => {
+                    const isExpanded = !!expandedOrders[order.id];
+                    const statusConfig = {
+                      pending: { bg: 'bg-amber-500/10 text-amber-500 border-amber-500/30', label: 'Pending' },
+                      preparing: { bg: 'bg-blue-500/10 text-blue-500 border-blue-500/30', label: 'Preparing' },
+                      shipping: { bg: 'bg-purple-500/10 text-purple-500 border-purple-500/30', label: 'Shipping' },
+                      delivered: { bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30', label: 'Delivered' },
+                    }[order.status] || { bg: 'bg-neutral-500/10 text-neutral-500 border-neutral-500/30', label: order.status };
+
+                    const dateFormatted = new Date(order.created_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    });
+
+                    return (
+                      <div 
+                        key={order.id}
+                        className="bg-neutral-50/50 dark:bg-neutral-950/40 border border-neutral-100 dark:border-neutral-850 rounded-2xl overflow-hidden transition-all duration-200"
+                      >
+                        {/* Summary Header */}
+                        <div 
+                          onClick={() => toggleOrderExpand(order.id)}
+                          className="p-3.5 flex items-center justify-between cursor-pointer hover:bg-neutral-100/50 dark:hover:bg-neutral-900/40 transition-colors"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-black text-foreground">
+                                #{order.id.slice(-6).toUpperCase()}
+                              </span>
+                              <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full border ${statusConfig.bg}`}>
+                                {statusConfig.label}
+                              </span>
+                            </div>
+                            <div className="text-[9px] text-brand-gray font-bold">
+                              {dateFormatted}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <span className="block text-xs font-black text-foreground">
+                                ${order.total_amount.toFixed(2)}
+                              </span>
+                              <span className="block text-[8px] text-brand-gray font-bold">
+                                {order.items?.length || 0} {order.items?.length === 1 ? 'item' : 'items'}
+                              </span>
+                            </div>
+                            {isExpanded ? (
+                              <ChevronUp size={14} className="text-brand-gray" />
+                            ) : (
+                              <ChevronDown size={14} className="text-brand-gray" />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Collapsible Details */}
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="border-t border-neutral-100 dark:border-neutral-850 bg-neutral-100/20 dark:bg-neutral-950/20 px-3.5 py-3 space-y-2.5 text-[11px]"
+                            >
+                              <div className="space-y-1.5">
+                                {order.items?.map((item) => (
+                                  <div key={item.id} className="flex justify-between items-center text-xs">
+                                    <div className="text-foreground font-semibold">
+                                      {item.food_name || 'Food Item'} <span className="text-brand-gray text-[10px]">x{item.quantity}</span>
+                                    </div>
+                                    <div className="text-brand-gray font-bold">
+                                      ${(item.price * item.quantity).toFixed(2)}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="pt-2 border-t border-neutral-200/40 dark:border-neutral-800/40 text-[9px] text-brand-gray font-bold space-y-0.5">
+                                <div><span className="text-foreground/75">Delivery Address:</span> {order.delivery_address}</div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Quick Actions Panel */}

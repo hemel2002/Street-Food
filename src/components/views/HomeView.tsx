@@ -32,15 +32,7 @@ export default function HomeView() {
   const [heatmapMode, setHeatmapMode] = useState(false);
   const [isClassifying, setIsClassifying] = useState(false);
   const [alertMsg, setAlertMsg] = useState<string | null>(null);
-
-  // Trigger alert when stall data is seeded or changes
-  useEffect(() => {
-    // Show a dynamic alert simulating a nearby notification
-    const timer = setTimeout(() => {
-      setAlertMsg("🔔 Alert: New Gourmet Hamburger Stall appeared 450m away from your coordinates!");
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, []);
+  const [alertTriggered, setAlertTriggered] = useState(false);
 
   // Distance calculator helper
   const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -57,6 +49,35 @@ export default function HomeView() {
 
     return R * c; // in meters
   };
+
+  // Trigger alert when stall data is seeded or changes
+  useEffect(() => {
+    if (alertTriggered) return;
+    if (stalls && stalls.length > 0) {
+      const timer = setTimeout(() => {
+        const loc = userLocation || { lat: 40.6782, lng: -73.9442 };
+        
+        let closestStall = stalls[0];
+        let minDistance = Infinity;
+        
+        stalls.forEach(stall => {
+          const dist = getDistance(loc.lat, loc.lng, stall.lat, stall.lng);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestStall = stall;
+          }
+        });
+        
+        const distanceStr = minDistance < 1000 
+          ? `${Math.round(minDistance)}m` 
+          : `${(minDistance / 1000).toFixed(1)}km`;
+          
+        setAlertMsg(`🔔 Alert: "${closestStall.name}" is located ${distanceStr} away from your coordinates!`);
+        setAlertTriggered(true);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [stalls, userLocation, alertTriggered]);
 
   // Open status helper
   const isStallOpenNow = (stall: Stall) => {
