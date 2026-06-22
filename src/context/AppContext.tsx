@@ -913,19 +913,43 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     setReviews(prev => [newRev, ...prev]);
 
+    // Calculate new average rating for this stall
+    const stallReviews = [newRev, ...reviews].filter(r => r.stall_id === stallId);
+    const newAvgRating = parseFloat(
+      (stallReviews.reduce((sum, r) => sum + r.rating, 0) / stallReviews.length).toFixed(1)
+    );
+
+    // Update local stalls state
+    setStalls(prev =>
+      prev.map(s => (s.id === stallId ? { ...s, avg_rating: newAvgRating } : s))
+    );
+    if (selectedStall && selectedStall.id === stallId) {
+      setSelectedStall(prev => (prev ? { ...prev, avg_rating: newAvgRating } : null));
+    }
+
     if (
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
     ) {
       try {
-        await supabase.from('reviews').insert({
+        const { error: reviewError } = await supabase.from('reviews').insert({
+          id: newRev.id,
           user_id: currentUser?.id ? currentUser.id : null,
           stall_id: stallId,
           rating,
-          comment
+          comment,
+          user_name: newRev.user_name
         });
+        if (reviewError) throw reviewError;
+
+        // Update the average rating of the stall in Supabase
+        const { error: stallError } = await supabase
+          .from('stalls')
+          .update({ avg_rating: newAvgRating })
+          .eq('id', stallId);
+        if (stallError) throw stallError;
       } catch (e) {
-        console.error('Failed to sync review with Supabase', e);
+        console.error('Failed to sync review and update average rating with Supabase:', e);
       }
     }
   };
