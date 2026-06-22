@@ -681,6 +681,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to parse user', e);
       }
     }
+
+    const savedPromoCode = localStorage.getItem('vrooklyn_promo_code');
+    if (savedPromoCode) {
+      setPromoCodeState(savedPromoCode);
+    }
+
     setIsLoading(false);
     detectUserLocation();
   }, []);
@@ -693,6 +699,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem('vrooklyn_user');
     }
   }, [currentUser]);
+
+  // Automatically recalculate discount when cart or promo code changes
+  useEffect(() => {
+    if (!promoCode) {
+      setDiscountAmount(0);
+      return;
+    }
+    
+    // Check fixed general promo codes
+    if (promoCode === 'WELCOME20') {
+      setDiscountAmount(20);
+      return;
+    }
+    if (promoCode === 'STREET30') {
+      setDiscountAmount(30);
+      return;
+    }
+    
+    // Check vendor promo codes
+    const vendorCode = vendorPromoCodes.find(p => p.code === promoCode && p.active);
+    if (vendorCode) {
+      if (vendorCode.type === 'fixed') {
+        setDiscountAmount(vendorCode.discount);
+      } else {
+        const subtotal = cart.reduce((acc, item) => acc + (item.food.price * item.quantity), 0);
+        setDiscountAmount(subtotal * vendorCode.discount);
+      }
+    }
+  }, [cart, promoCode, vendorPromoCodes]);
 
   // Fetch real data from Supabase if configured, otherwise fall back to mock data
   useEffect(() => {
@@ -854,6 +889,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('vrooklyn_cart');
     setPromoCodeState('');
     setDiscountAmount(0);
+    localStorage.removeItem('vrooklyn_promo_code');
   };
 
   const applyPromoCode = (code: string): boolean => {
@@ -863,23 +899,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const vendorCode = vendorPromoCodes.find(p => p.code === cleanCode && p.active);
     if (vendorCode) {
       setPromoCodeState(vendorCode.code);
-      if (vendorCode.type === 'fixed') {
-        setDiscountAmount(vendorCode.discount);
-      } else {
-        const subtotal = cart.reduce((acc, item) => acc + (item.food.price * item.quantity), 0);
-        setDiscountAmount(subtotal * vendorCode.discount);
-      }
+      localStorage.setItem('vrooklyn_promo_code', vendorCode.code);
       return true;
     }
 
     if (cleanCode === 'WELCOME20') {
       setPromoCodeState('WELCOME20');
-      setDiscountAmount(20); 
+      localStorage.setItem('vrooklyn_promo_code', 'WELCOME20');
       return true;
     }
     if (cleanCode === 'STREET30') {
       setPromoCodeState('STREET30');
-      setDiscountAmount(30); 
+      localStorage.setItem('vrooklyn_promo_code', 'STREET30');
       return true;
     }
     return false;

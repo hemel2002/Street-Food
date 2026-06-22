@@ -64,7 +64,11 @@ export default function CartView() {
 
       const { url } = await res.json();
       if (url) {
-        window.location.href = url;
+        if (url.startsWith('/')) {
+          router.push(url);
+        } else {
+          window.location.href = url;
+        }
       } else {
         throw new Error('No checkout URL returned');
       }
