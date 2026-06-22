@@ -1,4 +1,4 @@
-# Street Food App
+# Street Eats Hub
 
 A comprehensive web application for finding, reviewing, and ordering from street food vendors. The application features a modern frontend built with Next.js and integrates with various services like Supabase, Cloudinary, and Stripe. It also includes an older Express legacy backend.
 
