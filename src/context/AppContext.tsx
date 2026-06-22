@@ -682,6 +682,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
     setIsLoading(false);
+    detectUserLocation();
   }, []);
 
   // Save user session to local storage when state changes
@@ -1256,12 +1257,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const detectUserLocation = () => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          setCurrentLocation('Detected Location');
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setUserLocation({ lat, lng });
+          
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`, {
+              headers: { 'Accept-Language': 'en' }
+            });
+            const data = await res.json();
+            if (data && data.address) {
+              const street = data.address.road || data.address.suburb || data.address.neighbourhood || '';
+              const city = data.address.city || data.address.town || data.address.state || '';
+              const shortAddress = street && city ? `${street}, ${city}` : data.display_name.split(',').slice(0, 3).join(', ');
+              setCurrentLocation(shortAddress);
+            } else {
+              setCurrentLocation(`Detected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+            }
+          } catch (err) {
+            console.error('Failed to reverse geocode user location:', err);
+            setCurrentLocation(`Detected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+          }
         },
         (error) => {
           console.error('Geolocation error:', error);
