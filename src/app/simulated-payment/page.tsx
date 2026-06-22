@@ -165,7 +165,7 @@ export default function SimulatedPaymentPage() {
 
             <button 
               type="submit"
-              disabled={isPaying || total === 0}
+              disabled={isPaying}
               className="w-full bg-gold hover:bg-gold-hover text-brand-black disabled:opacity-50 font-black text-xs py-4 rounded-2xl shadow-lg transition-transform duration-200 active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
             >
               {isPaying ? (

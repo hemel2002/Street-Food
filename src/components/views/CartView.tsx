@@ -14,7 +14,8 @@ export default function CartView() {
     discountAmount, 
     applyPromoCode, 
     currentLocation, 
-    checkout 
+    checkout,
+    clearCart
   } = useApp();
 
   const router = useRouter();
@@ -44,6 +45,21 @@ export default function CartView() {
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     setIsCheckingOut(true);
+
+    if (total === 0) {
+      try {
+        await checkout(currentLocation);
+        clearCart();
+        router.push('/order-tracking?payment=success');
+      } catch (err) {
+        console.error('Free checkout failed:', err);
+        alert('Checkout failed. Please try again.');
+      } finally {
+        setIsCheckingOut(false);
+      }
+      return;
+    }
+
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
