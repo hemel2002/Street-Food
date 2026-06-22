@@ -419,7 +419,8 @@ export default function HomeView() {
                     className="bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-3xl p-3 flex flex-col justify-between cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group"
                   >
                     <div className="w-full h-24 rounded-2xl overflow-hidden bg-neutral-100 mb-3 relative">
-                      <img src={food.cover_pic} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <img src={food.cover_pic} alt="" className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" />
+                      <img src={food.cover_pic} alt={food.name} className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                       <span className="absolute bottom-2 left-2 bg-neutral-950/80 backdrop-blur text-[8px] font-black text-gold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                         ★ {food.rating}
                       </span>

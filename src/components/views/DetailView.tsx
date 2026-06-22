@@ -173,8 +173,9 @@ export default function DetailView() {
                       }}
                       className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/50 dark:border-neutral-850 rounded-2xl p-3 flex items-center gap-3.5 cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group"
                     >
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
-                        <img src={food.cover_pic} alt={food.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-neutral-100 shrink-0 relative">
+                        <img src={food.cover_pic} alt="" className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" />
+                        <img src={food.cover_pic} alt={food.name} className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                       </div>
                       <div className="overflow-hidden flex-1">
                         <h4 className="text-[11px] font-black truncate text-foreground group-hover:text-gold transition-colors">{food.name}</h4>
@@ -349,10 +350,17 @@ export default function DetailView() {
         {/* Left Column: Image and Video (5 cols) */}
         <div className="md:col-span-5 space-y-6">
           <div className="relative w-full h-[320px] md:h-[360px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30">
+            {/* Blurred background image to fill the empty aspect ratio bars */}
+            <img 
+              src={selectedFood.cover_pic} 
+              alt="" 
+              className="absolute inset-0 w-full h-full object-cover blur-md opacity-30 select-none pointer-events-none" 
+            />
+            {/* Contained foreground image that is fully visible and not cropped */}
             <img 
               src={selectedFood.cover_pic} 
               alt={selectedFood.name}
-              className="w-full h-full object-cover"
+              className="relative w-full h-full object-contain"
             />
             
             <button 
