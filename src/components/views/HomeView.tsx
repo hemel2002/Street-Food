@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useApp, Stall, Food } from '@/context/AppContext';
 import StreetFoodMap from '@/components/StreetFoodMap';
+import TiltCard from '@/components/TiltCard';
 
 export default function HomeView() {
   const { 
@@ -407,7 +408,7 @@ export default function HomeView() {
               {recommendedFoods.map(food => {
                 const stall = stalls.find(s => s.id === food.stall_id);
                 return (
-                  <div 
+                  <TiltCard 
                     key={food.id}
                     onClick={() => {
                       if (stall) {
@@ -416,7 +417,7 @@ export default function HomeView() {
                         router.push(`/stall/${stall.id}`);
                       }
                     }}
-                    className="bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-3xl p-3 flex flex-col justify-between cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group"
+                    className="bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-3xl p-3 flex flex-col justify-between cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group h-full"
                   >
                     <div className="w-full h-24 rounded-2xl overflow-hidden bg-neutral-100 mb-3 relative">
                       <img src={food.cover_pic} alt="" className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" />
@@ -435,7 +436,7 @@ export default function HomeView() {
                       <span className="text-[10px] font-black text-foreground">${food.price.toFixed(2)}</span>
                       <span className="text-[8px] text-emerald-500 font-extrabold uppercase bg-emerald-50 dark:bg-emerald-950/20 px-1.5 py-0.5 rounded-full">AI Match</span>
                     </div>
-                  </div>
+                  </TiltCard>
                 );
               })}
             </div>
@@ -503,63 +504,67 @@ export default function HomeView() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        onClick={() => handleStallClick(stall)}
-                        className="bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-[28px] overflow-hidden cursor-pointer hover:border-gold/30 hover:shadow-lg transition-all duration-300 flex flex-col group relative"
+                        className="h-full"
                       >
-                        {/* Stall Cover Image */}
-                        <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-850 relative overflow-hidden">
-                          <img 
-                            src={stall.cover_pic} 
-                            alt="" 
-                            className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" 
-                          />
-                          <img 
-                            src={stall.cover_pic} 
-                            alt={stall.name}
-                            className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                          />
-                          
-                          {/* Rating & Distance Badges */}
-                          <div className="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-0.5 text-[9px] font-black text-gold border border-neutral-800/30">
-                            ★ {stall.avg_rating}
-                          </div>
-
-                          <div className="absolute top-3 right-3 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[9px] font-black text-white border border-neutral-800/30">
-                            📍 {distanceText}
-                          </div>
-                        </div>
-                        
-                        {/* Card details */}
-                        <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                          <div>
-                            <div className="flex justify-between items-center mb-1">
-                              <h4 className="font-extrabold text-xs text-foreground group-hover:text-gold transition-colors leading-tight">
-                                {stall.name}
-                              </h4>
-                              
-                              <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${isOpen ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 border-emerald-200/30' : 'bg-red-50 dark:bg-red-950/20 text-red-500 border-red-200/30'}`}>
-                                {isOpen ? 'OPEN' : 'CLOSED'}
-                              </span>
-                            </div>
+                        <TiltCard
+                          onClick={() => handleStallClick(stall)}
+                          className="bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-[28px] overflow-hidden cursor-pointer hover:border-gold/30 hover:shadow-lg transition-all duration-300 flex flex-col group relative h-full"
+                        >
+                          {/* Stall Cover Image */}
+                          <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-850 relative overflow-hidden">
+                            <img 
+                              src={stall.cover_pic} 
+                              alt="" 
+                              className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" 
+                            />
+                            <img 
+                              src={stall.cover_pic} 
+                              alt={stall.name}
+                              className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                            />
                             
-                            <p className="text-[10px] text-brand-gray mt-1 leading-relaxed font-semibold line-clamp-2">
-                              {stall.title}
-                            </p>
-                          </div>
+                            {/* Rating & Distance Badges */}
+                            <div className="absolute top-3 left-3 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-0.5 text-[9px] font-black text-gold border border-neutral-800/30">
+                              ★ {stall.avg_rating}
+                            </div>
 
-                          <div className="border-t border-neutral-100 dark:border-neutral-800/80 pt-3 flex items-center justify-between text-[9px] text-brand-gray font-bold">
-                            <span className="flex items-center gap-0.5">⏱ Walk: {walkTime} min</span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleFavoriteStall(stall.id);
-                              }}
-                              className="text-brand-gray hover:text-brand-firebrick active:scale-90 transition-transform"
-                            >
-                              <Heart size={14} className={favoriteStallIds.includes(stall.id) ? 'fill-current text-brand-firebrick' : ''} />
-                            </button>
+                            <div className="absolute top-3 right-3 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[9px] font-black text-white border border-neutral-800/30">
+                              📍 {distanceText}
+                            </div>
                           </div>
-                        </div>
+                          
+                          {/* Card details */}
+                          <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <h4 className="font-extrabold text-xs text-foreground group-hover:text-gold transition-colors leading-tight">
+                                  {stall.name}
+                                </h4>
+                                
+                                <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${isOpen ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-500 border-emerald-200/30' : 'bg-red-50 dark:bg-red-950/20 text-red-500 border-red-200/30'}`}>
+                                  {isOpen ? 'OPEN' : 'CLOSED'}
+                                </span>
+                              </div>
+                              
+                              <p className="text-[10px] text-brand-gray mt-1 leading-relaxed font-semibold line-clamp-2">
+                                {stall.title}
+                              </p>
+                            </div>
+
+                            <div className="border-t border-neutral-100 dark:border-neutral-800/80 pt-3 flex items-center justify-between text-[9px] text-brand-gray font-bold">
+                              <span className="flex items-center gap-0.5">⏱ Walk: {walkTime} min</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavoriteStall(stall.id);
+                                }}
+                                className="text-brand-gray hover:text-brand-firebrick active:scale-90 transition-transform"
+                              >
+                                <Heart size={14} className={favoriteStallIds.includes(stall.id) ? 'fill-current text-brand-firebrick' : ''} />
+                              </button>
+                            </div>
+                          </div>
+                        </TiltCard>
                       </motion.div>
                     );
                   })

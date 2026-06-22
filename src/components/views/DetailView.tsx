@@ -5,6 +5,7 @@ import { ArrowLeft, Heart, Star, Flame, Clock, Plus, Minus, ShoppingBag, Video, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
+import TiltCard from '@/components/TiltCard';
 
 export default function DetailView() {
   const { 
@@ -107,7 +108,7 @@ export default function DetailView() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start bg-white dark:bg-neutral-900 border border-neutral-200/50 dark:border-neutral-805 rounded-[32px] p-6 md:p-8 shadow-md">
           {/* Left Column: Stall Image & Hours */}
           <div className="md:col-span-5 space-y-6">
-            <div className="relative w-full h-[240px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30">
+            <TiltCard className="relative w-full h-[240px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30 group">
               <img 
                 src={selectedStall.cover_pic} 
                 alt="" 
@@ -116,12 +117,16 @@ export default function DetailView() {
               <img 
                 src={selectedStall.cover_pic} 
                 alt={selectedStall.name}
-                className="relative w-full h-full object-contain"
+                className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                style={{ transform: 'translateZ(30px)' }}
               />
-              <div className="absolute top-4 left-4 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-0.5 text-[9px] font-black text-gold border border-neutral-800/30">
+              <div 
+                className="absolute top-4 left-4 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-0.5 text-[9px] font-black text-gold border border-neutral-800/30"
+                style={{ transform: 'translateZ(40px)' }}
+              >
                 ★ {selectedStall.avg_rating}
               </div>
-            </div>
+            </TiltCard>
 
             {/* Operating Hours */}
             {selectedStall.hours && (
@@ -169,14 +174,14 @@ export default function DetailView() {
                 <p className="text-[10px] text-brand-gray">No dishes uploaded by this vendor yet.</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {stallFoods.map(food => (
-                    <div 
+                   {stallFoods.map(food => (
+                    <TiltCard 
                       key={food.id}
                       onClick={() => {
                         setSelectedFood(food);
                         setQuantity(1);
                       }}
-                      className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/50 dark:border-neutral-850 rounded-2xl p-3 flex items-center gap-3.5 cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group"
+                      className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/50 dark:border-neutral-850 rounded-2xl p-3 flex items-center gap-3.5 cursor-pointer hover:border-gold/30 hover:shadow-md transition-all group h-full"
                     >
                       <div className="w-16 h-16 rounded-xl overflow-hidden bg-neutral-100 shrink-0 relative">
                         <img src={food.cover_pic} alt="" className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" />
@@ -190,7 +195,7 @@ export default function DetailView() {
                           <span className="flex items-center gap-0.5 text-gold">★ {food.rating}</span>
                         </div>
                       </div>
-                    </div>
+                    </TiltCard>
                   ))}
                 </div>
               )}
@@ -354,7 +359,7 @@ export default function DetailView() {
         
         {/* Left Column: Image and Video (5 cols) */}
         <div className="md:col-span-5 space-y-6">
-          <div className="relative w-full h-[320px] md:h-[360px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30">
+          <TiltCard className="relative w-full h-[320px] md:h-[360px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30 group">
             {/* Blurred background image to fill the empty aspect ratio bars */}
             <img 
               src={selectedFood.cover_pic} 
@@ -365,16 +370,21 @@ export default function DetailView() {
             <img 
               src={selectedFood.cover_pic} 
               alt={selectedFood.name}
-              className="relative w-full h-full object-contain"
+              className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+              style={{ transform: 'translateZ(30px)' }}
             />
             
             <button 
-              onClick={() => toggleFavoriteFood(selectedFood.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFavoriteFood(selectedFood.id);
+              }}
               className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/95 dark:bg-neutral-900/95 backdrop-blur shadow border border-neutral-250/20 flex items-center justify-center hover:scale-105 active:scale-95 transition-all text-foreground z-10"
+              style={{ transform: 'translateZ(40px)' }}
             >
               <Heart size={16} className={isFavorite ? "text-brand-firebrick fill-current" : "text-foreground"} />
             </button>
-          </div>
+          </TiltCard>
 
           {/* Video Player Box */}
           {selectedFood.video_url ? (

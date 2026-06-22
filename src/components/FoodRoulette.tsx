@@ -84,35 +84,48 @@ export default function FoodRoulette({ isOpen, onClose }: FoodRouletteProps) {
         </div>
 
         {/* The Roulette Screen */}
-        <div className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-150 dark:border-neutral-800/80 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[220px] relative">
+        <div 
+          style={{ perspective: 600 }}
+          className="bg-neutral-50 dark:bg-neutral-950 border border-neutral-150 dark:border-neutral-800/80 rounded-2xl p-6 flex flex-col items-center justify-center min-h-[240px] relative"
+        >
           {isSpinning ? (
-            /* Spinning state */
+            /* Spinning state - 3D coin spin animation */
             <div className="space-y-4 text-center">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-gold mx-auto animate-spin-slow relative">
+              <motion.div 
+                animate={{ rotateY: [0, 360], rotateZ: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.0, ease: "linear" }}
+                className="w-24 h-24 rounded-full overflow-hidden border-4 border-gold mx-auto shadow-2xl relative"
+                style={{ transformStyle: 'preserve-3d' }}
+              >
                 <img 
                   src={foods[animationIndex]?.cover_pic} 
                   alt="Spinning..." 
-                  className="w-full h-full object-cover blur-[1px]"
+                  className="w-full h-full object-cover blur-[0.5px]"
                 />
-              </div>
+              </motion.div>
               <h3 className="text-xs font-black text-gold uppercase tracking-wider animate-pulse">
                 Selecting Dish...
               </h3>
             </div>
           ) : selectedResult ? (
-            /* Result Selected State */
+            /* Result Selected State - 3D spring pop-in */
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
+              initial={{ scale: 0.3, rotateY: 90, opacity: 0 }}
+              animate={{ scale: 1, rotateY: 0, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 220, damping: 16 }}
               className="text-center space-y-4 w-full"
+              style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-500 mx-auto shadow-md">
+              <motion.div 
+                whileHover={{ scale: 1.08, rotateY: 15 }}
+                className="w-24 h-24 rounded-full overflow-hidden border-4 border-emerald-500 mx-auto shadow-xl cursor-pointer"
+              >
                 <img 
                   src={selectedResult.cover_pic} 
                   alt={selectedResult.name} 
                   className="w-full h-full object-cover"
                 />
-              </div>
+              </motion.div>
               
               <div>
                 <span className="text-[9px] font-black uppercase tracking-wider text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-0.5 rounded-full">
