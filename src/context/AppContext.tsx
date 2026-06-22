@@ -599,6 +599,29 @@ const MOCK_ORDERS: Order[] = [
   }
 ];
 
+const MOCK_COMPLAINTS: Complaint[] = [
+  {
+    id: 'comp-1',
+    stall_id: 'vendor-1',
+    stall_name: 'Double Hamburger Shop',
+    user_name: 'Thomas Wright',
+    reason: 'The order took 45 minutes to prepare and was cold.',
+    status: 'pending',
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString()
+  }
+];
+
+const MOCK_PROMO_CODES: VendorPromoCode[] = [
+  {
+    id: 'promo-1',
+    stall_id: 'vendor-1',
+    code: 'BURGER50',
+    discount: 0.5,
+    type: 'percentage',
+    active: true
+  }
+];
+
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -621,60 +644,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     role: 'customer'
   });
   
-  // Real DB Fetching
-  useEffect(() => {
-    async function fetchInitialData() {
-      try {
-        const { data: stallsData, error: stallsError } = await supabase.from('stalls').select('*');
-        if (stallsData) setStalls(stallsData);
-
-        const { data: foodsData, error: foodsError } = await supabase.from('foods').select('*');
-        if (foodsData) setFoods(foodsData);
-
-        const { data: reviewsData, error: reviewsError } = await supabase.from('reviews').select('*');
-        if (reviewsData) setReviews(reviewsData);
-
-        const { data: profilesData, error: profilesError } = await supabase.from('profiles').select('*');
-        if (profilesData) setProfiles(profilesData);
-        
-        if (stallsData && stallsData.length > 0) setSelectedStall(stallsData[0]);
-        if (foodsData && foodsData.length > 0) setSelectedFood(foodsData[0]);
-      } catch (error) {
-        console.error('Error fetching Supabase data:', error);
-      }
-    }
-    fetchInitialData();
-  }, []);
-
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentLocation, setCurrentLocation] = useState('Sterling place, Vrooklyn');
   const [promoCode, setPromoCodeState] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [orderStatus, setOrderStatus] = useState<'pending' | 'preparing' | 'shipping' | 'delivered'>('pending');
-
-
   
-  const [complaints, setComplaints] = useState<Complaint[]>([
-    {
-      id: 'comp-1',
-      stall_id: 'vendor-1',
-      stall_name: 'Double Hamburger Shop',
-      user_name: 'Thomas Wright',
-      reason: 'The order took 45 minutes to prepare and was cold.',
-      status: 'pending',
-      created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString()
-    }
-  ]);
-  const [vendorPromoCodes, setVendorPromoCodes] = useState<VendorPromoCode[]>([
-    {
-      id: 'promo-1',
-      stall_id: 'vendor-1',
-      code: 'BURGER50',
-      discount: 0.5,
-      type: 'percentage',
-      active: true
-    }
-  ]);
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [vendorPromoCodes, setVendorPromoCodes] = useState<VendorPromoCode[]>([]);
   const [favoriteStallIds, setFavoriteStallIds] = useState<string[]>([]);
   const [favoriteFoodIds, setFavoriteFoodIds] = useState<string[]>([]);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({ lat: 40.6782, lng: -73.9442 });
@@ -700,7 +677,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Fetch real data from Supabase if configured
+  // Fetch real data from Supabase if configured, otherwise fall back to mock data
   useEffect(() => {
     async function loadData() {
       if (
@@ -708,32 +685,59 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
       ) {
         console.log('Using pre-seeded mock data (Supabase URL not configured).');
+        setStalls(MOCK_STALLS);
+        setFoods(MOCK_FOODS);
+        setReviews(MOCK_REVIEWS);
+        setOrders(MOCK_ORDERS);
+        setComplaints(MOCK_COMPLAINTS);
+        setVendorPromoCodes(MOCK_PROMO_CODES);
+        if (MOCK_STALLS.length > 0) setSelectedStall(MOCK_STALLS[0]);
+        if (MOCK_FOODS.length > 0) setSelectedFood(MOCK_FOODS[0]);
         return;
       }
 
       try {
-        const { data: stallsData } = await supabase.from('stalls').select('*');
-        if (stallsData && stallsData.length > 0) {
+        const { data: stallsData, error: stallsError } = await supabase.from('stalls').select('*');
+        if (stallsError) throw stallsError;
+        if (stallsData) {
           setStalls(stallsData as Stall[]);
-          if (!selectedStall) setSelectedStall(stallsData[0] as Stall);
+          if (stallsData.length > 0) setSelectedStall(stallsData[0] as Stall);
         }
 
-        const { data: foodsData } = await supabase.from('foods').select('*');
-        if (foodsData && foodsData.length > 0) {
+        const { data: foodsData, error: foodsError } = await supabase.from('foods').select('*');
+        if (foodsError) throw foodsError;
+        if (foodsData) {
           setFoods(foodsData as Food[]);
+          if (foodsData.length > 0) setSelectedFood(foodsData[0] as Food);
         }
 
-        const { data: reviewsData } = await supabase.from('reviews').select('*');
-        if (reviewsData && reviewsData.length > 0) {
+        const { data: reviewsData, error: reviewsError } = await supabase.from('reviews').select('*').order('created_at', { ascending: false });
+        if (reviewsError) throw reviewsError;
+        if (reviewsData) {
           setReviews(reviewsData as Review[]);
         }
 
-        const { data: profilesData } = await supabase.from('profiles').select('*');
-        if (profilesData && profilesData.length > 0) {
+        const { data: profilesData, error: profilesError } = await supabase.from('profiles').select('*');
+        if (profilesError) throw profilesError;
+        if (profilesData) {
           setProfiles(profilesData as Profile[]);
+          if (currentUser) {
+            const dbUser = profilesData.find(p => p.email.toLowerCase() === currentUser.email.toLowerCase());
+            if (dbUser) setCurrentUser(dbUser as Profile);
+          }
         }
 
-        const { data: ordersData } = await supabase
+        const { data: complaintsData, error: complaintsError } = await supabase.from('complaints').select('*').order('created_at', { ascending: false });
+        if (!complaintsError && complaintsData) {
+          setComplaints(complaintsData as Complaint[]);
+        }
+
+        const { data: promoCodesData, error: promoCodesError } = await supabase.from('vendor_promo_codes').select('*');
+        if (!promoCodesError && promoCodesData) {
+          setVendorPromoCodes(promoCodesData as VendorPromoCode[]);
+        }
+
+        const { data: ordersData, error: ordersError } = await supabase
           .from('orders')
           .select(`
             *,
@@ -746,7 +750,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           `)
           .order('created_at', { ascending: false });
 
-        if (ordersData && ordersData.length > 0) {
+        if (ordersError) throw ordersError;
+
+        if (ordersData) {
           const parsedOrders = ordersData.map((order: any) => ({
             id: order.id,
             user_id: order.user_id,
@@ -755,13 +761,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             delivery_address: order.delivery_address,
             created_at: order.created_at,
             items: order.order_items?.map((item: any) => ({
-              id: item.id,
+              id: item.id.toString(),
               order_id: item.order_id,
               food_id: item.food_id,
               quantity: item.quantity,
               price: item.price,
-              food_name: item.foods?.name
-            }))
+              food_name: item.foods?.name || 'Unknown Item'
+            })) || []
           }));
           setOrders(parsedOrders);
         }
@@ -770,7 +776,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
     loadData();
-  }, [selectedStall]);
+  }, []);
 
   const toggleTheme = () => {
     setIsDarkMode((prev) => {
@@ -1140,6 +1146,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const deleteFood = async (foodId: string): Promise<boolean> => {
     setFoods((prev) => prev.filter((f) => f.id !== foodId));
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('foods')
+          .delete()
+          .eq('id', foodId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to delete food from Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1167,6 +1189,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setReviews((prev) =>
       prev.map((r) => (r.id === reviewId ? { ...r, vendor_reply: reply } : r))
     );
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('reviews')
+          .update({ vendor_reply: reply })
+          .eq('id', reviewId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to update review reply in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1182,6 +1220,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       created_at: new Date().toISOString()
     };
     setComplaints((prev) => [newComp, ...prev]);
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('complaints')
+          .insert({
+            id: newComp.id,
+            stall_id: stallId,
+            stall_name: newComp.stall_name,
+            user_name: newComp.user_name,
+            reason,
+            status: 'pending',
+            created_at: newComp.created_at
+          });
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to insert complaint in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1203,19 +1264,82 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       id: `promo-${Date.now()}`,
     };
     setVendorPromoCodes((prev) => [newPromo, ...prev]);
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('vendor_promo_codes')
+          .insert({
+            id: newPromo.id,
+            stall_id: promo.stall_id,
+            code: promo.code,
+            discount: promo.discount,
+            type: promo.type,
+            active: promo.active
+          });
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to insert vendor promo code in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
-  const togglePromoCodeStatus = (promoId: string) => {
+  const togglePromoCodeStatus = async (promoId: string) => {
+    let nextActive = true;
     setVendorPromoCodes((prev) =>
-      prev.map((p) => (p.id === promoId ? { ...p, active: !p.active } : p))
+      prev.map((p) => {
+        if (p.id === promoId) {
+          nextActive = !p.active;
+          return { ...p, active: nextActive };
+        }
+        return p;
+      })
     );
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('vendor_promo_codes')
+          .update({ active: nextActive })
+          .eq('id', promoId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to update promo code status in Supabase:', e?.message || e, e);
+      }
+    }
   };
 
   const approveVendor = async (stallId: string): Promise<boolean> => {
     setStalls((prev) =>
       prev.map((s) => (s.id === stallId ? { ...s, status: 'approved' } : s))
     );
+    if (selectedStall && selectedStall.id === stallId) {
+      setSelectedStall((prev) => (prev ? { ...prev, status: 'approved' } : null));
+    }
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('stalls')
+          .update({ status: 'approved' })
+          .eq('id', stallId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to approve vendor in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1223,11 +1347,49 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setStalls((prev) =>
       prev.map((s) => (s.id === stallId ? { ...s, status: 'suspended' } : s))
     );
+    if (selectedStall && selectedStall.id === stallId) {
+      setSelectedStall((prev) => (prev ? { ...prev, status: 'suspended' } : null));
+    }
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('stalls')
+          .update({ status: 'suspended' })
+          .eq('id', stallId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to suspend vendor in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
   const deleteVendor = async (stallId: string): Promise<boolean> => {
     setStalls((prev) => prev.filter((s) => s.id !== stallId));
+    if (selectedStall && selectedStall.id === stallId) {
+      setSelectedStall(null);
+    }
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('stalls')
+          .delete()
+          .eq('id', stallId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to delete vendor in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1237,6 +1399,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     );
     if (currentUser && currentUser.email === email) {
       setCurrentUser((prev) => (prev ? { ...prev, blocked: true } : null));
+    }
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ blocked: true })
+          .eq('email', email);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to block user in Supabase:', e?.message || e, e);
+        return false;
+      }
     }
     return true;
   };
@@ -1248,6 +1426,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (currentUser && currentUser.email === email) {
       setCurrentUser((prev) => (prev ? { ...prev, blocked: false } : null));
     }
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ blocked: false })
+          .eq('email', email);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to unblock user in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
@@ -1255,11 +1449,43 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setComplaints((prev) =>
       prev.map((c) => (c.id === complaintId ? { ...c, status: 'resolved' } : c))
     );
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('complaints')
+          .update({ status: 'resolved' })
+          .eq('id', complaintId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to resolve complaint in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 
   const deleteReview = async (reviewId: string): Promise<boolean> => {
     setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase
+          .from('reviews')
+          .delete()
+          .eq('id', reviewId);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to delete review in Supabase:', e?.message || e, e);
+        return false;
+      }
+    }
     return true;
   };
 

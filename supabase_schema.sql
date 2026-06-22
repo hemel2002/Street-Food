@@ -143,6 +143,49 @@ DO $$ BEGIN
   END IF;
 END $$;
 
+-- 7. COMPLAINTS TABLE
+CREATE TABLE IF NOT EXISTS public.complaints (
+    id TEXT PRIMARY KEY,
+    stall_id TEXT NOT NULL REFERENCES public.stalls(id) ON DELETE CASCADE,
+    stall_name TEXT,
+    user_name TEXT,
+    reason TEXT,
+    status TEXT CHECK (status IN ('pending', 'resolved')) NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS for Complaints
+ALTER TABLE public.complaints ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read complaints') THEN
+    CREATE POLICY "Allow public read complaints" ON public.complaints FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow all actions for complaints') THEN
+    CREATE POLICY "Allow all actions for complaints" ON public.complaints FOR ALL USING (true);
+  END IF;
+END $$;
+
+-- 8. VENDOR PROMO CODES TABLE
+CREATE TABLE IF NOT EXISTS public.vendor_promo_codes (
+    id TEXT PRIMARY KEY,
+    stall_id TEXT NOT NULL REFERENCES public.stalls(id) ON DELETE CASCADE,
+    code TEXT NOT NULL UNIQUE,
+    discount NUMERIC NOT NULL,
+    type TEXT CHECK (type IN ('percentage', 'fixed')) NOT NULL DEFAULT 'percentage',
+    active BOOLEAN DEFAULT TRUE
+);
+
+-- Enable RLS for Vendor Promo Codes
+ALTER TABLE public.vendor_promo_codes ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow public read vendor promo codes') THEN
+    CREATE POLICY "Allow public read vendor promo codes" ON public.vendor_promo_codes FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow all actions for vendor promo codes') THEN
+    CREATE POLICY "Allow all actions for vendor promo codes" ON public.vendor_promo_codes FOR ALL USING (true);
+  END IF;
+END $$;
+
 
 -- =========================================================================
 -- SEED DATA — Production-quality dataset
@@ -377,3 +420,19 @@ INSERT INTO public.order_items (order_id, food_id, quantity, price) VALUES
 ('order-113', 'food-35', 1, 12.00),
 ('order-114', 'food-22', 1, 14.00),
 ('order-115', 'food-30', 1, 16.00);
+
+
+-- ── Complaints ───────────────────────────────────────────────────────────
+INSERT INTO public.complaints (id, stall_id, stall_name, user_name, reason, status, created_at) VALUES
+('comp-1', 'vendor-1', 'Double Hamburger Shop', 'Thomas Wright', 'The order took 45 minutes to prepare and was cold.', 'pending', NOW() - INTERVAL '3 hours'),
+('comp-2', 'vendor-2', 'Pizzeria Brooklyn', 'Sarah Jones', 'Found hair in the pizza slice.', 'resolved', NOW() - INTERVAL '1 day'),
+('comp-3', 'vendor-3', 'Sushi Wave', 'David Smith', 'The fish tasted warm and not fresh.', 'pending', NOW() - INTERVAL '5 hours')
+ON CONFLICT (id) DO UPDATE SET stall_id=EXCLUDED.stall_id, stall_name=EXCLUDED.stall_name, user_name=EXCLUDED.user_name, reason=EXCLUDED.reason, status=EXCLUDED.status, created_at=EXCLUDED.created_at;
+
+-- ── Vendor Promo Codes ────────────────────────────────────────────────────
+INSERT INTO public.vendor_promo_codes (id, stall_id, code, discount, type, active) VALUES
+('promo-1', 'vendor-1', 'BURGER50', 0.5, 'percentage', true),
+('promo-2', 'vendor-2', 'PIZZA20', 0.2, 'percentage', true),
+('promo-3', 'vendor-3', 'SUSHIOFF', 10, 'fixed', true),
+('promo-4', 'vendor-4', 'SWEET15', 0.15, 'percentage', true)
+ON CONFLICT (id) DO UPDATE SET stall_id=EXCLUDED.stall_id, code=EXCLUDED.code, discount=EXCLUDED.discount, type=EXCLUDED.type, active=EXCLUDED.active;
