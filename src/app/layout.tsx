@@ -6,7 +6,7 @@ import "./globals.css";
 import { AppProvider, useApp } from "@/context/AppContext";
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ShoppingBag, Sun, Moon, MapPin, User, Settings, Key, Database, LogOut, Compass, ChefHat, Tag, ShieldAlert } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, MapPin, User, Settings, Key, Database, LogOut, Compass, ChefHat, Tag, ShieldAlert, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FoodRoulette from '@/components/FoodRoulette';
 
@@ -31,6 +31,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
     currentLocation, 
     setCurrentLocation,
     currentUser,
+    isLoading,
     logoutUser,
     loginUser
   } = useApp();
@@ -53,6 +54,8 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const isVendorRoute = pathname === '/dashboard';
 
   React.useEffect(() => {
+    if (isLoading) return; // Do not redirect while loading the user session
+
     // 1. Redirect unauthenticated users trying to access protected routes
     if (!currentUser && isProtectedRoute) {
       router.push('/auth');
@@ -65,12 +68,19 @@ function AppShell({ children }: { children: React.ReactNode }) {
     if (currentUser && isVendorRoute && currentUser.role !== 'vendor') {
       router.push('/auth');
     }
-  }, [currentUser, pathname, isProtectedRoute, isAdminRoute, isVendorRoute, router]);
+  }, [currentUser, isLoading, pathname, isProtectedRoute, isAdminRoute, isVendorRoute, router]);
 
   // Determine guarded content
   let mainContent = children;
 
-  if (!currentUser && isProtectedRoute) {
+  if (isLoading) {
+    mainContent = (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4 px-4">
+        <Loader2 className="w-8 h-8 text-gold animate-spin" />
+        <p className="text-[10px] text-brand-gray font-black uppercase tracking-widest animate-pulse">Loading Session...</p>
+      </div>
+    );
+  } else if (!currentUser && isProtectedRoute) {
     mainContent = (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5 px-4 animate-fade-in">
         <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center text-gold animate-bounce">

@@ -118,6 +118,7 @@ interface AppContextType {
   selectedStall: Stall | null;
   selectedFood: Food | null;
   currentUser: Profile | null;
+  isLoading: boolean;
   isDarkMode: boolean;
   currentLocation: string;
   promoCode: string;
@@ -638,6 +639,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedStall, setSelectedStall] = useState<Stall | null>(null);
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentLocation, setCurrentLocation] = useState('Sterling place, Vrooklyn');
@@ -679,6 +681,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to parse user', e);
       }
     }
+    setIsLoading(false);
   }, []);
 
   // Save user session to local storage when state changes
@@ -1575,6 +1578,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         selectedStall,
         selectedFood,
         currentUser,
+        isLoading,
         isDarkMode,
         currentLocation,
         promoCode,
