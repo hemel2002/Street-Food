@@ -110,8 +110,13 @@ export default function DetailView() {
             <div className="relative w-full h-[240px] rounded-3xl overflow-hidden bg-neutral-100 dark:bg-neutral-950 border border-neutral-205/30">
               <img 
                 src={selectedStall.cover_pic} 
+                alt="" 
+                className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" 
+              />
+              <img 
+                src={selectedStall.cover_pic} 
                 alt={selectedStall.name}
-                className="w-full h-full object-cover"
+                className="relative w-full h-full object-contain"
               />
               <div className="absolute top-4 left-4 bg-neutral-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-0.5 text-[9px] font-black text-gold border border-neutral-800/30">
                 ★ {selectedStall.avg_rating}

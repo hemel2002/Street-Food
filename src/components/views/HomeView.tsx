@@ -510,8 +510,13 @@ export default function HomeView() {
                         <div className="w-full h-36 bg-neutral-100 dark:bg-neutral-850 relative overflow-hidden">
                           <img 
                             src={stall.cover_pic} 
+                            alt="" 
+                            className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" 
+                          />
+                          <img 
+                            src={stall.cover_pic} 
                             alt={stall.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                           />
                           
                           {/* Rating & Distance Badges */}

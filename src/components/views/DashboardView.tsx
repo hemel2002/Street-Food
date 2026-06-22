@@ -362,8 +362,9 @@ export default function DashboardView() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
           <div className="bg-neutral-950 text-white p-5 rounded-3xl flex gap-4 items-center relative overflow-hidden shadow">
             <div className="absolute right-[-10px] bottom-[-10px] text-neutral-900 text-7xl select-none opacity-20">🍔</div>
-            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-neutral-850">
-              <img src={selectedStall.cover_pic} alt={selectedStall.name} className="w-full h-full object-cover" />
+            <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-neutral-850 relative">
+              <img src={selectedStall.cover_pic} alt="" className="absolute inset-0 w-full h-full object-cover blur-sm opacity-30 select-none pointer-events-none" />
+              <img src={selectedStall.cover_pic} alt={selectedStall.name} className="relative w-full h-full object-contain" />
             </div>
             <div>
               <span className="text-[9px] text-gold font-bold uppercase tracking-wider">Vendor Stall</span>
