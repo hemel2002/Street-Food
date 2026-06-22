@@ -5,8 +5,8 @@ import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import { AppProvider, useApp } from "@/context/AppContext";
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ShoppingBag, Sun, Moon, MapPin, User, Settings, Key, Database, LogOut, Compass, ChefHat, Tag } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ShoppingBag, Sun, Moon, MapPin, User, Settings, Key, Database, LogOut, Compass, ChefHat, Tag, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FoodRoulette from '@/components/FoodRoulette';
 
@@ -38,8 +38,90 @@ function AppShell({ children }: { children: React.ReactNode }) {
   const [showDemoSettings, setShowDemoSettings] = useState(false);
   const [isRouletteOpen, setRouletteOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Client-side route guarding and roles access control
+  const isAuthPage = pathname === '/auth';
+  const isLandingPage = pathname === '/';
+  const isTeamPage = pathname === '/team';
+  const isContactPage = pathname === '/contact';
+  
+  const isProtectedRoute = !isAuthPage && !isLandingPage && !isTeamPage && !isContactPage;
+  const isAdminRoute = pathname === '/admin';
+  const isVendorRoute = pathname === '/dashboard';
+
+  React.useEffect(() => {
+    // 1. Redirect unauthenticated users trying to access protected routes
+    if (!currentUser && isProtectedRoute) {
+      router.push('/auth');
+    }
+    // 2. Redirect non-admins trying to access admin pages
+    if (currentUser && isAdminRoute && currentUser.role !== 'admin') {
+      router.push('/auth');
+    }
+    // 3. Redirect non-vendors trying to access vendor dashboards
+    if (currentUser && isVendorRoute && currentUser.role !== 'vendor') {
+      router.push('/auth');
+    }
+  }, [currentUser, pathname, isProtectedRoute, isAdminRoute, isVendorRoute, router]);
+
+  // Determine guarded content
+  let mainContent = children;
+
+  if (!currentUser && isProtectedRoute) {
+    mainContent = (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5 px-4 animate-fade-in">
+        <div className="w-16 h-16 rounded-full bg-gold/10 flex items-center justify-center text-gold animate-bounce">
+          <Key size={28} />
+        </div>
+        <h3 className="text-lg font-black font-outfit text-foreground uppercase tracking-wider">Authentication Required</h3>
+        <p className="text-xs text-brand-gray max-w-xs font-semibold leading-relaxed">
+          You must be logged in to view this page. Redirecting you to the login screen...
+        </p>
+        <div className="w-12 h-1 bg-neutral-200 dark:bg-neutral-800 rounded-full overflow-hidden relative">
+          <div className="absolute inset-0 bg-gold animate-pulse" />
+        </div>
+      </div>
+    );
+  } else if (currentUser && isAdminRoute && currentUser.role !== 'admin') {
+    mainContent = (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5 px-4 animate-fade-in">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center text-brand-firebrick animate-pulse">
+          <ShieldAlert size={28} className="text-red-500" />
+        </div>
+        <h3 className="text-lg font-black font-outfit text-foreground uppercase tracking-wider text-brand-firebrick">Access Denied</h3>
+        <p className="text-xs text-brand-gray max-w-xs font-semibold leading-relaxed">
+          This area is restricted to System Administrators only. You do not have permission to view this console.
+        </p>
+        <button
+          onClick={() => router.push('/auth')}
+          className="bg-gold hover:bg-gold-hover text-brand-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-md"
+        >
+          Switch to Admin Profile
+        </button>
+      </div>
+    );
+  } else if (currentUser && isVendorRoute && currentUser.role !== 'vendor') {
+    mainContent = (
+      <div className="flex-1 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-5 px-4 animate-fade-in">
+        <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 animate-pulse">
+          <ChefHat size={28} />
+        </div>
+        <h3 className="text-lg font-black font-outfit text-foreground uppercase tracking-wider text-amber-500">Vendor Access Required</h3>
+        <p className="text-xs text-brand-gray max-w-xs font-semibold leading-relaxed">
+          This dashboard is restricted to registered Vendors only. You do not have permission to view these settings.
+        </p>
+        <button
+          onClick={() => router.push('/auth')}
+          className="bg-gold hover:bg-gold-hover text-brand-black px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-md"
+        >
+          Switch to Vendor Profile
+        </button>
+      </div>
+    );
+  }
 
   const locations = [
     'Sterling place, Vrooklyn',
@@ -285,7 +367,7 @@ function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main page content */}
       <main className="flex-1 w-full relative w-full px-4 sm:px-6 lg:px-8 py-8">
-        {children}
+        {mainContent}
       </main>
 
       {/* Global Footer */}

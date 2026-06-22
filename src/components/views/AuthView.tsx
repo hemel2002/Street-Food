@@ -7,7 +7,7 @@ import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 
 export default function AuthView() {
-  const { currentUser, loginUser, logoutUser, updateProfile } = useApp();
+  const { currentUser, loginUser, registerUser, logoutUser, updateProfile } = useApp();
   const router = useRouter();
   
   // Login input states
@@ -15,6 +15,10 @@ export default function AuthView() {
   const [role, setRole] = useState<'customer' | 'vendor' | 'admin'>('customer');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Sign up input states
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+  const [fullName, setFullName] = useState('');
 
   // Profile Edit States
   const [profileName, setProfileName] = useState(currentUser?.full_name || '');
@@ -27,10 +31,10 @@ export default function AuthView() {
 
   // Parallax motion tracking
   const x = useMotionValue(200);
-  const y = useMotionValue(260);
+  const y = useMotionValue(285);
 
-  const rotateX = useTransform(y, [0, 520], [12, -12]);
-  const rotateY = useTransform(x, [0, 400], [-12, 12]);
+  const rotateX = useTransform(y, [0, 570], [12, -12]);
+  const tiltRotateY = useTransform(x, [0, 400], [-12, 12]);
 
   React.useEffect(() => {
     if (currentUser) {
@@ -82,6 +86,15 @@ export default function AuthView() {
     if (!email) return;
     setIsLoggingIn(true);
     await loginUser(email, role);
+    setIsLoggingIn(false);
+    router.push(role === 'admin' ? '/admin' : role === 'vendor' ? '/dashboard' : '/menu');
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !fullName) return;
+    setIsLoggingIn(true);
+    await registerUser(email, fullName, role);
     setIsLoggingIn(false);
     router.push(role === 'admin' ? '/admin' : role === 'vendor' ? '/dashboard' : '/menu');
   };
@@ -244,196 +257,329 @@ export default function AuthView() {
              ========================================== */
           <div 
             style={{ perspective: 1200 }} 
-            className="w-full h-[540px] relative"
+            className="w-full h-[590px] relative"
           >
+            {/* Outer container: Tilt */}
             <motion.div
               style={{ 
                 rotateX, 
-                rotateY, 
+                rotateY: tiltRotateY, 
                 transformStyle: 'preserve-3d',
                 width: '100%',
                 height: '100%',
                 position: 'relative'
               }}
-              animate={{ rotateY: isFlipped ? 180 : 0 }}
-              transition={{ type: 'spring', stiffness: 180, damping: 22 }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
               className="w-full h-full relative"
             >
-              
-              {/* FRONT SIDE: Email/Password Login Form */}
-              <div 
-                style={{ backfaceVisibility: 'hidden' }}
-                className="absolute inset-0 w-full h-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800 rounded-[35px] p-8 shadow-2xl flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-gold mb-1">
-                      <Sparkles size={16} className="animate-spin" style={{ animationDuration: '4s' }} />
-                      <span className="text-[10px] font-black uppercase tracking-wider">Dynamic Discovery</span>
-                    </div>
-                    <h3 className="text-2xl font-black font-outfit text-foreground leading-tight">Welcome Back</h3>
-                    <p className="text-[10px] text-brand-gray font-semibold mt-1">Sign in to your Street Eats Hub account.</p>
-                  </div>
-
-                  <form onSubmit={handleLogin} className="space-y-3.5">
-                    <div>
-                      <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
-                        Email Address
-                      </label>
-                      <div className="relative">
-                        <input 
-                          type="email" 
-                          placeholder="yourname@gmail.com"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3.5 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
-                        />
-                        <User size={14} className="absolute left-3.5 top-[15px] text-brand-gray" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
-                        Password
-                      </label>
-                      <div className="relative">
-                        <input 
-                          type="password" 
-                          placeholder="••••••••"
-                          required
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3.5 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
-                        />
-                        <Lock size={14} className="absolute left-3.5 top-[15px] text-brand-gray" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
-                        Select Role
-                      </label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {(['customer', 'vendor', 'admin'] as const).map((r) => (
-                          <button
-                            key={r}
-                            type="button"
-                            onClick={() => setRole(r)}
-                            className={`py-2 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all ${
-                              role === r 
-                                ? 'bg-gold border-gold text-brand-black shadow-md scale-[1.02]' 
-                                : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-850 text-brand-gray hover:border-neutral-350'
-                            }`}
-                          >
-                            {r}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <button 
-                      type="submit"
-                      disabled={isLoggingIn}
-                      className="w-full bg-gold hover:bg-gold-hover text-brand-black font-black text-xs py-4 rounded-2xl shadow-md transition-transform duration-200 active:scale-[0.98] mt-2 uppercase tracking-wider"
-                    >
-                      {isLoggingIn ? 'Signing In...' : 'Sign In'}
-                    </button>
-                  </form>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setIsFlipped(true)}
-                  className="w-full text-center text-[10px] font-black text-gold hover:text-gold-hover uppercase tracking-wider py-2 mt-4 border border-dashed border-gold/30 hover:border-gold rounded-2xl transition-all"
-                >
-                  ⚡ Quick Demo Login Profiles
-                </button>
-              </div>
-
-              {/* BACK SIDE: Quick Demo Profiles */}
-              <div 
+              {/* Inner container: Flip */}
+              <motion.div
                 style={{ 
-                  backfaceVisibility: 'hidden', 
-                  transform: 'rotateY(180deg)' 
+                  transformStyle: 'preserve-3d',
+                  width: '100%',
+                  height: '100%',
+                  position: 'relative'
                 }}
-                className="absolute inset-0 w-full h-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800 rounded-[35px] p-8 shadow-2xl flex flex-col justify-between"
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ type: 'spring', stiffness: 180, damping: 22 }}
+                className="w-full h-full relative"
               >
-                <div className="space-y-5">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-emerald-500 mb-1">
-                      <ShieldCheck size={16} />
-                      <span className="text-[10px] font-black uppercase tracking-wider">Demo Access</span>
+                {/* FRONT SIDE: Email/Password Login & Signup Forms */}
+                <div 
+                  style={{ backfaceVisibility: 'hidden' }}
+                  className="absolute inset-0 w-full h-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800 rounded-[35px] p-8 shadow-2xl flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-1.5 text-gold mb-1">
+                          <Sparkles size={16} className="animate-spin" style={{ animationDuration: '4s' }} />
+                          <span className="text-[10px] font-black uppercase tracking-wider">Dynamic Discovery</span>
+                        </div>
+                        <h3 className="text-xl font-black font-outfit text-foreground leading-tight">
+                          {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                        </h3>
+                      </div>
+
+                      {/* Mode Toggle */}
+                      <div className="flex bg-neutral-100 dark:bg-neutral-950 p-1 rounded-xl border border-neutral-200/30">
+                        <button
+                          type="button"
+                          onClick={() => setAuthMode('login')}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
+                            authMode === 'login'
+                              ? 'bg-gold text-brand-black shadow-sm'
+                              : 'text-brand-gray hover:text-foreground'
+                          }`}
+                        >
+                          Sign In
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setAuthMode('signup')}
+                          className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
+                            authMode === 'signup'
+                              ? 'bg-gold text-brand-black shadow-sm'
+                              : 'text-brand-gray hover:text-foreground'
+                          }`}
+                        >
+                          Sign Up
+                        </button>
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-black font-outfit text-foreground leading-tight font-outfit">Demo Accounts</h3>
-                    <p className="text-[10px] text-brand-gray font-semibold mt-1">Select one of our seeded database users to instantly log in.</p>
+                    
+                    <p className="text-[10px] text-brand-gray font-semibold mt-1">
+                      {authMode === 'login' 
+                        ? 'Sign in to your Street Eats Hub account.' 
+                        : 'Register a new profile to access menu and dashboards.'
+                      }
+                    </p>
+
+                    {authMode === 'login' ? (
+                      /* LOGIN FORM */
+                      <form onSubmit={handleLogin} className="space-y-3.5">
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Email Address
+                          </label>
+                          <div className="relative">
+                            <input 
+                              type="email" 
+                              placeholder="yourname@gmail.com"
+                              required
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3.5 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
+                            />
+                            <User size={14} className="absolute left-3.5 top-[15px] text-brand-gray" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Password
+                          </label>
+                          <div className="relative">
+                            <input 
+                              type="password" 
+                              placeholder="••••••••"
+                              required
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3.5 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
+                            />
+                            <Lock size={14} className="absolute left-3.5 top-[15px] text-brand-gray" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Select Role
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {(['customer', 'vendor', 'admin'] as const).map((r) => (
+                              <button
+                                key={r}
+                                type="button"
+                                onClick={() => setRole(r)}
+                                className={`py-2 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all ${
+                                  role === r 
+                                    ? 'bg-gold border-gold text-brand-black shadow-md scale-[1.02]' 
+                                    : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-850 text-brand-gray hover:border-neutral-350'
+                                }`}
+                              >
+                                {r}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button 
+                          type="submit"
+                          disabled={isLoggingIn}
+                          className="w-full bg-gold hover:bg-gold-hover text-brand-black font-black text-xs py-4 rounded-2xl shadow-md transition-transform duration-200 active:scale-[0.98] mt-2 uppercase tracking-wider"
+                        >
+                          {isLoggingIn ? 'Signing In...' : 'Sign In'}
+                        </button>
+                      </form>
+                    ) : (
+                      /* SIGNUP FORM */
+                      <form onSubmit={handleRegister} className="space-y-3">
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Full Name
+                          </label>
+                          <div className="relative">
+                            <input 
+                              type="text" 
+                              placeholder="John Doe"
+                              required
+                              value={fullName}
+                              onChange={(e) => setFullName(e.target.value)}
+                              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
+                            />
+                            <User size={14} className="absolute left-3.5 top-[13px] text-brand-gray" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Email Address
+                          </label>
+                          <div className="relative">
+                            <input 
+                              type="email" 
+                              placeholder="yourname@gmail.com"
+                              required
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
+                            />
+                            <User size={14} className="absolute left-3.5 top-[13px] text-brand-gray" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Password
+                          </label>
+                          <div className="relative">
+                            <input 
+                              type="password" 
+                              placeholder="••••••••"
+                              required
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-850 rounded-2xl pl-10 pr-4 py-3 text-xs font-semibold focus:outline-none focus:border-gold transition-colors text-foreground"
+                            />
+                            <Lock size={14} className="absolute left-3.5 top-[13px] text-brand-gray" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[9px] font-black text-brand-gray uppercase tracking-wider pl-1 mb-1 block">
+                            Select Role
+                          </label>
+                          <div className="grid grid-cols-3 gap-2">
+                            {(['customer', 'vendor', 'admin'] as const).map((r) => (
+                              <button
+                                key={r}
+                                type="button"
+                                onClick={() => setRole(r)}
+                                className={`py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border transition-all ${
+                                  role === r 
+                                    ? 'bg-gold border-gold text-brand-black shadow-md scale-[1.02]' 
+                                    : 'bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-850 text-brand-gray hover:border-neutral-350'
+                                }`}
+                              >
+                                {r}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button 
+                          type="submit"
+                          disabled={isLoggingIn}
+                          className="w-full bg-gold hover:bg-gold-hover text-brand-black font-black text-xs py-3.5 rounded-2xl shadow-md transition-transform duration-200 active:scale-[0.98] mt-2 uppercase tracking-wider"
+                        >
+                          {isLoggingIn ? 'Creating Account...' : 'Create Account'}
+                        </button>
+                      </form>
+                    )}
                   </div>
 
-                  <div className="space-y-3">
-                    <button 
-                      onClick={() => handleQuickLogin('hemal@gmail.com', 'customer')}
-                      disabled={isLoggingIn}
-                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-gold/30 hover:translate-x-1"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-gold/15 flex items-center justify-center text-gold group-hover:scale-105 transition-transform">
-                          <User size={14} />
-                        </div>
-                        <div>
-                          <span className="block font-black text-[11px] text-foreground">Customer (Hemal)</span>
-                          <span className="text-[9px] text-brand-gray font-semibold">hemal@gmail.com</span>
-                        </div>
-                      </div>
-                      <span className="text-[8px] bg-gold/20 text-gold font-black uppercase px-2 py-0.5 rounded-md">Login</span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleQuickLogin('vendor@gmail.com', 'vendor')}
-                      disabled={isLoggingIn}
-                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-emerald-500/30 hover:translate-x-1"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-500 group-hover:scale-105 transition-transform">
-                          <UserCheck size={14} />
-                        </div>
-                        <div>
-                          <span className="block font-black text-[11px] text-foreground">Vendor (Ahmed Khan)</span>
-                          <span className="text-[9px] text-brand-gray font-semibold">vendor@gmail.com</span>
-                        </div>
-                      </div>
-                      <span className="text-[8px] bg-emerald-500/20 text-emerald-500 font-black uppercase px-2 py-0.5 rounded-md">Login</span>
-                    </button>
-
-                    <button 
-                      onClick={() => handleQuickLogin('admin@gmail.com', 'admin')}
-                      disabled={isLoggingIn}
-                      className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-sky-500/30 hover:translate-x-1"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-500 group-hover:scale-105 transition-transform">
-                          <ShieldCheck size={14} />
-                        </div>
-                        <div>
-                          <span className="block font-black text-[11px] text-foreground">System Administrator</span>
-                          <span className="text-[9px] text-brand-gray font-semibold">admin@gmail.com</span>
-                        </div>
-                      </div>
-                      <span className="text-[8px] bg-sky-500/20 text-sky-500 font-black uppercase px-2 py-0.5 rounded-md">Login</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsFlipped(true)}
+                    className="w-full text-center text-[10px] font-black text-gold hover:text-gold-hover uppercase tracking-wider py-2 mt-4 border border-dashed border-gold/30 hover:border-gold rounded-2xl transition-all"
+                  >
+                    ⚡ Quick Demo Login Profiles
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setIsFlipped(false)}
-                  className="w-full text-center text-[10px] font-black text-brand-gray hover:text-foreground uppercase tracking-wider py-2 mt-4 transition-colors"
+                {/* BACK SIDE: Quick Demo Profiles */}
+                <div 
+                  style={{ 
+                    backfaceVisibility: 'hidden', 
+                    transform: 'rotateY(180deg)' 
+                  }}
+                  className="absolute inset-0 w-full h-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800 rounded-[35px] p-8 shadow-2xl flex flex-col justify-between"
                 >
-                  ← Back to Email Sign In
-                </button>
-              </div>
+                  <div className="space-y-5">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-emerald-500 mb-1">
+                        <ShieldCheck size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-wider">Demo Access</span>
+                      </div>
+                      <h3 className="text-2xl font-black font-outfit text-foreground leading-tight font-outfit">Demo Accounts</h3>
+                      <p className="text-[10px] text-brand-gray font-semibold mt-1">Select one of our seeded database users to instantly log in.</p>
+                    </div>
 
+                    <div className="space-y-3">
+                      <button 
+                        onClick={() => handleQuickLogin('hemal@gmail.com', 'customer')}
+                        disabled={isLoggingIn}
+                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-gold/30 hover:translate-x-1"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-gold/15 flex items-center justify-center text-gold group-hover:scale-105 transition-transform">
+                            <User size={14} />
+                          </div>
+                          <div>
+                            <span className="block font-black text-[11px] text-foreground">Customer (Hemal)</span>
+                            <span className="text-[9px] text-brand-gray font-semibold">hemal@gmail.com</span>
+                          </div>
+                        </div>
+                        <span className="text-[8px] bg-gold/20 text-gold font-black uppercase px-2 py-0.5 rounded-md">Login</span>
+                      </button>
+
+                      <button 
+                        onClick={() => handleQuickLogin('vendor@gmail.com', 'vendor')}
+                        disabled={isLoggingIn}
+                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-emerald-500/30 hover:translate-x-1"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-500 group-hover:scale-105 transition-transform">
+                            <UserCheck size={14} />
+                          </div>
+                          <div>
+                            <span className="block font-black text-[11px] text-foreground">Vendor (Ahmed Khan)</span>
+                            <span className="text-[9px] text-brand-gray font-semibold">vendor@gmail.com</span>
+                          </div>
+                        </div>
+                        <span className="text-[8px] bg-emerald-500/20 text-emerald-500 font-black uppercase px-2 py-0.5 rounded-md">Login</span>
+                      </button>
+
+                      <button 
+                        onClick={() => handleQuickLogin('admin@gmail.com', 'admin')}
+                        disabled={isLoggingIn}
+                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-950 dark:hover:bg-neutral-850 border border-neutral-100 dark:border-neutral-800 transition-all text-left text-xs font-bold group hover:border-sky-500/30 hover:translate-x-1"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-500 group-hover:scale-105 transition-transform">
+                            <ShieldCheck size={14} />
+                          </div>
+                          <div>
+                            <span className="block font-black text-[11px] text-foreground">System Administrator</span>
+                            <span className="text-[9px] text-brand-gray font-semibold">admin@gmail.com</span>
+                          </div>
+                        </div>
+                        <span className="text-[8px] bg-sky-500/20 text-sky-500 font-black uppercase px-2 py-0.5 rounded-md">Login</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsFlipped(false)}
+                    className="w-full text-center text-[10px] font-black text-brand-gray hover:text-foreground uppercase tracking-wider py-2 mt-4 transition-colors"
+                  >
+                    ← Back to Email Sign In
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         )}

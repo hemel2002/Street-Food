@@ -143,6 +143,7 @@ interface AppContextType {
   setCurrentLocation: (loc: string) => void;
   toggleTheme: () => void;
   loginUser: (email: string, role: 'customer' | 'vendor' | 'admin') => Promise<void>;
+  registerUser: (email: string, fullName: string, role: 'customer' | 'vendor' | 'admin') => Promise<boolean>;
   logoutUser: () => void;
   addReview: (stallId: string, rating: number, comment: string) => Promise<void>;
   addFood: (foodData: Omit<Food, 'id'>) => Promise<boolean>;
@@ -636,13 +637,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   
   const [selectedStall, setSelectedStall] = useState<Stall | null>(null);
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
-  const [currentUser, setCurrentUser] = useState<Profile | null>({
-    id: 'cust-1',
-    email: 'hemal@gmail.com',
-    full_name: 'Hemal',
-    phone: '1234567890',
-    role: 'customer'
-  });
+  const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentLocation, setCurrentLocation] = useState('Sterling place, Vrooklyn');
@@ -675,7 +670,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setIsDarkMode(true);
       document.documentElement.classList.add('dark-mode');
     }
+
+    const savedUser = localStorage.getItem('vrooklyn_user');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse user', e);
+      }
+    }
   }, []);
+
+  // Save user session to local storage when state changes
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('vrooklyn_user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('vrooklyn_user');
+    }
+  }, [currentUser]);
 
   // Fetch real data from Supabase if configured, otherwise fall back to mock data
   useEffect(() => {
@@ -906,6 +919,42 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
       }
     }
+  };
+
+  const registerUser = async (email: string, fullName: string, role: 'customer' | 'vendor' | 'admin') => {
+    let id = `user-${Date.now()}`;
+    if (email === 'hemal@gmail.com') id = 'cust-1';
+    else if (email === 'vendor@gmail.com') id = 'owner-1';
+    else if (email === 'admin@gmail.com') id = 'admin-1';
+
+    const profile: Profile = {
+      id,
+      email,
+      full_name: fullName,
+      phone: '+1 555-0199',
+      role,
+      blocked: false
+    };
+    setCurrentUser(profile);
+    setProfiles(prev => {
+      if (!prev.some(p => p.id === profile.id)) {
+        return [...prev, profile];
+      }
+      return prev;
+    });
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase.from('profiles').insert(profile);
+        if (error) throw error;
+      } catch (e) {
+        console.error('Failed to sync new profile to Supabase:', e);
+      }
+    }
+    return true;
   };
 
   const logoutUser = () => {
@@ -1550,6 +1599,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setCurrentLocation,
         toggleTheme,
         loginUser,
+        registerUser,
         logoutUser,
         addReview,
         addFood,
