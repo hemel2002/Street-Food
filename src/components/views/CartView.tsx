@@ -52,6 +52,7 @@ export default function CartView() {
         },
         body: JSON.stringify({
           items: cart,
+          discountAmount: finalDiscount,
           successUrl: '/order-tracking?payment=success',
           cancelUrl: '/cart',
         }),

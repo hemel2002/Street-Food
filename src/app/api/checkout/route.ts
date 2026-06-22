@@ -10,7 +10,7 @@ const stripe = stripeSecret && !stripeSecret.includes('placeholder')
 
 export async function POST(request: Request) {
   try {
-    const { items, successUrl, cancelUrl } = await request.json();
+    const { items, discountAmount, successUrl, cancelUrl } = await request.json();
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'No items in cart' }, { status: 400 });
@@ -35,14 +35,30 @@ export async function POST(request: Request) {
       quantity: item.quantity,
     }));
 
-    // Create Checkout Session
-    const session = await stripe.checkout.sessions.create({
+    // Create Checkout Session parameters
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${request.headers.get('origin')}${successUrl}`,
       cancel_url: `${request.headers.get('origin')}${cancelUrl}`,
-    });
+    };
+
+    if (discountAmount && discountAmount > 0) {
+      try {
+        const coupon = await stripe.coupons.create({
+          amount_off: Math.round(discountAmount * 100),
+          currency: 'usd',
+          duration: 'once',
+          name: 'Applied Discount',
+        });
+        sessionParams.discounts = [{ coupon: coupon.id }];
+      } catch (couponError) {
+        console.error('Failed to create Stripe coupon:', couponError);
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
