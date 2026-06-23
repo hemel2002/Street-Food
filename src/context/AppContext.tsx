@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export interface Profile {
@@ -627,6 +628,7 @@ const MOCK_PROMO_CODES: VendorPromoCode[] = [
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [stalls, setStalls] = useState<Stall[]>([]);
   const [foods, setFoods] = useState<Food[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -729,20 +731,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, promoCode, vendorPromoCodes]);
 
-  // For vendors, automatically select or create their own stall when stalls or user changes
+  // For vendors, automatically select or create their own stall when stalls or user changes on the dashboard
   useEffect(() => {
     if (currentUser && currentUser.role === 'vendor' && stalls.length > 0 && !isLoading) {
-      const myStall = stalls.find(s => s.owner_id === currentUser.id);
-      if (myStall) {
-        if (!selectedStall || selectedStall.id !== myStall.id) {
-          setSelectedStall(myStall);
+      if (pathname === '/dashboard') {
+        const myStall = stalls.find(s => s.owner_id === currentUser.id);
+        if (myStall) {
+          if (!selectedStall || selectedStall.id !== myStall.id) {
+            setSelectedStall(myStall);
+          }
+        } else {
+          // If vendor has no stall, auto-create one
+          createStallForVendor(currentUser.id, currentUser.full_name);
         }
-      } else {
-        // If vendor has no stall, auto-create one
-        createStallForVendor(currentUser.id, currentUser.full_name);
       }
     }
-  }, [currentUser, stalls, selectedStall, isLoading]);
+  }, [currentUser, stalls, selectedStall, isLoading, pathname]);
 
   // Fetch real data from Supabase if configured, otherwise fall back to mock data
   useEffect(() => {
