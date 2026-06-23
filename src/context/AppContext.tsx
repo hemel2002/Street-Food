@@ -729,6 +729,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, promoCode, vendorPromoCodes]);
 
+  // For vendors, automatically select or create their own stall when stalls or user changes
+  useEffect(() => {
+    if (currentUser && currentUser.role === 'vendor' && stalls.length > 0 && !isLoading) {
+      const myStall = stalls.find(s => s.owner_id === currentUser.id);
+      if (myStall) {
+        if (!selectedStall || selectedStall.id !== myStall.id) {
+          setSelectedStall(myStall);
+        }
+      } else {
+        // If vendor has no stall, auto-create one
+        createStallForVendor(currentUser.id, currentUser.full_name);
+      }
+    }
+  }, [currentUser, stalls, selectedStall, isLoading]);
+
   // Fetch real data from Supabase if configured, otherwise fall back to mock data
   useEffect(() => {
     async function loadData() {
@@ -1212,6 +1227,48 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     }
     return true;
+  };
+
+  const createStallForVendor = async (ownerId: string, ownerName: string) => {
+    const newStall: Stall = {
+      id: `vendor-${Date.now()}`,
+      owner_id: ownerId,
+      name: `${ownerName}'s Street Stall`,
+      title: 'Delicious Street Eats',
+      description: 'Welcome to our street food stall! We serve fresh, delicious local eats made daily.',
+      cover_pic: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&auto=format&fit=crop&q=80',
+      area: 'Sterling Place, Brooklyn',
+      status: 'approved',
+      avg_rating: 5.0,
+      calories_info: '200kcal',
+      prep_time: '15 min',
+      lat: 40.6782,
+      lng: -73.9442,
+      hours: {
+        Monday: { open: '09:00', close: '21:00', closed: false },
+        Tuesday: { open: '09:00', close: '21:00', closed: false },
+        Wednesday: { open: '09:00', close: '21:00', closed: false },
+        Thursday: { open: '09:00', close: '21:00', closed: false },
+        Friday: { open: '09:00', close: '22:00', closed: false },
+        Saturday: { open: '09:00', close: '22:00', closed: false },
+        Sunday: { open: '10:00', close: '20:00', closed: false },
+      }
+    };
+
+    setStalls(prev => [...prev, newStall]);
+    setSelectedStall(newStall);
+
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('your-project-id')
+    ) {
+      try {
+        const { error } = await supabase.from('stalls').insert(newStall);
+        if (error) throw error;
+      } catch (e: any) {
+        console.error('Failed to sync new vendor stall to Supabase:', e?.message || e, e);
+      }
+    }
   };
 
   const toggleFoodAvailability = async (foodId: string): Promise<boolean> => {
