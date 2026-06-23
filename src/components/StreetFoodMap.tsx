@@ -10,6 +10,7 @@ interface MapProps {
   selectedRadius: number; // in meters (e.g. 500, 1000, 3000, 5000)
   onStallSelect: (stall: Stall) => void;
   heatmapMode: boolean;
+  onLocationSelect?: (lat: number, lng: number) => void;
 }
 
 export default function StreetFoodMap({
@@ -17,13 +18,20 @@ export default function StreetFoodMap({
   userLocation,
   selectedRadius,
   onStallSelect,
-  heatmapMode
+  heatmapMode,
+  onLocationSelect
 }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletMapInstance = useRef<any>(null);
   const markerGroupRef = useRef<any>(null);
   const radiusCircleRef = useRef<any>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+
+  // Keep a reference to the latest onLocationSelect callback to prevent stale closures
+  const onLocationSelectRef = useRef(onLocationSelect);
+  useEffect(() => {
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
 
   useEffect(() => {
     // 1. Dynamic Script Loading for Leaflet CSS & JS
@@ -85,6 +93,13 @@ export default function StreetFoodMap({
       }).addTo(leafletMapInstance.current);
 
       markerGroupRef.current = L.layerGroup().addTo(leafletMapInstance.current);
+
+      // Listen to map clicks to select user location
+      leafletMapInstance.current.on('click', (e: any) => {
+        if (onLocationSelectRef.current) {
+          onLocationSelectRef.current(e.latlng.lat, e.latlng.lng);
+        }
+      });
     } else {
       leafletMapInstance.current.setView([defaultLat, defaultLng]);
     }

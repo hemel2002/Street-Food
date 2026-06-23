@@ -15,7 +15,9 @@ export default function HomeView() {
     setSelectedStall, 
     setSelectedFood,
     userLocation,
+    setUserLocation,
     detectUserLocation,
+    setCurrentLocation,
     favoriteStallIds,
     toggleFavoriteStall,
     favoriteFoodIds,
@@ -143,6 +145,26 @@ export default function HomeView() {
     router.push(`/stall/${stall.id}`);
   };
 
+  const handleLocationSelect = async (lat: number, lng: number) => {
+    setUserLocation({ lat, lng });
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`, {
+        headers: { 'Accept-Language': 'en' }
+      });
+      const data = await res.json();
+      if (data && data.address) {
+        const street = data.address.road || data.address.suburb || data.address.neighbourhood || '';
+        const city = data.address.city || data.address.town || data.address.state || '';
+        const shortAddress = street && city ? `${street}, ${city}` : data.display_name.split(',').slice(0, 3).join(', ');
+        setCurrentLocation(shortAddress);
+      } else {
+        setCurrentLocation(`Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+      }
+    } catch (err) {
+      setCurrentLocation(`Selected: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+    }
+  };
+
   // Voice Search Trigger
   const startVoiceSearch = () => {
     if (typeof window !== 'undefined') {
@@ -252,6 +274,7 @@ export default function HomeView() {
               selectedRadius={selectedRadius}
               onStallSelect={handleStallClick}
               heatmapMode={heatmapMode}
+              onLocationSelect={handleLocationSelect}
             />
 
             {/* Map Controls */}

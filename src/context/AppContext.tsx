@@ -172,6 +172,7 @@ interface AppContextType {
   unblockUser: (email: string) => Promise<boolean>;
   resolveComplaint: (complaintId: string) => Promise<boolean>;
   deleteReview: (reviewId: string) => Promise<boolean>;
+  setUserLocation: (loc: { lat: number; lng: number } | null) => void;
 }
 
 const MOCK_STALLS: Stall[] = [
@@ -644,7 +645,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [currentLocation, setCurrentLocation] = useState('Sterling place, Vrooklyn');
+  const [currentLocation, setCurrentLocationState] = useState('Sterling place, Vrooklyn');
   const [promoCode, setPromoCodeState] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [orderStatus, setOrderStatus] = useState<'pending' | 'preparing' | 'shipping' | 'delivered'>('pending');
@@ -654,6 +655,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [favoriteStallIds, setFavoriteStallIds] = useState<string[]>([]);
   const [favoriteFoodIds, setFavoriteFoodIds] = useState<string[]>([]);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>({ lat: 40.6782, lng: -73.9442 });
+
+  const setCurrentLocation = (loc: string) => {
+    setCurrentLocationState(loc);
+    const locLower = loc.toLowerCase();
+    if (locLower.includes('sterling place')) {
+      setUserLocation({ lat: 40.6782, lng: -73.9442 });
+    } else if (locLower.includes('grand ave')) {
+      setUserLocation({ lat: 40.6792, lng: -73.9392 });
+    } else if (locLower.includes('flatbush ave')) {
+      setUserLocation({ lat: 40.6752, lng: -73.9512 });
+    } else if (locLower.includes('prospect heights')) {
+      setUserLocation({ lat: 40.6772, lng: -73.9632 });
+    }
+  };
 
   // Load state from local storage on mount
   useEffect(() => {
@@ -1374,11 +1389,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         },
         (error) => {
           console.error('Geolocation error:', error);
+          let errorMsg = '';
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMsg = 'GPS Permission Denied. Using default location (Brooklyn). You can click on the map to set your location manually.';
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMsg = 'GPS Location Unavailable. Using default location (Brooklyn). You can click on the map to set your location manually.';
+          } else if (error.code === error.TIMEOUT) {
+            errorMsg = 'GPS Request Timed Out. Using default location (Brooklyn). You can click on the map to set your location manually.';
+          } else {
+            errorMsg = 'GPS Geolocation failed. Using default location (Brooklyn). You can click on the map to set your location manually.';
+          }
           setUserLocation({ lat: 40.6782, lng: -73.9442 });
-        }
+          setCurrentLocation('Sterling place, Vrooklyn');
+          alert(errorMsg);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
     } else {
+      alert('Geolocation is not supported by your browser. You can click on the map to set your location manually.');
       setUserLocation({ lat: 40.6782, lng: -73.9442 });
+      setCurrentLocation('Sterling place, Vrooklyn');
     }
   };
 
@@ -1737,6 +1767,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         unblockUser,
         resolveComplaint,
         deleteReview,
+        setUserLocation,
       }}
     >
       {children}
